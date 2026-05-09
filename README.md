@@ -290,6 +290,7 @@ mybatis-plus:
   global-config:
     db-config:
       id-type: auto
+......
 ```
 
 > ⚠️ 部署前请修改 `username` 和 `password` 为你自己的 MySQL 凭据。
