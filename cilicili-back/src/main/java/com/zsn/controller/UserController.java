@@ -24,15 +24,12 @@ public class UserController {
 
     @PostMapping("login")
     public Result<User> login(@RequestBody Map<String, String> userMap) {
-
-            Result<User> result = userService.login(userMap.get("username"), userMap.get("password"));
-            // 通常这里生成 JWT 并返回，这里只返回用户信息（去掉密码）
-        if (result.getCode() == 200){
+        Result<User> result = userService.login(userMap.get("username"), userMap.get("password"));
+        if (result.getCode() == 200) {
             result.getData().setPassword(null);
-        }// TODO 未完成
-
-        return Result.success(user);
-
+            return result;
+        }
+        return result;
     }
 
 }

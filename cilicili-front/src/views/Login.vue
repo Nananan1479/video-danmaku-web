@@ -5,6 +5,7 @@ import { loginUser } from '@/utils/userStorage'
 import { getUserById } from '@/api/index.js'
 import { login } from '../api'
 
+const LOGIN_AFTER_JUMP_TIME = 1500  // 登录成功后跳转到首页的时间间隔(1.5秒)
 const router = useRouter()
 
 const formData = reactive({
@@ -27,7 +28,7 @@ const handleLogin = () => {
     
     // 调用登录函数
     login(formData.username, formData.password).then(res => {
-        // console.log(res.data.code)
+        console.log(res)
     
         if (res.data.code == 200) {
             successMessage.value = '登录成功！即将跳转到首页...'
@@ -36,12 +37,11 @@ const handleLogin = () => {
             formData.username = ''
             formData.password = ''
             
-            // 1.5秒后跳转到首页
             setTimeout(() => {
                 router.push('/home')
-            }, 1500)
+            }, LOGIN_AFTER_JUMP_TIME)
         } else {
-            errorMessage.value = res.data.data.code + ' ' + res.data.data.message
+            errorMessage.value = res.data.code + ' ' + res.data.message
         }
     })
 }

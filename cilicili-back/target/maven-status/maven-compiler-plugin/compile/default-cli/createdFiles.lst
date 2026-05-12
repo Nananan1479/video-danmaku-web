@@ -1,6 +1,0 @@
-com\zsn\CiliCiliApplication.class
-com\zsn\controller\UserController.class
-com\zsn\entity\User.class
-com\zsn\mapper\UserMapper.class
-com\zsn\service\impl\UserServiceImpl.class
-com\zsn\service\UserService.class
