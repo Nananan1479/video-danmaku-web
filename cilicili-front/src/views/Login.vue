@@ -2,7 +2,8 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { loginUser } from '@/utils/userStorage'
-import { getUserById, getUserByName } from '@/api/index.js'
+import { getUserById } from '@/api/index.js'
+import { login } from '../api'
 
 const router = useRouter()
 
@@ -25,22 +26,24 @@ const handleLogin = () => {
     }
     
     // 调用登录函数
-    const result = loginUser(formData.username, formData.password)
+    login(formData.username, formData.password).then(res => {
+        // console.log(res.data.code)
     
-    if (result.success) {
-        successMessage.value = '登录成功！即将跳转到首页...'
-        
-        // 清空表单
-        formData.username = ''
-        formData.password = ''
-        
-        // 1.5秒后跳转到首页
-        setTimeout(() => {
-            router.push('/home')
-        }, 1500)
-    } else {
-        errorMessage.value = result.message
-    }
+        if (res.data.code == 200) {
+            successMessage.value = '登录成功！即将跳转到首页...'
+            
+            // 清空表单
+            formData.username = ''
+            formData.password = ''
+            
+            // 1.5秒后跳转到首页
+            setTimeout(() => {
+                router.push('/home')
+            }, 1500)
+        } else {
+            errorMessage.value = res.data.data.code + ' ' + res.data.data.message
+        }
+    })
 }
 
 function testBtnById() {
@@ -56,7 +59,7 @@ function testBtnById() {
         <div class="login-container">
             <div class="login-header">
                 <h1 class="logo">CiliCili</h1>
-                <p class="subtitle">欢迎回来</p>
+                <p class="subtitle">登录享受更多功能</p>
             </div>
             
             <form @submit.prevent="handleLogin" class="login-form">

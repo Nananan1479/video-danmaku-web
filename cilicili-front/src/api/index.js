@@ -7,9 +7,14 @@ export function getUserById(id) {
     })
 }
 
-export function getUserByName(name) {
+export function login(username, password) {
+    console.log(username, password)
     return request({
-        url: `/api/users/getByName/${name}`,
-        method: 'POST'
+        url: `/api/users/login/`,
+        method: 'POST',
+        data: {
+            username,
+            password
+        }
     })
 }

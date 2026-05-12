@@ -1,5 +1,6 @@
 // 用户数据存储模块
 // 使用 localStorage 存储用户信息
+import { login } from '@/api/index.js'
 
 const USER_STORAGE_KEY = 'cilicili_users'
 const CURRENT_USER_KEY = 'cilicili_current_user'
@@ -34,7 +35,7 @@ export const registerUser = (userData) => {
     // 添加新用户
     const newUser = {
         id: Date.now(),
-        username: userData.username,
+        userName: userData.userName,
         password: userData.password,
         email: userData.email,
         createdAt: new Date().toISOString()
@@ -48,16 +49,27 @@ export const registerUser = (userData) => {
 
 // 用户登录
 export const loginUser = (username, password) => {
-    const users = getAllUsers()
-    const user = users.find(u => u.username === username && u.password === password)
+    // const users = getAllUsers()
+    // const user = users.find(u => u.username === username && u.password === password)
+    // let result = {}
     
-    if (user) {
-        // 保存当前登录用户
-        localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user))
-        return { success: true, message: '登录成功', user }
-    }
+    return login(username, password).then(res => {
+        console.log(res)
+        console.log(res.data.code)
+        // result = res
+        if (res.data.code == 200) {
+            // 保存当前登录用户
+            // 登录成功后，将用户信息保存到 localStorage
+            // localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user))
+            return { success: true, message: '登录成功', user: res.data.data }
+        }
+        else {
+            return { success: false, message: '用户名或密码错误,'+res.data.msg }
+        }
+    })
     
-    return { success: false, message: '用户名或密码错误' }
+    console.log(result)
+    // return result
 }
 
 // 获取当前登录用户
