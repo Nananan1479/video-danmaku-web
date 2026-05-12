@@ -16,8 +16,7 @@ target/
 # OS files
 .DS_Store
 Thumbs.db
-application.yml
+src/main/resources/application.yml
 
 # Sensitive config (contains database credentials)
 # Uncomment if you want to exclude it and use application.example.yml as template
-# src/main/resources/application.yml
