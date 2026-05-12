@@ -1,0 +1,23 @@
+# Compiled class files
+*.class
+
+# Maven build output
+target/
+
+# IDE files
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+application.yml
+
+# Sensitive config (contains database credentials)
+# Uncomment if you want to exclude it and use application.example.yml as template
+# src/main/resources/application.yml
