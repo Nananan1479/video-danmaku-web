@@ -199,7 +199,14 @@ Entity (User)                  ← 数据实体
 | Maven   | 3.6+ |
 | MySQL   | 8.0  |
 
-### 1. 启动后端
+### 1.修改数据库连接信息
+
+- 打开 `cilicili-back/src/main/resources/application.example.yml` 文件
+- 找到 `spring.datasource.username` 和 `spring.datasource.password` 行
+- 将 `your_db_username` 和 `your_db_password` 替换为你的 MySQL 用户名和密码
+- 将 `application.example.yml` 重命名为 `application.yml`
+
+### 2. 启动后端
 
 ```bash
 # 创建数据库
@@ -215,7 +222,7 @@ mvn spring-boot:run
 # 后端运行在 http://localhost:6060
 ```
 
-### 2. 启动前端
+### 3. 启动前端
 
 ```bash
 cd cilicili-front
@@ -224,7 +231,7 @@ npm run dev
 # 前端运行在 http://localhost:8000
 ```
 
-### 3. 访问
+### 4. 访问
 
 打开浏览器访问 **<http://localhost:8000>**
 
@@ -281,8 +288,8 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/cili_videodb
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: 123456
+    username: your_db_username
+    password: your_db_password
 
 mybatis-plus:
   configuration:
