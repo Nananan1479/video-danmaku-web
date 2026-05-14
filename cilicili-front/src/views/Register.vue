@@ -7,7 +7,7 @@ const router = useRouter()
 
 const formData = reactive({
     username: '',
-    email: '',
+    phone: '',
     password: '',
     confirmPassword: ''
 })
@@ -20,7 +20,7 @@ const handleRegister = () => {
     successMessage.value = ''
     
     // 验证表单
-    if (!formData.username || !formData.email || !formData.password || !formData.confirmPassword) {
+    if (!formData.username || !formData.phone || !formData.password || !formData.confirmPassword) {
         errorMessage.value = '请填写所有字段'
         return
     }
@@ -36,18 +36,17 @@ const handleRegister = () => {
     }
     
     // 调用注册函数
-    const result = registerUser({
+    registerUser({
         username: formData.username,
-        email: formData.email,
+        phone: formData.phone,
         password: formData.password
-    })
-    
-    if (result.success) {
+    }).then(result => {
+        if (result.success) {
         successMessage.value = '注册成功！即将跳转到登录页...'
         
         // 清空表单
         formData.username = ''
-        formData.email = ''
+        formData.phone = ''
         formData.password = ''
         formData.confirmPassword = ''
         
@@ -55,9 +54,10 @@ const handleRegister = () => {
         setTimeout(() => {
             router.push('/login')
         }, 2000)
-    } else {
-        errorMessage.value = result.message
-    }
+        } else {
+            errorMessage.value = result.message
+        }
+    })
 }
 </script>
 
@@ -82,12 +82,12 @@ const handleRegister = () => {
                 </div>
                 
                 <div class="form-group">
-                    <label for="email">邮箱</label>
+                    <label for="phone">手机号</label>
                     <input 
-                        type="email" 
-                        id="email" 
-                        v-model="formData.email" 
-                        placeholder="请输入邮箱"
+                        type="text" 
+                        id="phone" 
+                        v-model="formData.phone" 
+                        placeholder="请输入手机号"
                         required
                     />
                 </div>

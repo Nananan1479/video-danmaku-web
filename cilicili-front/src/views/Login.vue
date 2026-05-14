@@ -3,7 +3,6 @@ import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { loginUser } from '@/utils/userStorage'
 import { getUserById } from '@/api/index.js'
-import { login } from '../api'
 
 const LOGIN_AFTER_JUMP_TIME = 1500  // 登录成功后跳转到首页的时间间隔(1.5秒)
 const router = useRouter()
@@ -25,12 +24,11 @@ const handleLogin = () => {
         errorMessage.value = '请填写所有字段'
         return
     }
+
+    loginUser(formData.username, formData.password).then(result => {
+        console.log(result)
     
-    // 调用登录函数
-    login(formData.username, formData.password).then(res => {
-        console.log(res)
-    
-        if (res.data.code == 200) {
+        if (result.success) {
             successMessage.value = '登录成功！即将跳转到首页...'
             
             // 清空表单
@@ -41,7 +39,7 @@ const handleLogin = () => {
                 router.push('/home')
             }, LOGIN_AFTER_JUMP_TIME)
         } else {
-            errorMessage.value = res.data.code + ' ' + res.data.message
+            errorMessage.value = result.message
         }
     })
 }

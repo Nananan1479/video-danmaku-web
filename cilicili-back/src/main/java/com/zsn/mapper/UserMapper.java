@@ -8,5 +8,6 @@ import org.apache.ibatis.annotations.Param;
 //定义查询规则
 @Mapper
 public interface UserMapper extends BaseMapper<User> {
-    public User getUserByName(@Param("videoId") String name);
+    public User selectByUsername(@Param("username") String name);
+    public User selectByUserPhone(@Param("userPhone") String phone);
 }

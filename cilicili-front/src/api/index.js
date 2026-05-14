@@ -8,13 +8,25 @@ export function getUserById(id) {
 }
 
 export function login(username, password) {
-    console.log(username, password)
+    // console.log(username, password)
     return request({
         url: `/api/users/login/`,
         method: 'POST',
         data: {
             username,
             password
+        }
+    })
+}
+export function register(username, phone, password) {
+    console.log(username, phone, password)
+    return request({
+        url: `/api/users/register/`,
+        method: 'POST',
+        data: {
+            username,
+            phone,
+            password,
         }
     })
 }
