@@ -13,13 +13,13 @@ export const getAllUsers = () => {
 }
 
 // 保存所有用户数据
-export const saveAllUsers = (users) => {
+export const saveUsers = (users) => {
     localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(users))
 }
 
 // 注册新用户
 export const registerUser = (userData) => {
-    const users = getAllUsers()
+    // const users = getAllUsers()
     
     // 检查用户名是否已存在
     // const existingUser = users.find(user => user.username === userData.username)
@@ -70,6 +70,7 @@ export const loginUser = (username, password) => {
         // result = res
         if (res.data.code == 200) {
             // 保存当前登录用户
+            saveUsers(res.data.data)
             // 登录成功后，将用户信息保存到 localStorage
             return { success: true, message: '登录成功', user: res.data.data }
         }

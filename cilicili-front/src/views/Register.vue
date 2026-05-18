@@ -4,6 +4,8 @@ import { useRouter } from 'vue-router'
 import { registerUser } from '@/utils/userStorage'
 
 const router = useRouter()
+const REGISTER_AFTER_JUMP_TIME = 1500  // 注册成功后跳转到首页的时间间隔(1.5秒)
+
 
 const formData = reactive({
     username: '',
@@ -53,7 +55,7 @@ const handleRegister = () => {
         // 2秒后跳转到登录页
         setTimeout(() => {
             router.push('/login')
-        }, 2000)
+        }, REGISTER_AFTER_JUMP_TIME)
         } else {
             errorMessage.value = result.message
         }

@@ -35,6 +35,7 @@ public class Result<T> {
     private int code;       // 状态码
     private String message; // 提示信息
     private T data;         // 实际数据，可以是任意类型
+    private String token;   // JWT令牌（登录/注册时返回）
 
     // 成功时静态方法
     public static <T> Result<T> success(int Icode,T data) {

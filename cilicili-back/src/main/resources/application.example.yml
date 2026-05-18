@@ -70,8 +70,14 @@ spring:
     static-path-pattern: /picture/**
 
 mybatis-plus:
+  mapper-locations: classpath*:META-INF.mybatis/mapper/**/*.xml
   configuration:
     map-underscore-to-camel-case: true    # 自动下划线转驼峰 (created_at -> createdAt)
   global-config:
     db-config:
       id-type: auto
+
+########### JWT 配置
+jwt:
+  secret: cilicili-jwt-secret-key-2024-this-is-a-very-long-secret
+  expiration: 604800000
