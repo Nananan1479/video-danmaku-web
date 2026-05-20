@@ -1,11 +1,15 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
+import LoginBgCarousel from '../components/LoginBgCarousel.vue'
 import { loginUser } from '@/utils/userStorage'
-import { getUserById } from '@/api/index.js'
+import { getUserById, currentUser } from '@/api/index.js'
+import { useStaticDataStore } from '@/stores/index.js'
 
 const LOGIN_AFTER_JUMP_TIME = 1500  // 登录成功后跳转到首页的时间间隔(1.5秒)
 const router = useRouter()
+
+
 
 const formData = reactive({
     username: '',
@@ -50,10 +54,25 @@ function testBtnById() {
         console.log(res.data)
     })
 }
+
+function testToken() {
+    router.push('/test')
+}
+
+function testBtnCurrent() {
+    const staticDataStore = useStaticDataStore()
+    const token = localStorage.getItem(staticDataStore.siteConfig.USER_TOKEN_KEY)
+    // console.log(JSON.parse(atob(token.split('.')[1])))
+    currentUser(token).then(res => {
+        console.log(res)
+        console.log(res.data)
+    })
+}
 </script>
 
 <template>
     <div class="login-page">
+        <LoginBgCarousel  />
         <div class="login-container">
             <div class="login-header">
                 <h1 class="logo">CiliCili</h1>
@@ -93,6 +112,8 @@ function testBtnById() {
                 
                 <button type="submit" class="login-btn">登录</button>
                 <button type="submit" class="testBtnById" @click="testBtnById">后端接口测试（ById）</button>
+                <button type="submit" @click="testToken">token测试（跳转至测试页面）</button>
+                <button type="submit" @click="testBtnCurrent">当前用户测试</button>
             </form>
             
             <div class="register-link">
@@ -106,7 +127,8 @@ function testBtnById() {
 .login-page {
     width: 100%;
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
+    background-color: rgba(241, 242, 243);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -116,10 +138,11 @@ function testBtnById() {
 .login-container {
     width: 100%;
     max-width: 420px;
-    background: #fff;
+    background: rgba(255, 255, 255, 0.85);
     border-radius: 12px;
     padding: 40px 32px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    z-index: 1;
 }
 
 .login-header {
@@ -130,7 +153,7 @@ function testBtnById() {
 .logo {
     font-size: 36px;
     font-weight: 600;
-    color: #00a1d6;
+    color: rgba(0, 174, 236, 1);
     margin: 0 0 8px 0;
 }
 
@@ -161,7 +184,8 @@ function testBtnById() {
 .form-group input {
     height: 44px;
     padding: 0 16px;
-    border: 1px solid #e8e8e8;
+    background-color: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(232, 232, 232, 0.9);
     border-radius: 8px;
     font-size: 14px;
     outline: none;
@@ -169,7 +193,7 @@ function testBtnById() {
 }
 
 .form-group input:focus {
-    border-color: #00a1d6;
+    border-color: rgba(0, 174, 236, 1);
 }
 
 .form-group input::placeholder {
@@ -198,7 +222,7 @@ function testBtnById() {
 
 .login-btn {
     height: 48px;
-    background: #00a1d6;
+    background: rgba(0, 174, 236, 1);
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -224,7 +248,7 @@ function testBtnById() {
 }
 
 .register-link a {
-    color: #00a1d6;
+    color: rgba(0, 174, 236, 1);
     text-decoration: none;
     font-weight: 500;
 }

@@ -31,10 +31,15 @@ public class JwtUtil {
         Date expireDate = new Date(now.getTime() + expiration);
 
         return Jwts.builder()
+                // 用户名&用户ID（前端字段为 username&userId）
                 .setClaims(claims)
+                // 签发时间（前端字段为 iat）
                 .setIssuedAt(now)
+                // 过期时间（前端字段为 exp）(单位为秒，前端需*1000再与Data.now比较)
                 .setExpiration(expireDate)
+                // 生成防伪签名（HS256为加密的算法，secret为共享密钥
                 .signWith(SignatureAlgorithm.HS256, secret)
+                // 拼接字符串发送到前端（格式为header.payload.signature）
                 .compact();
     }
 

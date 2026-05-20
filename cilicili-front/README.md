@@ -1,5 +1,5 @@
 # 🎬 CiliCili — 仿哔哩哔哩视频弹幕平台
-### V3.0.2
+### V0.3.8
 
 > Vue 3 + Vite + Element Plus + Axios 构建的前端项目，配合 Spring Boot 后端提供类 B 站视频弹幕体验。
 

@@ -2,6 +2,9 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { registerUser } from '@/utils/userStorage'
+import LoginBgCarousel from '@/components/LoginBgCarousel.vue'
+
+
 
 const router = useRouter()
 const REGISTER_AFTER_JUMP_TIME = 1500  // 注册成功后跳转到首页的时间间隔(1.5秒)
@@ -65,6 +68,8 @@ const handleRegister = () => {
 
 <template>
     <div class="register-page">
+        <LoginBgCarousel />
+        
         <div class="register-container">
             <div class="register-header">
                 <h1 class="logo">CiliCili</h1>
@@ -138,7 +143,7 @@ const handleRegister = () => {
 .register-page {
     width: 100%;
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-color: rgba(241, 242, 243);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -148,10 +153,11 @@ const handleRegister = () => {
 .register-container {
     width: 100%;
     max-width: 420px;
-    background: #fff;
+    background: rgba(255, 255, 255, 0.85);
     border-radius: 12px;
     padding: 40px 32px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    z-index: 1;
 }
 
 .register-header {
@@ -193,7 +199,8 @@ const handleRegister = () => {
 .form-group input {
     height: 44px;
     padding: 0 16px;
-    border: 1px solid #e8e8e8;
+    background-color: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(232, 232, 232, 0.9);
     border-radius: 8px;
     font-size: 14px;
     outline: none;

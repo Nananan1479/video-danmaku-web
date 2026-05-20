@@ -2,21 +2,21 @@
 import { reactive, ref } from 'vue'
 
 const upUser = reactive({
-  name: '用户名',
-  signature: '个人签名',
-  fans: 0
+    name: '用户名',
+    signature: '个人签名',
+    fans: 0
 })
 
 const recommendList = ref([
-  {
-    id: 1,
-    cover: '@/assets/images/6ff74a8f45317f579bb358521a0aa33a917bafb9.png',
-    title: '此…此视频无人能白嫖！',
-    uploader: '果冻lui',
-    date: '2020-06-25',
-    playCount: 0,
-    danmakuCount: 0
-  }
+    {
+        id: 1,
+        cover: '@/assets/images/6ff74a8f45317f579bb358521a0aa33a917bafb9.png',
+        title: '此…此视频无人能白嫖！',
+        uploader: '果冻lui',
+        date: '2020-06-25',
+        playCount: 0,
+        danmakuCount: 0
+    }
 ])
 </script>
 

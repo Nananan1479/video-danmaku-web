@@ -30,3 +30,11 @@ export function register(username, phone, password) {
         }
     })
 }
+export function currentUser(token) {
+    console.log(token)
+    return request({
+        url: `/api/users/currentUser/`,
+        method: 'POST',
+        data: { token }
+    })
+}

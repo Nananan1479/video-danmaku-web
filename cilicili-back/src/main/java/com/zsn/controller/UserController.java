@@ -69,6 +69,7 @@ public class UserController {
     @PostMapping("currentUser")
     public Result<User> currentUser(HttpServletRequest request) {
         Integer userId = (Integer) request.getAttribute("userId");
+//        System.out.println("request"+request);
         if (userId == null) {
             return Result.fail(401, "未登录");
         }

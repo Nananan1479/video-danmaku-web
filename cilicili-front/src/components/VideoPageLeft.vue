@@ -3,18 +3,18 @@ import { ref, reactive } from 'vue'
 
 // 视频元数据
 const video = reactive({
-  title: '标题栏',
-  playCount: 0,
-  danmakuCount: 0,
-  date: '2020-06-25',
-  time: '05:12:13',
-  copyright: '未经作者授权，禁止转载',
-  description: '这是简介',
-  tags: ['标签1', '标签2', '标签3', '标签4', '标签5', '标签6', '标签7', '标签8'],
-  likes: 0,
-  coins: 0,
-  collects: 0,
-  shares: 0
+    title: '标题栏',
+    playCount: 0,
+    danmakuCount: 0,
+    date: '2020-06-25',
+    time: '05:12:13',
+    copyright: '未经作者授权，禁止转载',
+    description: '这是简介',
+    tags: ['标签1', '标签2', '标签3', '标签4', '标签5', '标签6', '标签7', '标签8'],
+    likes: 0,
+    coins: 0,
+    collects: 0,
+    shares: 0
 })
 
 // 弹幕状态
@@ -25,27 +25,28 @@ const danmakuInput = ref('')
 
 // 发送弹幕
 const sendDanmaku = () => {
-  if (!danmakuInput.value.trim()) return
-  // TODO: 调用发送弹幕接口
-  console.log('发送弹幕:', danmakuInput.value)
-  danmakuInput.value = ''
+    if (!danmakuInput.value.trim()) return
+    // TODO: 调用发送弹幕接口
+    console.log('发送弹幕:', danmakuInput.value)
+    danmakuInput.value = ''
 }
 
 // 评论数据
 const comments = ref([
-  { id: 1, username: "用户1", content: "这个视频太棒了，内容很有深度！", date: "2024-01-15", time: "14:30", likes: 256, replies: 12 },
-  { id: 2, username: "用户2", content: "学到了很多新知识，感谢分享！", date: "2024-01-14", time: "09:15", likes: 189, replies: 8 },
-  { id: 3, username: "用户3", content: "制作精良，期待更多精彩内容！", date: "2024-01-13", time: "20:45", likes: 342, replies: 0 }
+    { id: 1, username: "用户1", content: "这个视频太棒了，内容很有深度！", date: "2024-01-15", time: "14:30", likes: 256, replies: 12 },
+    { id: 2, username: "用户2", content: "学到了很多新知识，感谢分享！", date: "2024-01-14", time: "09:15", likes: 189, replies: 8 },
+    { id: 2, username: "用户2", content: "学到了很多新知识，感谢分享！", date: "2024-01-14", time: "09:15", likes: 189, replies: 8 },
+    { id: 3, username: "用户3", content: "制作精良，期待更多精彩内容！", date: "2024-01-13", time: "20:45", likes: 342, replies: 0 }
 ])
 
 const commentSort = ref('latest')
 const commentInput = ref('')
 
 const submitComment = () => {
-  if (!commentInput.value.trim()) return
-  // TODO: 发表评论
-  console.log('发表评论:', commentInput.value)
-  commentInput.value = ''
+    if (!commentInput.value.trim()) return
+    // TODO: 发表评论
+    console.log('发表评论:', commentInput.value)
+    commentInput.value = ''
 }
 </script>
 

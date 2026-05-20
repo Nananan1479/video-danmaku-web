@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory  } from "vue-router";
+import { useStaticDataStore } from '@/stores/index.js'
 
 const routes = [
     {
@@ -26,6 +27,12 @@ const routes = [
         path: "/register",
         name: "Register",
         component: () => import("@/views/Register.vue")
+    },
+    {
+        path: "/test",
+        name: "Test",
+        component: () => import("@/views/Test.vue"),
+        meta: { requiresAuth: true }  // 标记需要登录才能访问
     }
 ];
 
@@ -46,5 +53,15 @@ const router = createRouter({
     history: createWebHistory(),
     routes,
 });
+
+router.beforeEach((to, from, next) => {
+    const staticDataStore = useStaticDataStore()
+    const token = localStorage.getItem(staticDataStore.siteConfig.USER_TOKEN_KEY)
+    if (to.meta.requiresAuth && !token) {
+        next('/home');   // 未登录则强制跳转首页
+    } else {
+        next();
+    }
+})
 
 export default router;
