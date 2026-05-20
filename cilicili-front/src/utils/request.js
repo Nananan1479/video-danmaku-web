@@ -40,9 +40,11 @@ instance.interceptors.response.use(
     (error) => {
         console.log("response响应拦截器触发")
         console.log(error)
+        console.log(error.response)
+        console.log(error.response.data)
 
         // 如果是 401 且后端明确返回未登录/未授权
-        if (error.response?.status === 401 && error.response?.data?.code === 401) {
+        if (error.response?.status === 401) {
             const staticDataStore = useStaticDataStore()
             const tokenKey = staticDataStore.siteConfig.USER_TOKEN_KEY
             const userKey = staticDataStore.siteConfig.USER_STORAGE_KEY

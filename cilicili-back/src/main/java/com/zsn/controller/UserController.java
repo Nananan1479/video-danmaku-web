@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
-@CrossOrigin //跨域
+// @CrossOrigin //跨域
 @MapperScan("com.zsn.mapper")
 @RestController
 @RequestMapping("/api/users/")
@@ -81,4 +81,13 @@ public class UserController {
         return Result.success(200, user);
     }
 
+    @GetMapping("check")
+    public Result<Object> checkToken(HttpServletRequest request) {
+        Integer userId = (Integer) request.getAttribute("userId");
+        System.out.println("userId:" + userId);
+        if (userId == null) {
+            return Result.fail(401, "token无效");
+        }
+        return Result.success(200, "ok");
+    }
 }

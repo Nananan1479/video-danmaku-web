@@ -34,7 +34,13 @@ export function currentUser(token) {
     console.log(token)
     return request({
         url: `/api/users/currentUser/`,
-        method: 'POST',
-        data: { token }
+        method: 'POST'
+    })
+}
+export function checkToken(token) {
+    console.log(token)
+    return request({
+        url: `/api/users/check`,
+        method: 'GET'
     })
 }

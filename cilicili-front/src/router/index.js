@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory  } from "vue-router";
-import { useStaticDataStore } from '@/stores/index.js'
-
+import { USER_TOKEN_KEY } from "@/constants/constants";
 const routes = [
     {
         path: "/",
@@ -55,8 +54,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    const staticDataStore = useStaticDataStore()
-    const token = localStorage.getItem(staticDataStore.siteConfig.USER_TOKEN_KEY)
+    const token = localStorage.getItem(USER_TOKEN_KEY)
     if (to.meta.requiresAuth && !token) {
         next('/home');   // 未登录则强制跳转首页
     } else {
