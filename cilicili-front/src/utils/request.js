@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { useStaticDataStore } from '@/stores/index.js'
+import { USER_TOKEN_KEY, USER_STORAGE_KEY } from "@/constants/userSettingConstants.js";
 import router from '@/router'
 
 // 创建 axios 实例（不与全局 axios 混淆）
@@ -18,7 +19,7 @@ instance.interceptors.request.use(
         // console.log("request请求拦截器触发")
         // 从 Pinia 全局状态中读取 token 的存储键名（方便动态修改）
         const staticDataStore = useStaticDataStore()
-        const tokenKey = staticDataStore.siteConfig.USER_TOKEN_KEY
+        const tokenKey = USER_TOKEN_KEY
         const token = localStorage.getItem(tokenKey)
 
         // 如果存在 token，就拼成 Bearer xxx 格式放到 Authorization 头中
@@ -45,9 +46,8 @@ instance.interceptors.response.use(
 
         // 如果是 401 且后端明确返回未登录/未授权
         if (error.response?.status === 401) {
-            const staticDataStore = useStaticDataStore()
-            const tokenKey = staticDataStore.siteConfig.USER_TOKEN_KEY
-            const userKey = staticDataStore.siteConfig.USER_STORAGE_KEY
+            const tokenKey = USER_TOKEN_KEY
+            const userKey = USER_STORAGE_KEY
 
             // 先取出原始 token 字符串（避免之前的变量引用错误）
             const rawToken = localStorage.getItem(tokenKey)
@@ -62,15 +62,15 @@ instance.interceptors.response.use(
             }
 
             // 清除过期信息
-            localStorage.removeItem(tokenKey)
-            localStorage.removeItem(userKey)
+            localStorage.removeItem(USER_TOKEN_KEY)
+            localStorage.removeItem(USER_STORAGE_KEY)
 
             // 跳转登录（避免重复跳转）
             if (router.currentRoute.value.path !== '/login') {
                 router.push('/login')
             }
 
-            // ★ 关键：返回一个 resolved promise，终止错误传播
+            // 返回一个 resolved promise，终止错误传播
             return Promise.resolve()
         }
         return Promise.reject(error)

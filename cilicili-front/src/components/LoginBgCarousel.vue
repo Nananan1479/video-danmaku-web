@@ -1,22 +1,22 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 
-import loginCarouselImg1 from '@/assets/images/login_banner_1.jpg'
-import loginCarouselImg2 from '@/assets/images/login_banner_2.png'
-import loginCarouselImg3 from '@/assets/images/login_banner_3.jpg'
-import loginCarouselImg4 from '@/assets/images/login_banner_4.jpg'
-import loginCarouselImg5 from '@/assets/images/login_banner_5.jpg'
-import loginCarouselImg6 from '@/assets/images/login_banner_6.jpg'
-import loginCarouselImg7 from '@/assets/images/login_banner_7.jpg'
-import loginCarouselImg8 from '@/assets/images/login_banner_8.jpg'
-import loginCarouselImg9 from '@/assets/images/login_banner_9.jpg'
-import loginCarouselImg10 from '@/assets/images/login_banner_10.jpg'
-import loginCarouselImg11 from '@/assets/images/login_banner_11.jpg'
-import loginCarouselImg12 from '@/assets/images/login_banner_12.jpg'
+import loginCarouselImg1 from '@/assets/images/login_banner_1.avif'
+import loginCarouselImg2 from '@/assets/images/login_banner_2.avif'
+import loginCarouselImg3 from '@/assets/images/login_banner_3.avif'
+import loginCarouselImg4 from '@/assets/images/login_banner_4.avif'
+import loginCarouselImg5 from '@/assets/images/login_banner_5.avif'
+import loginCarouselImg6 from '@/assets/images/login_banner_6.avif'
+import loginCarouselImg7 from '@/assets/images/login_banner_7.avif'
+import loginCarouselImg8 from '@/assets/images/login_banner_8.avif'
+import loginCarouselImg9 from '@/assets/images/login_banner_9.avif'
+import loginCarouselImg10 from '@/assets/images/login_banner_10.avif'
+import loginCarouselImg11 from '@/assets/images/login_banner_11.avif'
+import loginCarouselImg12 from '@/assets/images/login_banner_12.avif'
 
 const images = [
-    loginCarouselImg1, loginCarouselImg2, 
-    loginCarouselImg4, loginCarouselImg5, loginCarouselImg6,
+    loginCarouselImg6, loginCarouselImg2, 
+    loginCarouselImg4, loginCarouselImg5, loginCarouselImg1,
     loginCarouselImg7, loginCarouselImg8, loginCarouselImg9,
     loginCarouselImg10, loginCarouselImg11, loginCarouselImg12
 ]

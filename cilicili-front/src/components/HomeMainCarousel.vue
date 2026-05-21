@@ -134,7 +134,6 @@ import Carousel2 from '@/assets/images/Carousel2.png'
     width: 100%;
     height: 100%;
     position: relative;
-    border-radius: 7px;
     overflow: hidden;
 }
 
@@ -142,6 +141,7 @@ import Carousel2 from '@/assets/images/Carousel2.png'
     width: 100%;
     height: 81.3%;
     position: relative;
+    border-radius: 7px;
     overflow: hidden;
 }
 

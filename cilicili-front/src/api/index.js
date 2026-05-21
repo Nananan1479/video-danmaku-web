@@ -30,15 +30,13 @@ export function register(username, phone, password) {
         }
     })
 }
-export function currentUser(token) {
-    console.log(token)
+export function currentUser() {
     return request({
         url: `/api/users/currentUser/`,
         method: 'POST'
     })
 }
-export function checkToken(token) {
-    console.log(token)
+export function checkToken() {
     return request({
         url: `/api/users/check`,
         method: 'GET'

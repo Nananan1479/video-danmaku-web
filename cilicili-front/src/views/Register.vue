@@ -64,6 +64,10 @@ const handleRegister = () => {
         }
     })
 }
+
+function goHome() {
+    router.push('/home')
+}
 </script>
 
 <template>
@@ -131,6 +135,7 @@ const handleRegister = () => {
                 
                 <button type="submit" class="register-btn">注册</button>
             </form>
+            <button @click="goHome" class="goHome-btn">返回首页</button>
             
             <div class="login-link">
                 已有账号？<router-link to="/login">立即登录</router-link>
@@ -168,7 +173,7 @@ const handleRegister = () => {
 .logo {
     font-size: 36px;
     font-weight: 600;
-    color: #00a1d6;
+    color: rgba(0, 174, 236, 1);
     margin: 0 0 8px 0;
 }
 
@@ -208,7 +213,7 @@ const handleRegister = () => {
 }
 
 .form-group input:focus {
-    border-color: #00a1d6;
+    border-color: rgba(0, 174, 236, 1);
 }
 
 .form-group input::placeholder {
@@ -237,7 +242,7 @@ const handleRegister = () => {
 
 .register-btn {
     height: 48px;
-    background: #00a1d6;
+    background: rgba(0, 174, 236, 1);
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -248,11 +253,33 @@ const handleRegister = () => {
 }
 
 .register-btn:hover {
-    background: #0095c8;
+    background: #00a9e1;
 }
 
 .register-btn:active {
-    background: #0089ba;
+    background: #009dd5;
+}
+
+.goHome-btn {
+    width: 100%;
+    height: 48px;
+    margin-top: 24px;
+    background: rgba(255, 255, 255, 0.80);
+    color: rgba(0, 174, 236, 0.85);
+    border: 2px solid rgba(0, 174, 236, 0.85);
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.goHome-btn:hover {
+    background: #f9f9f9;
+}
+
+.goHome-btn:active {
+    background: #e8e8e8;
 }
 
 .login-link {
@@ -263,7 +290,7 @@ const handleRegister = () => {
 }
 
 .login-link a {
-    color: #00a1d6;
+    color: rgba(0, 174, 1746, 1);
     text-decoration: none;
     font-weight: 500;
 }

@@ -1,7 +1,7 @@
 <script setup>
     import { getCurrentInstance, onMounted } from 'vue';
     import { checkToken } from '@/api/index';
-    import { USER_TOKEN_KEY } from "@/constants/constants";
+    import { USER_TOKEN_KEY, USER_STORAGE_KEY } from "@/constants/userSettingConstants.js";
     import router from '@/router';
     window.app = getCurrentInstance();
 
@@ -10,7 +10,7 @@
         if (!token) return   // 未登录状态无需验证
 
         try {
-            await checkToken(token)
+            await checkToken()
             console.log('token 有效')
             router.push('/')
             // 正常，不做操作
@@ -20,6 +20,7 @@
             router.push('/login')
             // 清除 token
             localStorage.removeItem(USER_TOKEN_KEY)
+            localStorage.removeItem(USER_STORAGE_KEY)
         }
     })
 </script>

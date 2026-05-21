@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router'
 import LoginBgCarousel from '../components/LoginBgCarousel.vue'
 import { loginUser } from '@/utils/userStorage'
 import { getUserById, currentUser } from '@/api/index.js'
-import { useStaticDataStore } from '@/stores/index.js'
+import { USER_TOKEN_KEY } from "@/constants/userSettingConstants.js";
 
 const LOGIN_AFTER_JUMP_TIME = 1500  // 登录成功后跳转到首页的时间间隔(1.5秒)
 const router = useRouter()
@@ -18,6 +18,7 @@ const formData = reactive({
 
 const errorMessage = ref('')
 const successMessage = ref('')
+const isLoading = ref(false)
 
 const handleLogin = () => {
     errorMessage.value = ''
@@ -29,8 +30,10 @@ const handleLogin = () => {
         return
     }
 
+    isLoading.value = true
     loginUser(formData.username, formData.password).then(result => {
         console.log(result)
+        isLoading.value = false
     
         if (result.success) {
             successMessage.value = '登录成功！即将跳转到首页...'
@@ -45,7 +48,14 @@ const handleLogin = () => {
         } else {
             errorMessage.value = result.message
         }
+    }).catch(() => {
+        isLoading.value = false
+        errorMessage.value = '网络错误，请稍后重试'
     })
+}
+
+function goHome() {
+    router.push('/home')
 }
 
 function testBtnById() {
@@ -60,10 +70,9 @@ function testToken() {
 }
 
 function testBtnCurrent() {
-    const staticDataStore = useStaticDataStore()
-    const token = localStorage.getItem(staticDataStore.siteConfig.USER_TOKEN_KEY)
+    const token = localStorage.getItem(USER_TOKEN_KEY)
     // console.log(JSON.parse(atob(token.split('.')[1])))
-    currentUser(token).then(res => {
+    currentUser().then(res => {
         console.log(res)
         console.log(res.data)
     })
@@ -106,15 +115,21 @@ function testBtnCurrent() {
                     {{ errorMessage }}
                 </div>
                 
+                <div v-if="isLoading" class="loading-message">
+                    <span class="loading-spinner"></span>
+                    正在登录中...
+                </div>
+
                 <div v-if="successMessage" class="success-message">
                     {{ successMessage }}
                 </div>
                 
-                <button type="submit" class="login-btn">登录</button>
-                <button type="submit" class="testBtnById" @click="testBtnById">后端接口测试（ById）</button>
-                <button type="submit" @click="testToken">token测试（跳转至测试页面）</button>
-                <button type="submit" @click="testBtnCurrent">当前用户测试</button>
+                <button type="submit" class="login-btn" :disabled="isLoading">登录</button>
+                <!-- <button type="submit" class="testBtnById" @click="testBtnById">后端接口测试（ById）</button> -->
+                <!-- <button type="submit" @click="testToken">token测试（跳转至测试页面）</button> -->
+                <!-- <button type="submit" @click="testBtnCurrent">当前用户测试</button> -->
             </form>
+            <button @click="goHome" class="goHome-btn">返回首页</button>
             
             <div class="register-link">
                 还没有账号？<router-link to="/register">立即注册</router-link>
@@ -220,6 +235,35 @@ function testBtnCurrent() {
     text-align: center;
 }
 
+.loading-message {
+    padding: 12px;
+    background: #e6f7ff;
+    border: 1px solid #91d5ff;
+    border-radius: 6px;
+    color: #1890ff;
+    font-size: 14px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid #91d5ff;
+    border-top-color: #1890ff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
 .login-btn {
     height: 48px;
     background: rgba(0, 174, 236, 1);
@@ -233,11 +277,38 @@ function testBtnCurrent() {
 }
 
 .login-btn:hover {
-    background: #0095c8;
+    background: #00a9e1;
 }
 
 .login-btn:active {
-    background: #0089ba;
+    background: #009dd5;
+}
+
+.login-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.goHome-btn {
+    width: 100%;
+    height: 48px;
+    margin-top: 24px;
+    background: rgba(255, 255, 255, 0.80);
+    color: rgba(0, 174, 236, 0.85);
+    border: 2px solid rgba(0, 174, 236, 0.85);
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.goHome-btn:hover {
+    background: #f9f9f9;
+}
+
+.goHome-btn:active {
+    background: #e8e8e8;
 }
 
 .register-link {

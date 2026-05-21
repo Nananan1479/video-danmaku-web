@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory  } from "vue-router";
-import { USER_TOKEN_KEY } from "@/constants/constants";
+import { USER_TOKEN_KEY, USER_STORAGE_KEY } from "@/constants/userSettingConstants.js";
 const routes = [
     {
         path: "/",
