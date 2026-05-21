@@ -90,6 +90,7 @@ const skipHome = () => {
     display: flex;
     align-items: center;
     gap: 15px;
+    padding-right: 10px;
 }
 .logo {
     width: 95px;
@@ -103,6 +104,7 @@ const skipHome = () => {
 }
 .nav-item {
     font-size: 14px;
+    font-weight: 500;
     color: #444;
     text-decoration: none;
     white-space: nowrap;
@@ -119,6 +121,7 @@ const skipHome = () => {
 .search-box {
     display: flex;
     align-items: center;
+    min-width: 200px;
     width: 300px;
     height: 40px;
     padding: 0 12px;
@@ -135,10 +138,11 @@ const skipHome = () => {
 }
 
 .nav-right {
-    min-width: 480px;
+    min-width: 494px;
     display: flex;
     align-items: center;
     gap: 16px;
+    padding-left: 10px;
 }
 .user-avatar {
     width: 36px;

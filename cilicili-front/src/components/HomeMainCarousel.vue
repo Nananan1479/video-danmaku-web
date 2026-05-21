@@ -133,6 +133,8 @@ import Carousel2 from '@/assets/images/Carousel2.png'
 .carousel {
     width: 100%;
     height: 100%;
+    grid-column: span 2;
+    grid-row: span 2;
     position: relative;
     overflow: hidden;
 }

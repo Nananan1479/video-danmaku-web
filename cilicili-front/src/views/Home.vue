@@ -35,13 +35,13 @@ onUnmounted(() => {
 
 <style scoped>
 .home-page {
+    width: 100%;
     max-width: 2000px;
     height: 100%;
-    width: 100%;
     box-sizing: border-box;
     margin: 0 auto;
-    overflow-y: auto;
-    overflow-x: hidden;
+    /* overflow-y: auto;
+    overflow-x: hidden; */
 }
 
 .home-page__content {
@@ -59,5 +59,16 @@ onUnmounted(() => {
     flex-direction: column;
     align-items: center;
     width: 100%;
+    max-width: 2000px;
+}
+
+@media (max-width: 767px) {
+    .home-page {
+        max-width: 100%;
+    }
+
+    .home-page__inner {
+        max-width: 100%;
+    }
 }
 </style>

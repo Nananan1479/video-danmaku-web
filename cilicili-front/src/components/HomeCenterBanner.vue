@@ -39,22 +39,22 @@ const quickLinks = [
             </div>
             <!-- 中间 -->
             <div class="center-banner__categories">
-              <div
-                v-for="(category, index) in categories"
-                :key="index"
-                class="center-banner__category"
-              >
-                <span class="center-banner__category-label">{{ category }}</span>
-                <span v-if="category === '更多'" class="center-banner__category-arrow"></span>
-              </div>
+                <div
+                    v-for="(category, index) in categories"
+                    :key="index"
+                    class="center-banner__category"
+                >
+                    <span class="center-banner__category-label">{{ category }}</span>
+                    <span v-if="category === '更多'" class="center-banner__category-arrow"></span>
+                </div>
             </div>
             <!-- 右侧 -->
             <div class="center-banner__right">
                 <div class="center-banner__right-links">
                     <div
-                      v-for="(link, linkIndex) in quickLinks[0]"
-                      :key="link.label"
-                      class="center-banner__right-link"
+                        v-for="(link, linkIndex) in quickLinks[0]"
+                        :key="link.label"
+                        class="center-banner__right-link"
                     >
                         <span class="center-banner__right-icon" :class="`center-banner__right-icon--${link.icon}`"></span>
                         <span class="center-banner__right-label">{{ link.label }}</span>
@@ -62,14 +62,14 @@ const quickLinks = [
                 </div>
                 <div class="center-banner__right-links center-banner__right-links--row2">
                     <div
-                      v-for="(link, linkIndex) in quickLinks[1]"
-                      :key="link.label"
-                      class="center-banner__right-link"
+                        v-for="(link, linkIndex) in quickLinks[1]"
+                        :key="link.label"
+                        class="center-banner__right-link"
                     >
                         <span class="center-banner__right-icon" :class="`center-banner__right-icon--${link.icon}`"></span>
                         <span class="center-banner__right-label">{{ link.label }}</span>
                     </div>
-                  </div>
+                    </div>
             </div>
         </div>
     </div>
@@ -88,7 +88,7 @@ const quickLinks = [
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 16px 72px 16px 63px;
+    padding: 18px 60px 18px 62px;
     width: 100%;
 }
 
@@ -191,6 +191,9 @@ const quickLinks = [
 .center-banner__right {
     width: 259px;
     height: 66px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
     flex-shrink: 0;
     position: relative;
     border-left: 1px solid #d7d7d7;

@@ -115,6 +115,7 @@ function handleNavClick(item) {
     display: flex;
     align-items: center;
     gap: 12px;
+    padding-right: 10px;
 }
 
 .header-banner__nav-item {
@@ -162,6 +163,7 @@ function handleNavClick(item) {
 }
 
 .header-banner__search {
+    min-width: 200px;
     width: 390px;
     height: 34px;
     position: relative;
@@ -181,29 +183,26 @@ function handleNavClick(item) {
 }
 
 .header-banner__right {
-    min-width: 480px;
+    min-width: 494px;
     display: flex;
     align-items: center;
     gap: 16px;
+    padding-left: 10px;
     /* width: 495px;
     height: 56px; */
 }
 
 .header-banner__avatar {
-    width: 39px;
-    height: 39px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
-    background: #fff;
-    flex-shrink: 0;
-    cursor: pointer;
+    overflow: hidden;
 }
 
 .header-banner__avatar img {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    margin: 2px 0 0 2px;
 }
 
 .header-banner__actions {
