@@ -12,6 +12,7 @@ defineEmits(['click'])
 <template>
     <div class="video-card" @click="$emit('click')">
         <div class="video-card__cover">
+            <div class="video-card__cover-backgroundColor"></div>
             <img
                 class="video-card__cover-img"
                 src="@/assets/images/6ff74a8f45317f579bb358521a0aa33a917bafb9.png"
@@ -60,11 +61,22 @@ defineEmits(['click'])
     /* height: 132px; */
     /* height: 100%; */
     width: 100%;
+    background-color: #f1f2f3;
     border-radius: 7px;
     overflow: hidden;
     position: relative;
     display: flex;
     align-items: flex-end;
+}
+
+.video-card__cover-backgroundColor {
+    width: 100%;
+    height: 100%;
+    /* position: absolute; */
+    /* inset: 0; */
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 7px;
+    z-index: 0;
 }
 
 .video-card__cover-img {
@@ -73,11 +85,12 @@ defineEmits(['click'])
     width: 100%;
     height: 100%;
     object-fit: cover;
+    z-index: 1;
 }
 
 .video-card__cover-overlay {
     position: absolute;
-    z-index: 1;
+    z-index: 2;
     width: 100%;
     padding: 1px 10px;
     display: flex;

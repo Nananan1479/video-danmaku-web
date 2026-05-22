@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("org.example.mapper")
+@MapperScan("com.zsn.mapper")
 public class CiliCiliApplication {
 
     public static void main(String[] args) {

@@ -8,10 +8,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-    
+
     @Autowired
     private JwtInterceptor jwtInterceptor;
-    
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
@@ -21,8 +21,7 @@ public class WebConfig implements WebMvcConfigurer {
         .allowCredentials(true)
         .maxAge(3600);
     }
-    
-    // JWT 鉴权拦截器
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor)
@@ -31,7 +30,8 @@ public class WebConfig implements WebMvcConfigurer {
                 // 放行的路径（白名单）
                 .excludePathPatterns(
                         "/api/users/login",
-                        "/api/users/register"
+                        "/api/users/register",
+                        "/api/videos/**"
                 );
     }
 }

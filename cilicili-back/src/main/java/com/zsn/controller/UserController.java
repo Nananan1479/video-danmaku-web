@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 // @CrossOrigin //跨域
-@MapperScan("com.zsn.mapper")
+//@MapperScan("com.zsn.mapper")
 @RestController
 @RequestMapping("/api/users/")
 public class UserController {

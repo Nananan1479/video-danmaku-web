@@ -142,7 +142,8 @@ function handleVideoClick(video) {
     grid-template-columns: repeat(auto-fit, minmax(236.6px, 1fr));
     column-gap: 28px;
     row-gap: 16px;
-    padding: 0 72px 0 63px;
+    padding: 0 64px 0 60px;
+    /* padding: 0 72px 0 63px; */
 }
 
 /* 选中第 3 行及以后的卡片（每行3列，前两行共6个，n+7 即从第7个开始） */

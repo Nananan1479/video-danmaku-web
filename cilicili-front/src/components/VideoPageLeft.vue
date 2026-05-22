@@ -1,5 +1,6 @@
 <script setup>
 import { ref, reactive } from 'vue'
+import CustomPlayer from './VideoPage_CustomPlayer.vue'
 
 // 视频元数据
 const video = reactive({
@@ -71,7 +72,9 @@ const submitComment = () => {
         </div>
 
         <!-- 视频播放器 -->
-        <div class="video-player"></div>
+        <div class="video-player">
+            <CustomPlayer controls></CustomPlayer>
+        </div>
 
         <!-- 弹幕控制栏 -->
         <div class="danmaku-bar">
