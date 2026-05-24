@@ -1,6 +1,10 @@
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
+import { useRoute } from 'vue-router'
 import CustomPlayer from './VideoPage_CustomPlayer.vue'
+
+const route = useRoute()
+const videoId = computed(() => Number(route.query.id) || null)
 
 // 视频元数据
 const video = reactive({
@@ -73,7 +77,7 @@ const submitComment = () => {
 
         <!-- 视频播放器 -->
         <div class="video-player">
-            <CustomPlayer controls></CustomPlayer>
+            <CustomPlayer :video-id="videoId" controls></CustomPlayer>
         </div>
 
         <!-- 弹幕控制栏 -->

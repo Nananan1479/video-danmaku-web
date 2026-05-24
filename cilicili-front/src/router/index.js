@@ -31,7 +31,13 @@ const routes = [
         path: "/test",
         name: "Test",
         component: () => import("@/views/Test.vue"),
-        meta: { requiresAuth: true }  // 标记需要登录才能访问
+        meta: { requiresAuth: true } // 标记需要登录才能访问
+    },
+    {
+        path: "/upload",
+        name: "Upload",
+        component: () => import("@/views/Upload.vue"),
+        meta: { requiresAuth: true }
     }
 ];
 

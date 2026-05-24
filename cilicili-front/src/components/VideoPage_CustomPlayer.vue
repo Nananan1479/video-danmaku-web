@@ -15,7 +15,7 @@ const props = defineProps({
 const videoSrc = computed(() => {
     if (props.src) return props.src
     if (props.videoId) return `http://localhost:6060/api/videos/${props.videoId}`
-    return 'http://localhost:6060/api/videos/1'
+    return ''
 })
 
 const videoRef = ref(null)
@@ -30,6 +30,7 @@ const volume = ref(1)
 const playbackRate = ref(1)
 const showControls = ref(true)
 let hideTimer = null
+let errorMessage = ref('')
 
 // 百分比计算
 const currentPercent = computed(() => (duration.value ? (currentTime.value / duration.value) * 100 : 0))
@@ -68,6 +69,7 @@ const onError = (e) => {
         console.error('视频加载失败 [' + error.code + ']:', messages[error.code] || '未知错误')
         console.error('请求地址:', video.src)
         console.error('浏览器提示:', error.message)
+        errorMessage.value = `视频加载失败 [${error.code}] ${messages[error.code] || '未知错误'}`
     } else {
         console.error('视频加载失败:', e)
     }
@@ -187,6 +189,7 @@ const formatTime = (sec) => {
                 <button @click="toggleFullscreen">⛶</button>
             </div>
         </div>
+        <div class="videoError" v-if="errorMessage">{{ errorMessage }}</div>
     </div>
 </template>
 
@@ -255,5 +258,14 @@ video {
     display: flex;
     align-items: center;
     gap: 4px;
+}
+
+.videoError {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
 }
 </style>

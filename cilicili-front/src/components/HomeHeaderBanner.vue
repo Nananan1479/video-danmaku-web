@@ -32,6 +32,10 @@ function skipHome() {
     router.push('/home')
 }
 
+function skipUpload() {
+    router.push('/upload')
+}
+
 function handleNavClick(item) {
     if (item.isHome) {
         skipHome()
@@ -79,7 +83,7 @@ function handleNavClick(item) {
                         <span class="header-banner__action-label">{{ action.label }}</span>
                     </div>
                 </div>
-                <button class="header-banner__upload-btn">
+                <button class="header-banner__upload-btn" @click="skipUpload">
                     <span class="header-banner__upload-icon"></span>
                     投稿
                 </button>
@@ -260,7 +264,7 @@ function handleNavClick(item) {
 .header-banner__action-icon--Frame_120_179 { background-image: url(@/assets/images/Frame_120_179.png); }
 .header-banner__action-icon--IconEmail { background-image: url(@/assets/images/IconEmail.png); }
 .header-banner__action-icon--Group { background-image: url(@/assets/images/Group.png); }
-.header-banner__action-icon--star { background-image: url(@/assets/images/star.png); }
+.header-banner__action-icon--star { background-image: url(@/assets/images/likes_white_icon.png); }
 .header-banner__action-icon--timeclock { background-image: url(@/assets/images/timeclock.png); }
 .header-banner__action-icon--Idea { background-image: url(@/assets/images/Idea.png); }
 

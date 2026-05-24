@@ -42,3 +42,12 @@ export function checkToken() {
         method: 'GET'
     })
 }
+
+export function uploadVideo(formData) {
+    return request({
+        url: `/api/videos/upload/`,
+        method: 'POST',
+        headers: { 'Content-Type': 'multipart/form-data' },
+        data: formData
+    })
+}

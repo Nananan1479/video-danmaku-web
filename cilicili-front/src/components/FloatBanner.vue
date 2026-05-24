@@ -9,6 +9,9 @@ const skipLogin = () => {
 const skipHome = () => {
     router.push('/home');
 }
+const skipUpload = () => {
+    router.push('/upload');
+}
 </script>
 
 <template>
@@ -59,7 +62,7 @@ const skipHome = () => {
                     <i class="icon icon-creator"></i>创作中心
                 </span>
             </div>
-            <button class="upload-btn">
+            <button class="upload-btn" @click="skipUpload">
                 <i class="icon icon-upload"></i>投稿
             </button>
         </div>
