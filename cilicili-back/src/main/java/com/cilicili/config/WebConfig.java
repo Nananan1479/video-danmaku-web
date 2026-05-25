@@ -1,4 +1,4 @@
-package com.zsn.config;
+package com.cilicili.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +12,15 @@ public class WebConfig implements WebMvcConfigurer {
     @Autowired
     private JwtInterceptor jwtInterceptor;
 
+    /**
+     * 跨域检查白名单
+     *
+     * @param registry
+     *
+     * @author Nananan1479
+     * @date 2026/5/25 14:26
+
+     */
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
@@ -22,6 +31,15 @@ public class WebConfig implements WebMvcConfigurer {
         .maxAge(3600);
     }
 
+    /**
+     * JWT鉴权拦截器白名单
+     *
+     * @param registry
+     *
+     * @author Nananan1479
+     * @date 2026/5/25 14:27
+
+     */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor)

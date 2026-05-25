@@ -1,16 +1,17 @@
-package com.zsn.service.impl;
+package com.cilicili.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.zsn.common.Result;
-import com.zsn.entity.User;
-import com.zsn.mapper.UserMapper;
-import com.zsn.service.UserService;
+import com.cilicili.common.Result;
+import com.cilicili.entity.User;
+import com.cilicili.mapper.UserMapper;
+import com.cilicili.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -26,6 +27,18 @@ public class UserServiceImpl implements UserService {
         return userMapper.selectById(id);
     }
 
+    /**
+     * 用户登录。<br>
+     * 返回查找后的用户资料，检查用户名是否存在，使用BCrypt解码进行密码比对
+     *
+
+     * @param username
+     * @param password
+     *
+     * @author Nananan1479
+     * @date 2026/5/25 13:39
+     * @return com.cilicili.common.Result<com.cilicili.entity.User>
+     */
     @Override
     public Result<User> login(String username, String password) {
         // 1. 按用户名查询
@@ -49,6 +62,18 @@ public class UserServiceImpl implements UserService {
         return Result.success(200,user);
     }
 
+    /**
+     * 用户注册
+     *
+
+     * @param username
+     * @param phone
+     * @param password
+     *
+     * @author Nananan1479
+     * @date 2026/5/25 13:44
+     * @return com.cilicili.common.Result<com.cilicili.entity.User>
+     */
     @Override
     public Result<User> register(String username, String phone, String password) {
 //        User existUser = userMapper.selectOne(

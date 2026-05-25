@@ -1,6 +1,6 @@
-package com.zsn.config;
+package com.cilicili.config;
 
-import com.zsn.util.JwtUtil;
+import com.cilicili.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -14,6 +14,19 @@ public class JwtInterceptor implements HandlerInterceptor {
     @Autowired
     private JwtUtil jwtUtil;
 
+    /**
+     * JWT鉴权拦截器<br>
+     * 分析“Bearer”请求头并解析token是否无效或已过期。
+     *
+     * @param request
+     * @param response
+     * @param handler
+     *
+     * @author Nananan1479
+     * @date 2026/5/25 14:28
+
+     * @return boolean
+     */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 //        System.out.println("request"+request.toString());

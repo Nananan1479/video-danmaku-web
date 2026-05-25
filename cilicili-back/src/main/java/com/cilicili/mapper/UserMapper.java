@@ -1,7 +1,7 @@
-package com.zsn.mapper;
+package com.cilicili.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.zsn.entity.User;
+import com.cilicili.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

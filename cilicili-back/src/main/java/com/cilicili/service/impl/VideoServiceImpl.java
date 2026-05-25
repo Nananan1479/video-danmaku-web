@@ -1,9 +1,10 @@
-package com.zsn.service.impl;
+package com.cilicili.service.impl;
 
-import com.zsn.entity.Video;
-import com.zsn.mapper.VideoMapper;
-import com.zsn.service.VideoService;
+import com.cilicili.entity.Video;
+import com.cilicili.mapper.VideoMapper;
+import com.cilicili.service.VideoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,12 +24,31 @@ import java.util.UUID;
 @Service
 public class VideoServiceImpl implements VideoService {
 
-    private static final String VIDEO_DIR = "C:/Users/NANANAN/Videos/Captures";
-    private static final String COVER_DIR = "C:/Users/NANANAN/Videos/Covers";
+    /**
+     *存储视频地址
+     */
+    @Value("${file.video-dir}")
+    private String VIDEO_DIR ;
+    /**
+     *存储视频封面地址
+     */
+    @Value("${file.cover-dir}")
+    private String COVER_DIR ;
 
     @Autowired
     private VideoMapper videoMapper;
 
+    /**
+     * 向前端返回视频流。通过rangeHeader头可向前端返回视频片段实现拖拽进度条时快速跳转到对应位置。
+     *
+     *
+     * @param id
+     * @param rangeHeader
+     * 
+     * @author Nananan1479 
+     * @date 2026/5/25 13:51
+     * @return org.springframework.http.ResponseEntity<byte[]>
+     */
     @Override
     public ResponseEntity<byte[]> getVideo(Long id, String rangeHeader) {
         Video video = videoMapper.selectById(id);
@@ -97,6 +117,21 @@ public class VideoServiceImpl implements VideoService {
         }
     }
 
+    /**
+     * 上传视频和封面功能，视频仅支持MP4格式，图片仅支持png格式，视频大小不超500MB（可在application.yml里调整）。
+     *
+
+     * @param videoFile
+     * @param coverFile
+     * @param title
+     * @param description
+     * @param uploaderId
+     *
+     * @author Nananan1479
+     * @date 2026/5/25 14:08
+
+     * @return com.cilicili.entity.Video
+     */
     @Override
     public Video uploadVideo(MultipartFile videoFile, MultipartFile coverFile, String title, String description, Long uploaderId) {
         try {
@@ -104,10 +139,13 @@ public class VideoServiceImpl implements VideoService {
             Files.createDirectories(Paths.get(COVER_DIR));
 
             String videoExt = ".mp4";
+            // 视频
             String videoName = UUID.randomUUID().toString() + videoExt;
             Path videoPath = Paths.get(VIDEO_DIR, videoName);
+            // 写入磁盘
             videoFile.transferTo(videoPath.toFile());
 
+            // 封面写入磁盘
             String coverName = null;
             if (coverFile != null && !coverFile.isEmpty()) {
                 String originalName = coverFile.getOriginalFilename();
@@ -115,9 +153,11 @@ public class VideoServiceImpl implements VideoService {
                         originalName.substring(originalName.lastIndexOf(".")) : ".png";
                 coverName = UUID.randomUUID().toString() + coverExt;
                 Path coverPath = Paths.get(COVER_DIR, coverName);
+                // 写入磁盘
                 coverFile.transferTo(coverPath.toFile());
             }
 
+            // 存储视频信息(数据库)
             Video video = new Video();
             video.setTitle(title);
             video.setDescription(description);

@@ -79,12 +79,12 @@ import Carousel2 from '@/assets/images/Carousel2.png'
         @mouseenter="isHovering = true"
         @mouseleave="isHovering = false"
     >
-        <div class="carousel__viewport">
+        <div class="carouselViewport">
             <div
                 v-for="(slide, index) in slidesData"
                 :key="slide.id"
-                class="carousel__slide"
-                :class="{ 'carousel__slide--active': index === currentIndex }"
+                class="carouselSlide"
+                :class="{ 'carouselSlide--active': index === currentIndex }"
             >
                 <img
                     class="carouselImg"
@@ -95,31 +95,31 @@ import Carousel2 from '@/assets/images/Carousel2.png'
                     <p class="carousel__event-sub">{{ slide.eventTitle }}</p>
                 </div> -->
                 <div
-                    class="carousel__overlay"
+                    class="carouselOverlay"
                     :style="{background: slide.TitleBg}"
                     >
-                    <div class="carousel__content">
-                        <div class="carousel__text">
-                            <p class="carousel__title">
-                                <span class="carousel__title-main">{{ slide.Title }}</span>
+                    <div class="carouselContent">
+                        <div class="carouselText">
+                            <p class="carouselTitle">
+                                <span class="carouselTitleMain">{{ slide.Title }}</span>
                             </p>
                         </div>
                         <!-- 轮播图指示器 -->
-                        <div class="carousel__dots">
+                        <div class="carouselDots">
                             <span
                                 v-for="(dot, dotIndex) in slidesData"
                                 :key="dot.id"
-                                class="carousel__dot"
-                                :class="{ 'carousel__dot--active': dotIndex === currentIndex }"
+                                class="carouselDot"
+                                :class="{ 'carouselDot--active': dotIndex === currentIndex }"
                                 @click="goTo(dotIndex)"
                             ></span>
                         </div>
                     </div>
-                    <div class="carousel__arrow">
-                        <button class="carousel__arrow_button" @click="prev">
+                    <div class="carouselArrow">
+                        <button class="carouselArrowButton" @click="prev">
                             <img src="../assets/images/PC160.png" alt="上一张" />
                         </button>
-                        <button class="carousel__arrow_button" @click="next">
+                        <button class="carouselArrowButton" @click="next">
                             <img src="@/assets/images/PC16.png" alt="下一张" />
                         </button>
                     </div>
@@ -139,7 +139,7 @@ import Carousel2 from '@/assets/images/Carousel2.png'
     overflow: hidden;
 }
 
-.carousel__viewport {
+.carouselViewport {
     width: 100%;
     height: 81.3%;
     position: relative;
@@ -147,19 +147,19 @@ import Carousel2 from '@/assets/images/Carousel2.png'
     overflow: hidden;
 }
 
-.carousel__slide {
+.carouselSlide {
     position: absolute;
     inset: 0;
     opacity: 0;
     transition: opacity 0.5s ease;
 }
 
-.carousel__slide--active {
+.carouselSlide--active {
     opacity: 1;
 }
 
 /* 修复因为opacity导致按钮hover失效的bug */
-.carousel__slide:not(.carousel__slide--active) {
+.carouselSlide:not(.carouselSlide--active) {
     pointer-events: none;
 }
 
@@ -195,7 +195,7 @@ import Carousel2 from '@/assets/images/Carousel2.png'
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 } */
 
-.carousel__overlay {
+.carouselOverlay {
     position: absolute;
     left: 0;
     right: 0;
@@ -214,7 +214,7 @@ import Carousel2 from '@/assets/images/Carousel2.png'
     padding: 40px 14px 17px 20px;
 }
 
-.carousel__content {
+.carouselContent {
     width: 100%;
     display: flex;
     gap: 12px;
@@ -224,38 +224,38 @@ import Carousel2 from '@/assets/images/Carousel2.png'
     /* padding-left: 20px; */
 }
 
-.carousel__text {
+.carouselText {
     flex: 1;
     display: flex;
     flex-direction: column;
 }
 
-.carousel__title {
+.carouselTitle {
     font-size: 20px;
     line-height: 29px;
     color: #fff;
     margin: 0;
 }
 
-.carousel__title-main {
+.carouselTitleMain {
     font-family: "Noto Sans SC-Regular", sans-serif;
     font-weight: 400;
     color: #fff;
 }
 
-.carousel__title-emoji {
+.carouselTitleEmoji {
     font-family: "Microsoft YaHei-Regular", sans-serif;
     font-weight: 400;
     color: #fff;
 }
 
-.carousel__title-sub {
+.carouselTitleSub {
     font-family: "Noto Sans SC-Regular", sans-serif;
     font-weight: 400;
     color: #fff;
 }
 
-.carousel__dots {
+.carouselDots {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -263,7 +263,7 @@ import Carousel2 from '@/assets/images/Carousel2.png'
     flex-shrink: 0;
 }
 
-.carousel__dot {
+.carouselDot {
     width: 12px;
     height: 12px;
     background-image: url(@/assets/images/CarouselDot.png);
@@ -274,12 +274,12 @@ import Carousel2 from '@/assets/images/Carousel2.png'
     flex-shrink: 0;
 }
 
-.carousel__dot--active {
+.carouselDot--active {
     width: 20px;
     height: 20px;
 }
 
-.carousel__arrow {
+.carouselArrow {
     width: 66px;
     display: flex;
     gap: 12px;
@@ -289,7 +289,7 @@ import Carousel2 from '@/assets/images/Carousel2.png'
 
 
 
-.carousel__arrow_button {
+.carouselArrowButton {
     /* transform: translateY(-50%); */
     width: 28px;
     height: 28px;
@@ -305,20 +305,20 @@ import Carousel2 from '@/assets/images/Carousel2.png'
     transition: background-color 0.2s ease;
 }
 
-.carousel__arrow_button:hover {
+.carouselArrowButton:hover {
     background-color: rgba(255, 255, 255, 0.9);
     /* background-color: black; */
 }
 
-.carousel__arrow--prev {
+.carouselArrowButton--prev {
     left: 8px;
 }
 
-.carousel__arrow--next {
+.carouselArrowButton--next {
     right: 8px;
 }
 
-.carousel__arrow_button img {
+.carouselArrowButton img {
     width: 57.14%;
     height: 57.14%;
     object-fit: contain;

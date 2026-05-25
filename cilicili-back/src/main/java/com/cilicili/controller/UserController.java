@@ -1,10 +1,9 @@
-package com.zsn.controller;
+package com.cilicili.controller;
 
-import com.zsn.common.Result;
-import com.zsn.entity.User;
-import com.zsn.service.UserService;
-import com.zsn.util.JwtUtil;
-import org.mybatis.spring.annotation.MapperScan;
+import com.cilicili.common.Result;
+import com.cilicili.entity.User;
+import com.cilicili.service.UserService;
+import com.cilicili.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 // @CrossOrigin //跨域
-//@MapperScan("com.zsn.mapper")
+//@MapperScan("com.cilicili.mapper")
 @RestController
 @RequestMapping("/api/users/")
 public class UserController {
@@ -84,7 +83,7 @@ public class UserController {
     @GetMapping("check")
     public Result<Object> checkToken(HttpServletRequest request) {
         Integer userId = (Integer) request.getAttribute("userId");
-        System.out.println("userId:" + userId);
+        System.out.println("当前登录的userId（by-checkToken()）:" + userId);
         if (userId == null) {
             return Result.fail(401, "token无效");
         }

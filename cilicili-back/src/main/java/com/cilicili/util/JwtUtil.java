@@ -1,4 +1,4 @@
-package com.zsn.util;
+package com.cilicili.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -10,6 +10,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 生成或解析JWT-Token
+ *
+ *
+ * @author Nananan1479
+ * @date 2026/5/25 14:43
+
+ * @return null
+ */
 @Component
 public class JwtUtil {
 
@@ -21,7 +30,17 @@ public class JwtUtil {
     @Value("${jwt.expiration}")
     private long expiration;
 
-    // 生成 Token
+    /**
+     * 生成 Token
+     *
+     * @param userId
+     * @param username
+     *
+     * @author Nananan1479
+     * @date 2026/5/25 14:38
+
+     * @return java.lang.String
+     */
     public String generateToken(int userId, String username) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userId);
@@ -43,7 +62,16 @@ public class JwtUtil {
                 .compact();
     }
 
-    //解析Token（旧版写法）
+    /**
+     * 解析Token（旧版写法）
+     *
+     * @param token
+     *
+     * @author Nananan1479
+     * @date 2026/5/25 14:38
+
+     * @return io.jsonwebtoken.Claims
+     */
     public Claims parseToken(String token) {
         return Jwts.parser()
                 .setSigningKey(secret)
@@ -51,7 +79,16 @@ public class JwtUtil {
                 .getBody();
     }
 
-    // 验证 Token 是否有效
+    /**
+     * 验证 Token 是否有效
+     *
+     * @param token
+     *
+     * @author Nananan1479
+     * @date 2026/5/25 14:39
+
+     * @return boolean
+     */
     public boolean validateToken(String token) {
         try {
             parseToken(token);
@@ -61,13 +98,32 @@ public class JwtUtil {
         }
     }
 
-    // 从 Token 中提取用户ID
+    /**
+     * 从 Token 中提取用户ID
+     *
+
+     * @param token
+     *
+     * @author Nananan1479
+     * @date 2026/5/25 14:39
+
+     * @return int
+     */
     public int getUserIdFromToken(String token) {
         Claims claims = parseToken(token);
         return (int) claims.get("userId");
     }
 
-    // 从 Token 中提取用户名
+    /**
+     * 从 Token 中提取用户名
+     *
+     * @param token
+     *
+     * @author Nananan1479
+     * @date 2026/5/25 14:41
+
+     * @return java.lang.String
+     */
     public String getUsernameFromToken(String token) {
         Claims claims = parseToken(token);
         return (String) claims.get("username");

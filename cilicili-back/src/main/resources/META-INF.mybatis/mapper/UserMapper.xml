@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.zsn.mapper.UserMapper">
-    <select id="selectByUsername" resultType="com.zsn.entity.User">
+<mapper namespace="com.cilicili.mapper.UserMapper">
+    <select id="selectByUsername" resultType="com.cilicili.entity.User">
         SELECT id, username, password, nickname, avatar
         FROM user
         WHERE username = #{username}
     </select>
 
-    <select id="selectByUserPhone" resultType="com.zsn.entity.User">
+    <select id="selectByUserPhone" resultType="com.cilicili.entity.User">
         SELECT id, username, password, nickname, avatar
         FROM user
         WHERE phone = #{userPhone}

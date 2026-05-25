@@ -114,8 +114,8 @@ function handleVideoClick(video) {
 </script>
 
 <template>
-    <div class="home-main">
-        <div class="home-main__grid">
+    <div class="homeMain">
+        <div class="homeMain_grid">
             <HomeMainCarousel />
 
             <VideoCard
@@ -129,14 +129,14 @@ function handleVideoClick(video) {
 </template>
 
 <style scoped>
-.home-main {
+.homeMain {
     width: 100%;
     max-width: 1430px;
     display: flex;
     justify-content: center;
 }
 
-.home-main__grid {
+.homeMain_grid {
     width: 100%;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(236.6px, 1fr));
@@ -147,18 +147,18 @@ function handleVideoClick(video) {
 }
 
 /* 选中第 3 行及以后的卡片（每行3列，前两行共6个，n+7 即从第7个开始） */
-.home-main__grid :deep(.video-card:nth-child(n+8)) {
+.homeMain_grid :deep(.video-card:nth-child(n+8)) {
     margin-top: 40px;
 }
 
 /* 轮播图跨2列2行 */
-/* .home-main__grid :deep(.carousel) {
+/* .homeMain__grid :deep(.carousel) {
     grid-column: span 2;
     grid-row: span 2;
 } */
 
 @media (max-width: 1599px) {
-    .home-main__grid {
+    .homeMain_grid {
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         column-gap: 20px;
         padding: 0 72px 0 63px;
@@ -166,7 +166,7 @@ function handleVideoClick(video) {
 }
 
 @media (max-width: 1199px) {
-    .home-main__grid {
+    .homeMain_grid {
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
         column-gap: 16px;
         padding: 0 32px 0 24px;
@@ -175,7 +175,7 @@ function handleVideoClick(video) {
 }
 
 @media (max-width: 767px) {
-    .home-main__grid {
+    .homeMain_grid {
         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
         column-gap: 12px;
         padding: 0 16px;
@@ -184,7 +184,7 @@ function handleVideoClick(video) {
 }
 
 @media (max-width: 480px) {
-    .home-main__grid {
+    .homeMain_grid {
         grid-template-columns: repeat(2, 1fr);
         column-gap: 8px;
         padding: 0 8px;

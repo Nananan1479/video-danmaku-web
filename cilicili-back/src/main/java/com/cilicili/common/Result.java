@@ -1,4 +1,4 @@
-package com.zsn.common;
+package com.cilicili.common;
 
 import lombok.Data;
 

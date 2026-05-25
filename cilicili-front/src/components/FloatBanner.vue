@@ -15,62 +15,62 @@ const skipUpload = () => {
 </script>
 
 <template>
-    <header class="top-nav">
+    <header class="topNav">
         <!-- 左侧：Logo + 导航菜单 -->
-        <nav class="nav-left">
+        <nav class="navLeft">
             <a href="#" class="logo" @click="skipHome">CiliCili</a>
-            <a href="#" class="nav-item" @click="skipHome">首页</a>
-            <a href="#" class="nav-item">番剧</a>
-            <a href="#" class="nav-item">直播</a>
-            <a href="#" class="nav-item">游戏中心</a>
-            <a href="#" class="nav-item">会员购</a>
-            <a href="#" class="nav-item">漫画</a>
-            <a href="#" class="nav-item">赛事</a>
-            <a href="#" class="nav-item download">
-                <i class="icon icon-download"></i>下载客户端
+            <a href="#" class="navItem" @click="skipHome">首页</a>
+            <a href="#" class="navItem">番剧</a>
+            <a href="#" class="navItem">直播</a>
+            <a href="#" class="navItem">游戏中心</a>
+            <a href="#" class="navItem">会员购</a>
+            <a href="#" class="navItem">漫画</a>
+            <a href="#" class="navItem">赛事</a>
+            <a href="#" class="navItem download">
+                <i class="icon iconDownload"></i>下载客户端
             </a>
         </nav>
 
         <!-- 中间：搜索框 -->
-        <div class="search-box">
-            <i class="icon icon-search"></i>
+        <div class="searchBox">
+            <i class="icon iconSearch"></i>
             <input type="text" placeholder="搜索你感兴趣的视频" />
         </div>
 
         <!-- 右侧：用户操作 -->
-        <div class="nav-right">
-            <div class="user-avatar" @click="skipLogin">
+        <div class="navRight">
+            <div class="userAvatar" @click="skipLogin">
                 <img src="@/assets/images/Akalin.png" alt="头像" />
             </div>
-            <div class="user-actions">
-                <div class="action-item" @click="skipLogin">
-                    <i class="icon icon-vip"></i>大会员
+            <div class="userActions">
+                <div class="actionItem" @click="skipLogin">
+                    <i class="icon iconVip"></i>大会员
                 </div>
-                <span class="action-item">
-                    <i class="icon icon-msg"></i>消息
+                <span class="actionItem">
+                    <i class="icon iconMsg"></i>消息
                 </span>
-                <span class="action-item">
-                    <i class="icon icon-dynamic"></i>动态
+                <span class="actionItem">
+                    <i class="icon iconDynamic"></i>动态
                 </span>
-                <span class="action-item">
-                    <i class="icon icon-fav"></i>收藏
+                <span class="actionItem">
+                    <i class="icon iconFav"></i>收藏
                 </span>
-                <span class="action-item">
-                    <i class="icon icon-history"></i>历史
+                <span class="actionItem">
+                    <i class="icon iconHistory"></i>历史
                 </span>
-                <span class="action-item">
-                    <i class="icon icon-creator"></i>创作中心
+                <span class="actionItem">
+                    <i class="icon iconCreator"></i>创作中心
                 </span>
             </div>
-            <button class="upload-btn" @click="skipUpload">
-                <i class="icon icon-upload"></i>投稿
+            <button class="uploadBtn" @click="skipUpload">
+                <i class="icon iconUpload"></i>投稿
             </button>
         </div>
     </header>
 </template>
 
 <style scoped>
-.top-nav {
+.topNav {
     position: fixed;
     top: 0;
     left: 0;
@@ -85,11 +85,11 @@ const skipUpload = () => {
     box-shadow: 0 2px 4px rgba(0,0,0,0.08);
     transition: box-shadow 0.2s;
 }
-.top-nav.scrolled {
+.topNav.scrolled {
     box-shadow: 0 2px 4px rgba(0,0,0,0.08);
 }
 
-.nav-left {
+.navLeft {
     display: flex;
     align-items: center;
     gap: 15px;
@@ -105,14 +105,14 @@ const skipUpload = () => {
     text-decoration: none;
     /* margin-right: 12px; */
 }
-.nav-item {
+.navItem {
     font-size: 14px;
     font-weight: 500;
     color: #444;
     text-decoration: none;
     white-space: nowrap;
 }
-.nav-item:hover {
+.navItem:hover {
     color: #00a1d6;
 }
 .download {
@@ -121,7 +121,7 @@ const skipUpload = () => {
     gap: 4px;
 }
 
-.search-box {
+.searchBox {
     display: flex;
     align-items: center;
     min-width: 200px;
@@ -131,7 +131,7 @@ const skipUpload = () => {
     background: #f1f2f3;
     border-radius: 8px;
 }
-.search-box input {
+.searchBox input {
     flex: 1;
     border: none;
     background: transparent;
@@ -140,38 +140,38 @@ const skipUpload = () => {
     margin-left: 8px;
 }
 
-.nav-right {
+.navRight {
     min-width: 494px;
     display: flex;
     align-items: center;
     gap: 16px;
     padding-left: 10px;
 }
-.user-avatar {
+.userAvatar {
     width: 36px;
     height: 36px;
     border-radius: 50%;
     overflow: hidden;
 }
-.user-avatar img {
+.userAvatar img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
-.user-actions {
+.userActions {
     display: flex;
     gap: 20px;
     font-size: 14px;
     color: #555;
 }
-.action-item {
+.actionItem {
     display: flex;
     flex-direction: column;
     align-items: center;
     /* gap: 4px; */
     cursor: pointer;
 }
-.upload-btn {
+.uploadBtn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -189,19 +189,19 @@ const skipUpload = () => {
 /* 图标占位 */
 .icon {
     display: inline-block;
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
 }
-.icon-download { background-image: url(@/assets/images/download_gray.png); }
-.icon-search { background-image: url(@/assets/images/search.png); }
-.icon-vip { background-image: url(@/assets/images/bigVIP_black.png); }
-.icon-msg { background-image: url(@/assets/images/messages_black.png); }
-.icon-dynamic { background-image: url(@/assets/images/Group_black_icon.png); }
-.icon-fav { background-image: url(@/assets/images/likes_black_icon.png); }
-.icon-history { background-image: url(@/assets/images/pastRecodes_black_icon.png); }
-.icon-creator { background-image: url(@/assets/images/creationCenter_black_icon.png); }
-.icon-upload { background-image: url(@/assets/images/uploadWork.png); }
+.iconDownload { background-image: url(@/assets/images/download_gray.png); }
+.iconSearch { background-image: url(@/assets/images/search.png); }
+.iconVip { background-image: url(@/assets/images/bigVIP_black.png); }
+.iconMsg { background-image: url(@/assets/images/messages_black.png); }
+.iconDynamic { background-image: url(@/assets/images/Group_black_icon.png); }
+.iconFav { background-image: url(@/assets/images/likes_black_icon.png); }
+.iconHistory { background-image: url(@/assets/images/pastRecodes_black_icon.png); }
+.iconCreator { background-image: url(@/assets/images/creationCenter_black_icon.png); }
+.iconUpload { background-image: url(@/assets/images/uploadWork.png); }
 </style>

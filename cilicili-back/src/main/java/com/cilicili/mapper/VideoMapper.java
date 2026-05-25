@@ -1,7 +1,7 @@
-package com.zsn.mapper;
+package com.cilicili.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.zsn.entity.Video;
+import com.cilicili.entity.Video;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper

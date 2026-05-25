@@ -1,7 +1,7 @@
-package com.zsn.service;
+package com.cilicili.service;
 
-import com.zsn.common.Result;
-import com.zsn.entity.User;
+import com.cilicili.common.Result;
+import com.cilicili.entity.User;
 
 
 public interface UserService  {

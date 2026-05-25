@@ -21,12 +21,23 @@ const successMessage = ref('')
 const isUploading = ref(false)
 const uploadPercent = ref(0)
 
+const MAX_VIDEO_SIZE = 500 * 1024 * 1024
+
 function handleVideoSelect(e) {
     const file = e.target.files[0]
     if (!file) return
 
     if (!file.name.toLowerCase().endsWith('.mp4')) {
         errorMessage.value = '仅支持MP4格式视频'
+        videoFile.value = null
+        videoFileName.value = ''
+        e.target.value = ''
+        return
+    }
+
+    if (file.size > MAX_VIDEO_SIZE) {
+        const sizeMB = (file.size / 1024 / 1024).toFixed(1)
+        errorMessage.value = `视频文件过大（${sizeMB}MB），最大支持 500MB`
         videoFile.value = null
         videoFileName.value = ''
         e.target.value = ''

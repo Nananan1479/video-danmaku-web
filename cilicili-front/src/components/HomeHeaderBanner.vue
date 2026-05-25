@@ -44,47 +44,47 @@ function handleNavClick(item) {
 </script>
 
 <template>
-    <div class="header-banner">
-        <div class="header-banner__inner">
+    <div class="headerBanner">
+        <div class="headerBanner__inner">
             <!-- 左侧导航栏 -->
-            <div class="header-banner__left">
-                <div class="header-banner__nav-item header-banner__nav-item--home" @click="skipHome">
-                    <span class="header-banner__home-icon"></span>
-                    <span class="header-banner__nav-label">首页</span>
+            <div class="headerBanner__left">
+                <div class="headerBanner__nav-item headerBanner__nav-item--home" @click="skipHome">
+                    <span class="headerBanner__home-icon"></span>
+                    <span class="headerBanner__nav-label">首页</span>
                 </div>
                 <div
                     v-for="item in navItems.slice(1)"
                     :key="item.label"
-                    class="header-banner__nav-item"
+                    class="headerBanner__nav-item"
                 >
-                    <span v-if="item.icon" class="header-banner__icon" :class="`header-banner__icon--${item.icon}`"></span>
-                    <span class="header-banner__nav-label">{{ item.label }}</span>
+                    <span v-if="item.icon" class="headerBanner__icon" :class="`headerBanner__icon--${item.icon}`"></span>
+                    <span class="headerBanner__nav-label">{{ item.label }}</span>
                 </div>
             </div>
 
             <!-- 搜索栏 -->
-            <div class="header-banner__search">
-                <span class="header-banner__search-icon"></span>
+            <div class="headerBanner__search">
+                <span class="headerBanner__search-icon"></span>
             </div>
 
             <!-- 右侧导航栏 -->
-            <div class="header-banner__right">
-                <div class="header-banner__avatar" @click="skipLogin">
+            <div class="headerBanner__right">
+                <div class="headerBanner__avatar" @click="skipLogin">
                     <img src="@/assets/images/Akalin.png" alt="头像" />
                 </div>
-                <div class="header-banner__actions">
+                <div class="headerBanner__actions">
                     <div
                         v-for="action in userActions"
                         :key="action.label"
-                        class="header-banner__action"
+                        class="headerBanner__action"
                         @click="skipLogin"
                     >
-                        <span class="header-banner__action-icon" :class="`header-banner__action-icon--${action.icon}`"></span>
-                        <span class="header-banner__action-label">{{ action.label }}</span>
+                        <span class="headerBanner__action-icon" :class="`headerBanner__action-icon--${action.icon}`"></span>
+                        <span class="headerBanner__action-label">{{ action.label }}</span>
                     </div>
                 </div>
-                <button class="header-banner__upload-btn" @click="skipUpload">
-                    <span class="header-banner__upload-icon"></span>
+                <button class="headerBanner__upload-btn" @click="skipUpload">
+                    <span class="headerBanner__upload-icon"></span>
                     投稿
                 </button>
             </div>
@@ -93,7 +93,7 @@ function handleNavClick(item) {
 </template>
 
 <style scoped>
-.header-banner {
+.headerBanner {
     width: 100%;
     height: 156px;
     overflow: hidden;
@@ -106,7 +106,7 @@ function handleNavClick(item) {
     background-image: url(@/assets/images/73a22f6747cbf58a20f68484ef95224a79feeb2b.png);
 }
 
-.header-banner__inner {
+.headerBanner__inner {
     width: 100%;
     height: 60px;
     display: flex;
@@ -115,27 +115,27 @@ function handleNavClick(item) {
     padding: 10px 24px;
 }
 
-.header-banner__left {
+.headerBanner__left {
     display: flex;
     align-items: center;
     gap: 12px;
     padding-right: 10px;
 }
 
-.header-banner__nav-item {
+.headerBanner__nav-item {
     display: flex;
     align-items: center;
     gap: 5px;
     cursor: pointer;
 }
 
-.header-banner__nav-item--home {
+.headerBanner__nav-item--home {
     width: 55px;
     height: 24px;
     justify-content: center;
 }
 
-.header-banner__home-icon {
+.headerBanner__home-icon {
     width: 20px;
     height: 20px;
     background-image: url(@/assets/images/tv03.png);
@@ -144,7 +144,7 @@ function handleNavClick(item) {
     flex-shrink: 0;
 }
 
-.header-banner__nav-label {
+.headerBanner__nav-label {
     font-size: 14px;
     font-family: "Noto Sans SC-Medium", sans-serif;
     font-weight: 500;
@@ -152,7 +152,7 @@ function handleNavClick(item) {
     white-space: nowrap;
 }
 
-.header-banner__icon {
+.headerBanner__icon {
     width: 28px;
     height: 28px;
     background-size: 100% 100%;
@@ -160,13 +160,13 @@ function handleNavClick(item) {
     flex-shrink: 0;
 }
 
-.header-banner__icon--download {
+.headerBanner__icon--download {
     width: 12px;
     height: 13.5px;
     background-image: url(@/assets/images/download.png);
 }
 
-.header-banner__search {
+.headerBanner__search {
     min-width: 200px;
     width: 390px;
     height: 34px;
@@ -175,7 +175,7 @@ function handleNavClick(item) {
     background-color: rgba(225, 225, 225, 0.9);
 }
 
-.header-banner__search-icon {
+.headerBanner__search-icon {
     position: absolute;
     right: 15.5px;
     top: 7px;
@@ -186,7 +186,7 @@ function handleNavClick(item) {
     background-repeat: no-repeat;
 }
 
-.header-banner__right {
+.headerBanner__right {
     min-width: 494px;
     display: flex;
     align-items: center;
@@ -196,33 +196,33 @@ function handleNavClick(item) {
     height: 56px; */
 }
 
-.header-banner__avatar {
+.headerBanner__avatar {
     width: 38px;
     height: 38px;
     border-radius: 50%;
     overflow: hidden;
 }
 
-.header-banner__avatar img {
+.headerBanner__avatar img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.header-banner__actions {
+.headerBanner__actions {
     display: flex;
     gap: 20px;
     margin-left: 0;
 }
 
-.header-banner__action {
+.headerBanner__action {
     display: flex;
     flex-direction: column;
     align-items: center;
     cursor: pointer;
 }
 
-.header-banner__action-icon {
+.headerBanner__action-icon {
     width: 22px;
     height: 22px;
     background-size: 100% 100%;
@@ -230,7 +230,7 @@ function handleNavClick(item) {
     flex-shrink: 0;
 }
 
-.header-banner__action-label {
+.headerBanner__action-label {
     font-size: 14px;
     font-family: "Noto Sans SC-Medium", sans-serif;
     font-weight: 500;
@@ -238,7 +238,7 @@ function handleNavClick(item) {
     text-align: center;
 }
 
-.header-banner__upload-btn {
+.headerBanner__upload-btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -253,7 +253,7 @@ function handleNavClick(item) {
     cursor: pointer;
 }
 
-.header-banner__upload-icon {
+.headerBanner__upload-icon {
     width: 22px;
     height: 18px;
     background-image: url(@/assets/images/uploadWork.png);
@@ -261,11 +261,11 @@ function handleNavClick(item) {
     background-repeat: no-repeat;
 }
 
-.header-banner__action-icon--Frame_120_179 { background-image: url(@/assets/images/Frame_120_179.png); }
-.header-banner__action-icon--IconEmail { background-image: url(@/assets/images/IconEmail.png); }
-.header-banner__action-icon--Group { background-image: url(@/assets/images/Group.png); }
-.header-banner__action-icon--star { background-image: url(@/assets/images/likes_white_icon.png); }
-.header-banner__action-icon--timeclock { background-image: url(@/assets/images/timeclock.png); }
-.header-banner__action-icon--Idea { background-image: url(@/assets/images/Idea.png); }
+.headerBanner__action-icon--Frame_120_179 { background-image: url(@/assets/images/Frame_120_179.png); }
+.headerBanner__action-icon--IconEmail { background-image: url(@/assets/images/IconEmail.png); }
+.headerBanner__action-icon--Group { background-image: url(@/assets/images/Group.png); }
+.headerBanner__action-icon--star { background-image: url(@/assets/images/likes_white_icon.png); }
+.headerBanner__action-icon--timeclock { background-image: url(@/assets/images/timeclock.png); }
+.headerBanner__action-icon--Idea { background-image: url(@/assets/images/Idea.png); }
 
 </style>

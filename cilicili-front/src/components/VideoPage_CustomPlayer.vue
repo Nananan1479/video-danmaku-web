@@ -71,7 +71,7 @@ const onError = (e) => {
         console.error('浏览器提示:', error.message)
         errorMessage.value = `视频加载失败 [${error.code}] ${messages[error.code] || '未知错误'}`
     } else {
-        console.error('视频加载失败:', e)
+        console.error('视频加载失败:', e || '未知错误')
     }
 }
 

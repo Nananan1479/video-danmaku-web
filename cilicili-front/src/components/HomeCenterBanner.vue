@@ -20,54 +20,54 @@ const quickLinks = [
 </script>
 
 <template>
-    <div class="center-banner">
-        <div class="center-banner__inner">
+    <div class="centerBanner">
+        <div class="centerBanner__inner">
             <!-- 左侧 -->
-            <div class="center-banner__left">
-                <div class="center-banner__trending-item">
-                    <span class="center-banner__trending-icon center-banner__trending-icon--dynamic">
+            <div class="centerBanner__left">
+                <div class="centerBanner__trending-item">
+                    <span class="centerBanner__trending-icon centerBanner__trending-icon--dynamic">
                         <img src="@/assets/images/Akalin.png" alt="动态" />
                     </span>
-                    <span class="center-banner__trending-label">动态</span>
+                    <span class="centerBanner__trending-label">动态</span>
                 </div>
-                <div class="center-banner__trending-item">
-                    <span class="center-banner__trending-icon center-banner__trending-icon--hot">
-                        <span class="center-banner__hot-fire"></span>
+                <div class="centerBanner__trending-item">
+                    <span class="centerBanner__trending-icon centerBanner__trending-icon--hot">
+                        <span class="centerBanner__hot-fire"></span>
                     </span>
-                    <span class="center-banner__trending-label">热门</span>
+                    <span class="centerBanner__trending-label">热门</span>
                 </div>
             </div>
             <!-- 中间 -->
-            <div class="center-banner__categories">
+            <div class="centerBanner__categories">
                 <div
                     v-for="(category, index) in categories"
                     :key="index"
-                    class="center-banner__category"
+                    class="centerBanner__category"
                 >
-                    <span class="center-banner__category-label">{{ category }}</span>
-                    <span v-if="category === '更多'" class="center-banner__category-arrow"></span>
+                    <span class="centerBanner__category-label">{{ category }}</span>
+                    <span v-if="category === '更多'" class="centerBanner__category-arrow"></span>
                 </div>
             </div>
             <!-- 右侧 -->
-            <div class="center-banner__right">
-                <div class="center-banner__right-links">
+            <div class="centerBanner__right">
+                <div class="centerBanner__right-links">
                     <div
                         v-for="(link, linkIndex) in quickLinks[0]"
                         :key="link.label"
-                        class="center-banner__right-link"
+                        class="centerBanner__right-link"
                     >
-                        <span class="center-banner__right-icon" :class="`center-banner__right-icon--${link.icon}`"></span>
-                        <span class="center-banner__right-label">{{ link.label }}</span>
+                        <span class="centerBanner__right-icon" :class="`centerBanner__right-icon--${link.icon}`"></span>
+                        <span class="centerBanner__right-label">{{ link.label }}</span>
                     </div>
                 </div>
-                <div class="center-banner__right-links center-banner__right-links--row2">
+                <div class="centerBanner__right-links centerBanner__right-links--row2">
                     <div
                         v-for="(link, linkIndex) in quickLinks[1]"
                         :key="link.label"
-                        class="center-banner__right-link"
+                        class="centerBanner__right-link"
                     >
-                        <span class="center-banner__right-icon" :class="`center-banner__right-icon--${link.icon}`"></span>
-                        <span class="center-banner__right-label">{{ link.label }}</span>
+                        <span class="centerBanner__right-icon" :class="`centerBanner__right-icon--${link.icon}`"></span>
+                        <span class="centerBanner__right-label">{{ link.label }}</span>
                     </div>
                     </div>
             </div>
@@ -76,7 +76,7 @@ const quickLinks = [
 </template>
 
 <style scoped>
-.center-banner {
+.centerBanner {
     width: 100%;
     overflow: hidden;
     flex-shrink: 0;
@@ -84,7 +84,7 @@ const quickLinks = [
     justify-content: center;
 }
 
-.center-banner__inner {
+.centerBanner__inner {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -92,24 +92,24 @@ const quickLinks = [
     width: 100%;
 }
 
-.center-banner__left {
+.centerBanner__left {
     display: flex;
     gap: 24px;
     padding-right: 22px;
 }
 
-.center-banner__trending-item {
+.centerBanner__trending-item {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 3px;
 }
 
-/* .center-banner__trending-item:first-child {
+/* .centerBanner__trending-item:first-child {
     gap: 0;
 } */
 
-.center-banner__trending-icon {
+.centerBanner__trending-icon {
     width: 48px;
     height: 48px;
     background-size: 100% 100%;
@@ -117,18 +117,18 @@ const quickLinks = [
     flex-shrink: 0;
 }
 
-.center-banner__trending-icon img {
+.centerBanner__trending-icon img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.center-banner__trending-icon--hot {
+.centerBanner__trending-icon--hot {
     background-image: url(@/assets/images/Ellipse_65_596.png);
     position: relative;
 }
 
-.center-banner__hot-fire {
+.centerBanner__hot-fire {
     position: absolute;
     left: 19.15%;
     right: 21.28%;
@@ -139,14 +139,14 @@ const quickLinks = [
     background-repeat: no-repeat;
 }
 
-.center-banner__trending-label {
+.centerBanner__trending-label {
     font-size: 14px;
     font-family: "Noto Sans SC-Regular", sans-serif;
     font-weight: 400;
     color: #3e3e3e;
 }
 
-.center-banner__categories {
+.centerBanner__categories {
     width: 894px;
     height: 70px;
     flex-shrink: 0;
@@ -159,7 +159,7 @@ const quickLinks = [
     padding-right: 24px;
 }
 
-.center-banner__category {
+.centerBanner__category {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -172,7 +172,7 @@ const quickLinks = [
     flex-shrink: 0;
 }
 
-.center-banner__category-label {
+.centerBanner__category-label {
     font-size: 14px;
     font-family: "Noto Sans SC-Regular", sans-serif;
     font-weight: 400;
@@ -180,7 +180,7 @@ const quickLinks = [
     white-space: nowrap;
 }
 
-.center-banner__category-arrow {
+.centerBanner__category-arrow {
     width: 12.58px;
     height: 18px;
     background-image: url(@/assets/images/Bace3Iconchevrondown.png);
@@ -188,7 +188,7 @@ const quickLinks = [
     background-repeat: no-repeat;
 }
 
-.center-banner__right {
+.centerBanner__right {
     width: 259px;
     height: 66px;
     display: grid;
@@ -199,7 +199,7 @@ const quickLinks = [
     border-left: 1px solid #d7d7d7;
 }
 
-.center-banner__right-links {
+.centerBanner__right-links {
     position: absolute;
     left: 15px;
     top: 5px;
@@ -207,17 +207,17 @@ const quickLinks = [
     gap: 23px;
 }
 
-.center-banner__right-links--row2 {
+.centerBanner__right-links--row2 {
     top: 40px;
 }
 
-.center-banner__right-link {
+.centerBanner__right-link {
     display: flex;
     align-items: center;
     gap: 6px;
 }
 
-.center-banner__right-icon {
+.centerBanner__right-icon {
     width: 18px;
     height: 18px;
     background-size: contain;
@@ -226,14 +226,14 @@ const quickLinks = [
     flex-shrink: 0;
 }
 
-.center-banner__right-icon--Paper { background-image: url(@/assets/images/Paper.png); }
-.center-banner__right-icon--flag_gray { background-image: url(@/assets/images/flag_gray.png); }
-.center-banner__right-icon--scomment { background-image: url(@/assets/images/scomment.png); }
-.center-banner__right-icon--video_camera { background-image: url(@/assets/images/video_camera.png); }
-.center-banner__right-icon--book3fill { background-image: url(@/assets/images/book3fill.png); }
-.center-banner__right-icon--filemusicfill { background-image: url(@/assets/images/filemusicfill.png); }
+.centerBanner__right-icon--Paper { background-image: url(@/assets/images/Paper.png); }
+.centerBanner__right-icon--flag_gray { background-image: url(@/assets/images/flag_gray.png); }
+.centerBanner__right-icon--scomment { background-image: url(@/assets/images/scomment.png); }
+.centerBanner__right-icon--video_camera { background-image: url(@/assets/images/video_camera.png); }
+.centerBanner__right-icon--book3fill { background-image: url(@/assets/images/book3fill.png); }
+.centerBanner__right-icon--filemusicfill { background-image: url(@/assets/images/filemusicfill.png); }
 
-.center-banner__right-label {
+.centerBanner__right-label {
     font-size: 14px;
     font-family: "Noto Sans SC-Regular", sans-serif;
     font-weight: 400;

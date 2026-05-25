@@ -12,7 +12,7 @@
         try {
             await checkToken()
             console.log('token 有效')
-            router.push('/')
+            // router.push('/')
             // 正常，不做操作
         } catch (error) {
             // 401 表示 token 无效

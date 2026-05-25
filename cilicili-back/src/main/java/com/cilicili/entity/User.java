@@ -1,4 +1,4 @@
-package com.zsn.entity;
+package com.cilicili.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
