@@ -1,10 +1,14 @@
 package com.cilicili.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cilicili.entity.Video;
 import com.cilicili.mapper.VideoMapper;
 import com.cilicili.service.VideoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -12,13 +16,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -172,6 +180,7 @@ public class VideoServiceImpl implements VideoService {
             video.setCoinCount(0L);
             video.setCollectCount(0L);
             video.setShareCount(0L);
+            video.setDuration(extractDuration(videoPath));
             String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             video.setCreatedAt(now);
             video.setUpdatedAt(now);
@@ -182,5 +191,82 @@ public class VideoServiceImpl implements VideoService {
         } catch (IOException e) {
             throw new RuntimeException("上传失败", e);
         }
+    }
+
+    /**
+     * 根据文件名，从服务器固定目录读取图片，并以 Resource 形式返回给浏览器。
+     *
+     * @param filename
+     *
+     * @author Nananan1479
+     * @date 2026/5/26 23:06
+
+     * @return org.springframework.http.ResponseEntity<org.springframework.core.io.Resource>
+     */
+    @Override
+    public ResponseEntity<Resource> getCover(String filename) {
+        try {
+            File file = new File(COVER_DIR, filename);
+            if (!file.exists()) {
+                return ResponseEntity.notFound().build();
+            }
+            Resource resource = new FileSystemResource(file);
+            String contentType = Files.probeContentType(file.toPath());
+            if (contentType == null) contentType = "image/png";
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .body(resource);
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    // 首页推荐：按播放量倒序
+    @Override
+    public Page<Video> getHomeRecommendedVideos(int pageNum, int pageSize) {
+        Page<Video> page = new Page<>(pageNum, pageSize);
+        QueryWrapper<Video> wrapper = new QueryWrapper<>();
+        wrapper.eq("status", 1)                       // 仅正常状态
+                .orderByDesc("play_count");            // 按播放量降序
+        return videoMapper.selectPage(page, wrapper);
+    }
+
+    // 视频页侧边栏推荐：排除当前视频，按时间或播放量
+    @Override
+    public Page<Video> getRelatedVideos(int pageNum, int pageSize, Long currentVideoId) {
+        Page<Video> page = new Page<>(pageNum, pageSize);
+        QueryWrapper<Video> wrapper = new QueryWrapper<>();
+        wrapper.eq("status", 1)
+                .ne("id", currentVideoId)               // 排除当前视频
+                .orderByDesc("created_at");            // 可按时间或热度
+        return videoMapper.selectPage(page, wrapper);
+    }
+
+    // 通用分页查询（无条件，全部数据）
+    @Override
+    public Page<Video> getAllVideos(int pageNum, int pageSize) {
+        return videoMapper.selectPage(new Page<>(pageNum, pageSize), null);
+    }
+
+    private int extractDuration(Path videoPath) {
+        try {
+            ProcessBuilder pb = new ProcessBuilder(
+                    "ffprobe", "-v", "error",
+                    "-show_entries", "format=duration",
+                    "-of", "default=noprint_wrappers=1:nokey=1",
+                    videoPath.toString()
+            );
+            Process process = pb.start();
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String line = reader.readLine();
+                if (line != null && !line.isEmpty()) {
+                    return (int) Math.round(Double.parseDouble(line.trim()));
+                }
+            }
+            process.waitFor();
+        } catch (Exception e) {
+            System.err.println("获取视频时长失败: " + e.getMessage());
+        }
+        return 0;
     }
 }

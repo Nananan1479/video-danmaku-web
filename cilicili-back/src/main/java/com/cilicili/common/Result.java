@@ -2,7 +2,15 @@ package com.cilicili.common;
 
 import lombok.Data;
 
-// 向前端返回错误码
+/**
+ * 自定义业务码<br>
+ * 向前端返回错误码
+ *
+ *
+ * @author Nananan1479
+ * @date 2026/5/25 22:22
+
+ */
 @Data
 public class Result<T> {
     //常见的状态码
@@ -31,6 +39,12 @@ public class Result<T> {
     //502 Bad Gateway：网关收到无效响应（如后端崩溃）。
     //503 Service Unavailable：服务器过载或维护中。
     //504 Gateway Timeout：网关超时。
+
+    /**
+     * 请求成功
+     */
+    public static final int RESULT_OK = 200;
+    public static final int RESULT_BAD_REQUEST = 200;
 
     private int code;       // 状态码
     private String message; // 提示信息

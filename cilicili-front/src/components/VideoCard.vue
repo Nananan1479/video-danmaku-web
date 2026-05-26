@@ -1,5 +1,9 @@
 <script setup>
-defineProps({
+import { computed } from 'vue'
+import { getVideoCoverUrlById } from '@/api/index'
+import { formatCount, formatDuration, formatDate } from '@/utils/videoData'
+
+const props = defineProps({
     video: {
         type: Object,
         required: true
@@ -7,38 +11,45 @@ defineProps({
 })
 
 defineEmits(['click'])
+
+const playCount = computed(() => formatCount(props.video.playCount))
+const commentCount = computed(() => formatCount(props.video.commentCount))
+const duration = computed(() => formatDuration(props.video.duration))
+const dateText = computed(() => formatDate(props.video.updatedAt))
+const coverUrl = computed(() => getVideoCoverUrlById(props.video.id))
 </script>
 
 <template>
     <div class="video-card" @click="$emit('click')">
+        <!-- 视频封面部分 -->
         <div class="video-card__cover">
-            <div class="video-card__cover-backgroundColor"></div>
             <img
                 class="video-card__cover-img"
-                src="@/assets/images/6ff74a8f45317f579bb358521a0aa33a917bafb9.png"
-                alt=""
+                :src="coverUrl"
+                alt="视频封面"
             />
             <div class="video-card__cover-overlay">
                 <div class="video-card__stats">
                     <div class="video-card__stat">
-                        <img class="video-card__stat-icon" src="@/assets/images/videoPlays_white_icon.png" alt="" />
-                        <span class="video-card__stat-text">{{ video.views }}</span>
+                        <img class="video-card__stat-icon" src="@/assets/images/videoPlays_white_icon.png" alt="播放图标" />
+                        <span class="video-card__stat-text">{{ playCount }}</span>
                     </div>
                     <div class="video-card__stat">
-                        <img class="video-card__stat-icon" src="@/assets/images/videoComments_white_icon.png" alt="" />
-                        <span class="video-card__stat-text">{{ video.comments }}</span>
+                        <img class="video-card__stat-icon" src="@/assets/images/videoComments_white_icon.png" alt="评论图标" />
+                        <span class="video-card__stat-text">{{ commentCount }}</span>
                     </div>
                 </div>
-                <span class="video-card__duration">{{ video.duration }}</span>
+                <span class="video-card__duration">{{ duration }}</span>
             </div>
         </div>
+        <!-- 视频信息部分 -->
         <div class="video-card__info">
             <h3 class="video-card__title">{{ video.title }}</h3>
             <div class="video-card__meta">
                 <span class="video-card__up-badge"></span>
-                <span class="video-card__author">{{ video.author }}</span>
-                <span class="video-card__dot">·</span>
-                <span class="video-card__date">{{ video.date }}</span>
+                <span class="video-card__author">UP主</span>
+                <!-- <span class="video-card__dot">·</span> -->
+                <span class="video-card__date"> · {{ dateText }}</span>
             </div>
         </div>
     </div>
@@ -59,28 +70,20 @@ defineEmits(['click'])
 
 .video-card__cover {
     /* height: 132px; */
-    /* height: 100%; */
     width: 100%;
     background-color: #f1f2f3;
     border-radius: 7px;
+    /* 16比9的宽度 */
+    /* 9 / 16 * 100% = 56.25% */
+    padding-top: 56.25%;
     overflow: hidden;
     position: relative;
     display: flex;
     align-items: flex-end;
 }
 
-.video-card__cover-backgroundColor {
-    width: 100%;
-    height: 100%;
-    /* position: absolute; */
-    /* inset: 0; */
-    background-color: rgba(0, 0, 0, 0.5);
-    border-radius: 7px;
-    z-index: 0;
-}
-
 .video-card__cover-img {
-    /* position: absolute; */
+    position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
@@ -92,11 +95,12 @@ defineEmits(['click'])
     position: absolute;
     z-index: 2;
     width: 100%;
+    height: 24px;
     padding: 1px 10px;
+    background: linear-gradient(180.00deg, rgba(57, 57, 57, 0) 0%,rgba(57, 57, 57, 0.6) 50%,rgba(57, 57, 57, 0.86) 100%);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 24px;
 }
 
 .video-card__stats {
@@ -112,21 +116,19 @@ defineEmits(['click'])
 }
 
 .video-card__stat-icon {
-    width: 20px;
-    height: 22px;
+    width: 18px;
+    height: 20px;
     object-fit: cover;
 }
 
 .video-card__stat-text {
-    font-size: 13px;
-    font-family: "Noto Sans SC-Medium", sans-serif;
+    font-size: 12px;
     font-weight: 500;
     color: #fff;
 }
 
 .video-card__duration {
-    font-size: 13px;
-    font-family: "Noto Sans SC-Medium", sans-serif;
+    font-size: 12px;
     font-weight: 500;
     color: #fff;
 }
@@ -141,7 +143,6 @@ defineEmits(['click'])
 
 .video-card__title {
     font-size: 16px;
-    font-family: "Microsoft YaHei-Regular", sans-serif;
     font-weight: 400;
     color: #000;
     letter-spacing: 1px;
@@ -165,8 +166,8 @@ defineEmits(['click'])
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 19px;
-    height: 18px;
+    width: 16px;
+    height: 15px;
     font-size: 9px;
     font-weight: 500;
     background-size: cover;
@@ -176,22 +177,13 @@ defineEmits(['click'])
 }
 
 .video-card__author {
-    font-size: 14px;
-    font-family: "Noto Sans SC-Regular", sans-serif;
+    font-size: 12px;
     font-weight: 400;
     color: #9499a0;
 }
 
-.video-card__dot {
-    font-size: 11px;
-    font-family: "Noto Sans SC-Medium", sans-serif;
-    font-weight: 500;
-    color: #9499a0;
-}
-
 .video-card__date {
-    font-size: 14px;
-    font-family: "Noto Sans SC-Regular", sans-serif;
+    font-size: 12px;
     font-weight: 400;
     color: #9499a0;
 }

@@ -1,26 +1,70 @@
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import CustomPlayer from './VideoPage_CustomPlayer.vue'
+import { fetchVideoInfo, formatCount, formatDuration, formatDate } from '@/utils/videoData'
 
 const route = useRoute()
 const videoId = computed(() => Number(route.query.id) || null)
 
-// 视频元数据
 const video = reactive({
-    title: '标题栏',
+    id: null,
+    title: '加载中...',
+    description: '',
     playCount: 0,
     danmakuCount: 0,
-    date: '2020-06-25',
-    time: '05:12:13',
+    duration: 0,
+    coverUrl: '',
+    likeCount: 0,
+    coinCount: 0,
+    collectCount: 0,
+    shareCount: 0,
+    uploaderId: null,
+    createdAt: '',
     copyright: '未经作者授权，禁止转载',
-    description: '这是简介',
-    tags: ['标签1', '标签2', '标签3', '标签4', '标签5', '标签6', '标签7', '标签8'],
-    likes: 0,
-    coins: 0,
-    collects: 0,
-    shares: 0
+    tags: []
 })
+
+const displayPlayCount = computed(() => formatCount(video.playCount))
+const displayDanmakuCount = computed(() => formatCount(video.danmakuCount))
+const displayDuration = computed(() => formatDuration(video.duration))
+const displayDate = computed(() => formatDate(video.createdAt))
+const loading = ref(true)
+
+async function loadVideoData() {
+    if (!videoId.value) return
+    loading.value = true
+    try {
+        const data = await fetchVideoInfo(videoId.value)
+        if (data) {
+            Object.assign(video, {
+                id: data.id ?? null,
+                title: data.title || '未知标题',
+                description: data.description || '',
+                playCount: data.playCount ?? 0,
+                danmakuCount: data.danmakuCount ?? 0,
+                duration: data.duration ?? 0,
+                coverUrl: data.coverUrl || '',
+                likeCount: data.likeCount ?? 0,
+                coinCount: data.coinCount ?? 0,
+                collectCount: data.collectCount ?? 0,
+                shareCount: data.shareCount ?? 0,
+                uploaderId: data.uploaderId ?? null,
+                createdAt: data.createdAt || '',
+                copyright: '未经作者授权，禁止转载',
+                tags: []
+            })
+        }
+    } catch (err) {
+        console.error('加载视频数据失败', err)
+    } finally {
+        loading.value = false
+    }
+}
+
+watch(videoId, (newId) => {
+    if (newId) loadVideoData()
+}, { immediate: true })// 立即执行一次，确保初始加载时获取到视频数据
 
 // 弹幕状态
 const danmakuOn = ref(true)
@@ -62,13 +106,13 @@ const submitComment = () => {
             <h1 class="title">{{ video.title }}</h1>
             <div class="meta-info">
                 <span class="meta-item">
-                    <i class="icon icon-play"></i>{{ video.playCount }}
+                    <i class="icon icon-play"></i>{{ displayPlayCount }}
                 </span>
                 <span class="meta-item">
-                    <i class="icon icon-danmaku"></i>{{ video.danmakuCount }}
+                    <i class="icon icon-danmaku"></i>{{ displayDanmakuCount }}
                 </span>
-                <span class="meta-item">{{ video.date }}</span>
-                <span class="meta-item">{{ video.time }}</span>
+                <span class="meta-item">{{ displayDate }}</span>
+                <span class="meta-item">{{ displayDuration }}</span>
                 <span class="meta-item copyright">
                     <i class="icon icon-copyright"></i>{{ video.copyright }}
                 </span>
@@ -103,10 +147,10 @@ const submitComment = () => {
         <!-- 互动操作栏 (点赞投币收藏分享) -->
         <div class="action-bar">
             <div class="actions">
-                <button class="action-btn"><i class="icon-videoReward icon icon-like"></i>{{ video.likes }}</button>
-                <button class="action-btn"><i class="icon-videoReward icon icon-coin"></i>{{ video.coins }}</button>
-                <button class="action-btn"><i class="icon-videoReward icon icon-collect"></i>{{ video.collects }}</button>
-                <button class="action-btn"><i class="icon-videoReward icon icon-share"></i>{{ video.shares }}</button>
+                <button class="action-btn"><i class="icon-videoReward icon icon-like"></i>{{ video.likeCount }}</button>
+                <button class="action-btn"><i class="icon-videoReward icon icon-coin"></i>{{ video.coinCount }}</button>
+                <button class="action-btn"><i class="icon-videoReward icon icon-collect"></i>{{ video.collectCount }}</button>
+                <button class="action-btn"><i class="icon-videoReward icon icon-share"></i>{{ video.shareCount }}</button>
             </div>
             <div class="report">
                 <i class="icon icon-report"></i>稿件举报

@@ -6,15 +6,30 @@ import com.cilicili.entity.User;
 import com.cilicili.mapper.UserMapper;
 import com.cilicili.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.UUID;
 
 
 @Service
 public class UserServiceImpl implements UserService {
+
+    @Value("${file.avatar-dir}")
+    private String AVATAR_DIR;
 
     @Autowired
     private UserMapper userMapper;
@@ -106,5 +121,67 @@ public class UserServiceImpl implements UserService {
         return Result.success(200, user);
     }
 
+    /**
+     * 上传头像
+     *
+     * @param file 上传的文件路径
+     * @param userId
+     *
+     * @author Nananan1479
+     * @date 2026/5/26 14:06
+
+     * @return java.lang.String
+     */
+    @Override
+    public String uploadAvatar(MultipartFile file, int userId) {
+        try {
+            Files.createDirectories(Paths.get(AVATAR_DIR));
+            String originalName = file.getOriginalFilename();
+            String ext = originalName != null && originalName.contains(".") ?
+                    originalName.substring(originalName.lastIndexOf(".")) : ".png";
+            String avatarName = UUID.randomUUID().toString() + ext;
+            Path avatarPath = Paths.get(AVATAR_DIR, avatarName);
+            file.transferTo(avatarPath.toFile());
+
+            User user = userMapper.selectById(userId);
+            if (user == null) {
+                throw new RuntimeException("用户不存在");
+            }
+            user.setAvatar(avatarName);
+            userMapper.updateById(user);
+
+            return avatarName;
+        } catch (IOException e) {
+            throw new RuntimeException("头像上传失败", e);
+        }
+    }
+
+    /**
+     * 获取用户头像
+     *
+     * @param filename 需要的头像名称（仅支持png）
+     *
+     * @author Nananan1479
+     * @date 2026/5/26 14:08
+
+     * @return org.springframework.http.ResponseEntity<org.springframework.core.io.Resource>
+     */
+    @Override
+    public ResponseEntity<Resource> getAvatar(String filename) {
+        try {
+            File file = new File(AVATAR_DIR, filename);
+            if (!file.exists()) {
+                return ResponseEntity.notFound().build();
+            }
+            Resource resource = new FileSystemResource(file);
+            String contentType = Files.probeContentType(file.toPath());
+            if (contentType == null) contentType = "image/png";
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .body(resource);
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
 }

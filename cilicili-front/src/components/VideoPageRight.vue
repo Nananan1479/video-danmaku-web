@@ -1,10 +1,12 @@
 <script setup>
 import { reactive, ref } from 'vue'
+import { getVideoCoverUrlById, getAvatarUrl } from '@/api/index'
 
 const upUser = reactive({
     name: '用户名',
     signature: '个人签名',
-    fans: 0
+    fans: 0,
+    avatar: ''
 })
 
 const recommendList = ref([
@@ -24,7 +26,7 @@ const recommendList = ref([
     <aside class="video-sidebar">
         <!-- UP主信息 -->
         <div class="up-info">
-            <div class="up-avatar"></div>
+            <div class="up-avatar" :style="{ backgroundImage: `url(${getAvatarUrl(upUser.avatar) || '@/assets/images/Akalin.png'})` }"></div>
             <div class="up-detail">
                 <div class="up-name">{{ upUser.name }}</div>
                 <div class="up-sign">{{ upUser.signature }}</div>
@@ -46,7 +48,7 @@ const recommendList = ref([
         <!-- 推荐视频列表 -->
         <div class="recommend-list">
             <div v-for="item in recommendList" :key="item.id" class="recommend-item">
-                <div class="rec-cover" :style="{ backgroundImage: `url(${item.cover})` }"></div>
+                <div class="rec-cover" :style="{ backgroundImage: `url(${getVideoCoverUrlById(item.id)})` }"></div>
                 <div class="rec-info">
                     <div class="rec-title">{{ item.title }}</div>
                     <div class="rec-meta">

@@ -5,7 +5,10 @@ import com.cilicili.entity.User;
 import com.cilicili.service.UserService;
 import com.cilicili.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -88,5 +91,27 @@ public class UserController {
             return Result.fail(401, "token无效");
         }
         return Result.success(200, "ok");
+    }
+
+    @PostMapping("avatar")
+    public Result<String> uploadAvatar(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
+        Integer userId = (Integer) request.getAttribute("userId");
+        if (userId == null) {
+            return Result.fail(401, "未登录");
+        }
+        if (file.isEmpty()) {
+            return Result.fail(400, "头像文件不能为空");
+        }
+        try {
+            String avatarName = userService.uploadAvatar(file, userId);
+            return Result.success(200, avatarName);
+        } catch (RuntimeException e) {
+            return Result.fail(500, "头像上传失败: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("avatar/{filename:.+}")
+    public ResponseEntity<Resource> getAvatar(@PathVariable String filename) {
+        return userService.getAvatar(filename);
     }
 }

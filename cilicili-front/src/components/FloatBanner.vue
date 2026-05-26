@@ -1,7 +1,18 @@
 <script setup>
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { getCurrentUser } from '@/utils/userStorage'
+import { getAvatarUrl } from '@/api/index'
 
 const router = useRouter();
+
+const currentUser = computed(() => getCurrentUser())
+const avatarSrc = computed(() => {
+    if (currentUser.value && currentUser.value.avatar) {
+        return getAvatarUrl(currentUser.value.avatar)
+    }
+    return new URL('@/assets/images/Akalin.png', import.meta.url).href
+})
 
 const skipLogin = () => {
     router.push('/login');
@@ -40,7 +51,7 @@ const skipUpload = () => {
         <!-- 右侧：用户操作 -->
         <div class="navRight">
             <div class="userAvatar" @click="skipLogin">
-                <img src="@/assets/images/Akalin.png" alt="头像" />
+                <img :src="avatarSrc" alt="头像" />
             </div>
             <div class="userActions">
                 <div class="actionItem" @click="skipLogin">

@@ -85,9 +85,10 @@ mybatis-plus:
 
 ########### JWT 配置
 jwt:
-  secret: cilicili-jwt-secret-key-by-nan-2025-this-is-a-very-long-secret
+  secret: cilicili-jwt-secret-key-by-Nananan1479@github-2025-this-is-a-very-long-secret
   expiration: 604800000 # 一天（单位为毫秒，1 * 24 * 60 * 60 * 1000）
 ########### 视频及封面地址 配置
 file:
   video-dir: C:/Users/NANANAN/Videos/Captures
   cover-dir: C:/Users/NANANAN/Videos/Covers
+  avatar-dir: C:/Users/NANANAN/Videos/Avatars
