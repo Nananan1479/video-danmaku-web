@@ -42,6 +42,8 @@ public class UserServiceImpl implements UserService {
         return userMapper.selectById(id);
     }
 
+
+
     /**
      * 用户登录。<br>
      * 返回查找后的用户资料，检查用户名是否存在，使用BCrypt解码进行密码比对
@@ -169,6 +171,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<Resource> getAvatar(String filename) {
         try {
+            Path dir = Paths.get(AVATAR_DIR);
+            if (!Files.exists(dir)) {
+                Files.createDirectories(dir);  // 自动创建所有不存在的父目录
+            }
+
             File file = new File(AVATAR_DIR, filename);
             if (!file.exists()) {
                 return ResponseEntity.notFound().build();
@@ -183,5 +190,4 @@ public class UserServiceImpl implements UserService {
             return ResponseEntity.notFound().build();
         }
     }
-
 }

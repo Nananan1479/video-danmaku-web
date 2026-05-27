@@ -113,7 +113,12 @@ export function getVideoCoverUrlById(videoId) {
  */
 export function getAvatarUrl(filename) {
     if (!filename) return ''
-    return `${import.meta.env.VITE_API_URL}/api/users/avatar/${filename}`
+    // 数据库存的可能是完整路径，也可能是纯文件名
+    // 用 lastIndexOf 找最后一个 / 或 \，截取后面的纯文件名
+    var i = Math.max(filename.lastIndexOf('/'), filename.lastIndexOf('\\'))
+    var name = i >= 0 ? filename.substring(i + 1) : filename
+    // encodeURIComponent 防止中文或特殊字符导致 URL 无效
+    return `${import.meta.env.VITE_API_URL}/api/users/avatar/${encodeURIComponent(name)}`
 }
 
 /**

@@ -15,6 +15,7 @@ const avatarSrc = computed(() => {
     }
     return new URL('@/assets/images/Akalin.png', import.meta.url).href
 })
+console.log(avatarSrc.value)
 
 const navItems = [
     { label: '首页', icon: 'tv03', isHome: true },

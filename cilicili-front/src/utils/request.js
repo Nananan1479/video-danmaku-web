@@ -6,7 +6,7 @@ import router from '@/router'
 // 创建 axios 实例（不与全局 axios 混淆）
 const instance = axios.create({
     baseURL: import.meta.env.VITE_API_URL,   // 后端地址，从环境变量读取
-    timeout: 10000,                          // 超时时间为 10 秒
+    timeout: 20000,                          // 超时时间为 20 秒
 })
 
 /**
