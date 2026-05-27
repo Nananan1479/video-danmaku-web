@@ -1,7 +1,10 @@
 <script setup>
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { getVideoCoverUrlById } from '@/api/index'
 import { formatCount, formatDuration, formatDate } from '@/utils/videoData'
+
+const router = useRouter()
 
 const props = defineProps({
     video: {
@@ -17,12 +20,21 @@ const commentCount = computed(() => formatCount(props.video.commentCount))
 const duration = computed(() => formatDuration(props.video.duration))
 const dateText = computed(() => formatDate(props.video.updatedAt))
 const coverUrl = computed(() => getVideoCoverUrlById(props.video.id))
+
+function skipAuthorSpace(id) {
+    console.log("跳转UP主空间", id)
+}
+
+function skipVideo(video) {
+    router.push({ name: 'VideoPage', query: { id: video.id } })
+}
+
 </script>
 
 <template>
     <div class="video-card" @click="$emit('click')">
         <!-- 视频封面部分 -->
-        <div class="video-card__cover">
+        <div class="video-card__cover" @click="skipVideo(video)">
             <img
                 class="video-card__cover-img"
                 :src="coverUrl"
@@ -43,13 +55,17 @@ const coverUrl = computed(() => getVideoCoverUrlById(props.video.id))
             </div>
         </div>
         <!-- 视频信息部分 -->
-        <div class="video-card__info">
-            <h3 class="video-card__title">{{ video.title }}</h3>
+        <div class="video-card__info" :title="video.title">
+            <h3 class="video-card__title">
+                <a @click="skipVideo(video)">{{ video.title }}</a>
+            </h3>
             <div class="video-card__meta">
-                <span class="video-card__up-badge"></span>
-                <span class="video-card__author">UP主</span>
-                <!-- <span class="video-card__dot">·</span> -->
-                <span class="video-card__date"> · {{ dateText }}</span>
+                <a @click="skipAuthorSpace(video.uploaderId)">
+                    <span class="video-card__up-badge"></span>
+                    <span class="video-card__author">{{ video.uploaderName || 'UP主' }}</span>
+                    <!-- <span class="video-card__dot">·</span> -->
+                    <span class="video-card__date">· {{ dateText }}</span>
+                </a>
             </div>
         </div>
     </div>
@@ -65,7 +81,6 @@ const coverUrl = computed(() => getVideoCoverUrlById(props.video.id))
     display: flex;
     flex-direction: column;
     gap: 8px;
-    cursor: pointer;
 }
 
 .video-card__cover {
@@ -80,6 +95,7 @@ const coverUrl = computed(() => getVideoCoverUrlById(props.video.id))
     position: relative;
     display: flex;
     align-items: flex-end;
+    cursor: pointer;
 }
 
 .video-card__cover-img {
@@ -155,11 +171,34 @@ const coverUrl = computed(() => getVideoCoverUrlById(props.video.id))
     margin: 0;
 }
 
+.video-card__title a {
+    transition: color 0.2s linear;
+    cursor: pointer;
+}
+
+.video-card__title a:hover {
+    color: rgba(0, 174, 236, 1);
+}
+
 .video-card__meta {
     display: flex;
     align-items: center;
-    gap: 4px;
+    /* gap: 4px; */
     height: 21px;
+}
+
+.video-card__meta a {
+    display: flex;
+    align-items: center;
+    color: #9499a0;
+    gap: 4px;
+    /* height: 21px; */
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.video-card__meta a:hover {
+    color: rgba(0, 174, 236, 1);
 }
 
 .video-card__up-badge {
@@ -168,23 +207,26 @@ const coverUrl = computed(() => getVideoCoverUrlById(props.video.id))
     justify-content: center;
     width: 16px;
     height: 15px;
-    font-size: 9px;
-    font-weight: 500;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-image: url(@/assets/images/uploader_icon.png);
+    /* 使用CSS mask确保可以自动变色 */
+    background-color: currentColor;
+    mask-size: cover;
+    mask-position: center;
+    mask-repeat: no-repeat;
+    mask-image: url(@/assets/images/uploader_icon.png);
+    -webkit-mask-size: cover;
+    -webkit-mask-position: center;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-image: url(@/assets/images/uploader_icon.png);
 }
 
 .video-card__author {
     font-size: 12px;
     font-weight: 400;
-    color: #9499a0;
 }
 
 .video-card__date {
+    /* margin-left: 2px; */
     font-size: 12px;
     font-weight: 400;
-    color: #9499a0;
 }
 </style>

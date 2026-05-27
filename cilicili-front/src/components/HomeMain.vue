@@ -134,9 +134,6 @@ fetchVideos(pageNum.value, pageSize.value).then(res => {
 
 console.log(fetchVideos())
 
-function handleVideoClick(video) {
-    router.push({ name: 'VideoPage', query: { id: video.id } })
-}
 </script>
 
 <template>
@@ -148,7 +145,6 @@ function handleVideoClick(video) {
                 v-for="video in videos"
                 :key="video.id"
                 :video="video"
-                @click="handleVideoClick(video)"
             />
         </div>
     </div>

@@ -38,8 +38,9 @@ onUnmounted(() => {
     width: 100%;
     max-width: 2000px;
     height: 100%;
-    box-sizing: border-box;
     margin: 0 auto;
+    padding-bottom: 100px;
+    box-sizing: border-box;
     /* overflow-y: auto;
     overflow-x: hidden; */
 }
