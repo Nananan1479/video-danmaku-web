@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cilicili.entity.Video;
 import com.cilicili.mapper.VideoMapper;
 import com.cilicili.service.VideoService;
+import com.cilicili.util.VideoUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -16,10 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,6 +27,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
+
 
 @Service
 public class VideoServiceImpl implements VideoService {
@@ -45,6 +45,9 @@ public class VideoServiceImpl implements VideoService {
 
     @Autowired
     private VideoMapper videoMapper;
+
+//    @Autowired
+//    private VideoUtil videoUtil;
 
     /**
      * 向前端返回视频流。通过rangeHeader头可向前端返回视频片段实现拖拽进度条时快速跳转到对应位置。
@@ -159,6 +162,7 @@ public class VideoServiceImpl implements VideoService {
                 String originalName = coverFile.getOriginalFilename();
                 String coverExt = originalName != null && originalName.contains(".") ?
                         originalName.substring(originalName.lastIndexOf(".")) : ".png";
+                // 为视频创建唯一的UUID
                 coverName = UUID.randomUUID().toString() + coverExt;
                 Path coverPath = Paths.get(COVER_DIR, coverName);
                 // 写入磁盘
@@ -180,7 +184,7 @@ public class VideoServiceImpl implements VideoService {
             video.setCoinCount(0L);
             video.setCollectCount(0L);
             video.setShareCount(0L);
-            video.setDuration(extractDuration(videoPath));
+            video.setDuration((int) (VideoUtil.getDuration(videoPath.toFile())/1000));
             String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             video.setCreatedAt(now);
             video.setUpdatedAt(now);
@@ -193,10 +197,11 @@ public class VideoServiceImpl implements VideoService {
         }
     }
 
+
     /**
      * 根据文件名，从服务器固定目录读取图片，并以 Resource 形式返回给浏览器。
      *
-     * @param filename
+     * @param filename 封面名字（包含后缀）
      *
      * @author Nananan1479
      * @date 2026/5/26 23:06
@@ -221,7 +226,18 @@ public class VideoServiceImpl implements VideoService {
         }
     }
 
-    // 首页推荐：按播放量倒序
+
+    /**
+     * 视频页侧边栏推荐：排除当前视频，按时间或播放量
+     *
+     * @param pageNum
+     * @param pageSize
+     *
+     * @author Nananan1479
+     * @date 2026/5/27 0:33
+
+     * @return com.baomidou.mybatisplus.extension.plugins.pagination.Page<com.cilicili.entity.Video>
+     */
     @Override
     public Page<Video> getHomeRecommendedVideos(int pageNum, int pageSize) {
         Page<Video> page = new Page<>(pageNum, pageSize);
@@ -231,7 +247,19 @@ public class VideoServiceImpl implements VideoService {
         return videoMapper.selectPage(page, wrapper);
     }
 
-    // 视频页侧边栏推荐：排除当前视频，按时间或播放量
+
+    /**
+     * 视频页侧边栏推荐：排除当前视频，按时间或播放量
+     *
+     * @param pageNum
+     * @param pageSize
+     * @param currentVideoId
+     *
+     * @author Nananan1479
+     * @date 2026/5/27 0:32
+
+     * @return com.baomidou.mybatisplus.extension.plugins.pagination.Page<com.cilicili.entity.Video>
+     */
     @Override
     public Page<Video> getRelatedVideos(int pageNum, int pageSize, Long currentVideoId) {
         Page<Video> page = new Page<>(pageNum, pageSize);
@@ -242,31 +270,47 @@ public class VideoServiceImpl implements VideoService {
         return videoMapper.selectPage(page, wrapper);
     }
 
-    // 通用分页查询（无条件，全部数据）
+
+    /**
+     * 通用分页查询（无条件，全部数据）
+     *
+     * @param pageNum
+     * @param pageSize
+     *
+     * @author Nananan1479
+     * @date 2026/5/27 0:32
+
+     * @return com.baomidou.mybatisplus.extension.plugins.pagination.Page<com.cilicili.entity.Video>
+     */
     @Override
     public Page<Video> getAllVideos(int pageNum, int pageSize) {
         return videoMapper.selectPage(new Page<>(pageNum, pageSize), null);
     }
 
-    private int extractDuration(Path videoPath) {
-        try {
-            ProcessBuilder pb = new ProcessBuilder(
-                    "ffprobe", "-v", "error",
-                    "-show_entries", "format=duration",
-                    "-of", "default=noprint_wrappers=1:nokey=1",
-                    videoPath.toString()
-            );
-            Process process = pb.start();
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-                String line = reader.readLine();
-                if (line != null && !line.isEmpty()) {
-                    return (int) Math.round(Double.parseDouble(line.trim()));
-                }
-            }
-            process.waitFor();
-        } catch (Exception e) {
-            System.err.println("获取视频时长失败: " + e.getMessage());
-        }
-        return 0;
-    }
+    /*
+      解析MP4视频时长（使用isoparser文件解析库）
+
+      @param videoPath
+     *
+     * @author Nananan1479
+     * @date 2026/5/27 1:31
+
+     * @return int
+     */
+//    private int extractDuration(Path videoPath) {
+//        try {
+//            IsoFile isoFile = new IsoFile(videoPath.toFile());
+//            double durationSec = 0;
+//            try {
+//                MovieHeaderBox mvhd = isoFile.getMovieBox().getMovieHeaderBox();
+//                durationSec = (double) mvhd.getDuration() / mvhd.getTimescale();
+//            } finally {
+//                isoFile.close();
+//            }
+//            return (int) Math.round(durationSec);
+//        } catch (Exception e) {
+//            System.err.println("获取视频时长失败: " + e.getMessage());
+//            return 0;
+//        }
+//    }
 }

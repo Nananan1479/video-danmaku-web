@@ -3,6 +3,7 @@ import { ref, reactive, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { uploadVideo } from '@/api/index.js'
 import FloatBanner from '@/components/FloatBanner.vue'
+import SelectVideoCover from '@/components/selectVideoCover.vue'
 import { getCurrentUser } from '@/utils/userStorage'
 
 const router = useRouter()
@@ -16,6 +17,7 @@ const videoFile = ref(null)
 const videoFileName = ref('')
 const coverFile = ref(null)
 const coverPreview = ref('')
+const showCoverSelector = ref(false)
 const errorMessage = ref('')
 const successMessage = ref('')
 const isUploading = ref(false)
@@ -67,6 +69,33 @@ function triggerVideoInput() {
 
 function triggerCoverInput() {
     document.getElementById('cover-input').click()
+}
+
+function triggerCoverSelector() {
+    if (!videoFile.value) {
+        errorMessage.value = '请先选择视频文件'
+        return
+    }
+    errorMessage.value = ''
+    showCoverSelector.value = true
+}
+
+function onCoverCaptured(base64Data) {
+    const arr = base64Data.split(',')
+    const mime = arr[0].match(/:(.*?);/)[1]
+    const bstr = atob(arr[1])
+    const n = bstr.length
+    const u8arr = new Uint8Array(n)
+    for (let i = 0; i < n; i++) {
+        u8arr[i] = bstr.charCodeAt(i)
+    }
+    coverFile.value = new File([u8arr], 'cover.png', { type: mime })
+    coverPreview.value = base64Data
+    showCoverSelector.value = false
+}
+
+function onCoverSelectorCancel() {
+    showCoverSelector.value = false
 }
 
 function removeVideo() {
@@ -199,6 +228,9 @@ onUnmounted(() => {
                         style="display: none"
                         @change="handleCoverSelect"
                     />
+                    <button type="button" class="capture-cover-btn" @click="triggerCoverSelector">
+                        🎞 从视频截取封面
+                    </button>
                 </div>
 
                 <div class="form-group">
@@ -242,6 +274,13 @@ onUnmounted(() => {
             <button @click="goHome" class="goHome-btn">返回首页</button>
         </div>
     </div>
+
+    <SelectVideoCover
+        v-if="showCoverSelector"
+        :video-file="videoFile"
+        @confirm="onCoverCaptured"
+        @cancel="onCoverSelectorCancel"
+    />
 </template>
 
 <style scoped>
@@ -430,6 +469,23 @@ onUnmounted(() => {
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+.capture-cover-btn {
+    margin-top: 8px;
+    padding: 6px 16px;
+    background: none;
+    border: 1px solid rgba(0, 174, 236, 0.5);
+    border-radius: 6px;
+    color: rgba(0, 174, 236, 1);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.capture-cover-btn:hover {
+    background: rgba(0, 174, 236, 0.06);
+    border-color: rgba(0, 174, 236, 1);
 }
 
 .error-message {

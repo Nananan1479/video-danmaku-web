@@ -19,6 +19,7 @@ public class VideoVO {
     private Long collectCount;
     private Long shareCount;
     private Long uploaderId;
+    private String uploaderName;
 //    private String createdAt;
     private String updatedAt;
 }

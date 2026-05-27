@@ -2,11 +2,13 @@ package com.cilicili.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cilicili.common.Result;
+import com.cilicili.entity.User;
 import com.cilicili.entity.Video;
 import com.cilicili.entity.vo.VideoVO;
+import com.cilicili.mapper.UserMapper;
 import com.cilicili.mapper.VideoMapper;
 import com.cilicili.service.VideoService;
-import com.cilicili.service.impl.VideoServiceImpl;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +25,7 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -31,6 +34,9 @@ public class VideoController {
 
     @Autowired
     private VideoMapper videoMapper;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Autowired
     private VideoService videoService;
@@ -98,6 +104,9 @@ public class VideoController {
         info.put("coverUrl", video.getCoverUrl());
         info.put("uploaderId", video.getUploaderId());
         info.put("createdAt", video.getCreatedAt());
+
+        User uploader = userMapper.selectById(video.getUploaderId());
+        info.put("uploaderName", uploader != null ? uploader.getUsername() : "");
 
         return ResponseEntity.ok(info);
     }
@@ -230,20 +239,46 @@ public class VideoController {
     }
 
     /**
-     * 通用分页转换（可抽成工具类）
+     * 将 Video 分页转为 VideoVO 分页，并批量填充上传者用户名。
      *
-     * @param entityPage
+     * 相比最初的纯 BeanUtils.copyProperties：
+     *   - 新增了根据 uploaderId 批量查 user 表的逻辑
+     *   - 将查询到的用户名写入 VideoVO.uploaderName
+     * 这样前端 VideoCard 可以直接显示作者名，而无需额外请求。
+     *
+     * @param entityPage Video 实体的分页对象
      *
      * @author Nananan1479
      * @date 2026/5/25 22:33
+     * @since 1.1 添加批量用户名填充
 
-     * @return com.baomidou.mybatisplus.extension.plugins.pagination.Page<com.cilicili.entity.vo.VideoVO>
+     * @return Page&lt;VideoVO&gt; 含用户名的 VO 分页
      */
     private Page<VideoVO> convertToVoPage(Page<Video> entityPage) {
         Page<VideoVO> voPage = new Page<>(entityPage.getCurrent(), entityPage.getSize(), entityPage.getTotal());
+
+        // 收集当前页所有视频的上传者ID，去重
+        Set<Long> uploaderIds = entityPage.getRecords().stream()
+                // ::getUploaderId 是 Video 实体的方法引用，用于获取上传者ID
+                .map(Video::getUploaderId)
+                .collect(Collectors.toSet());
+
+        // 批量查询用户表，构建 id -> username 映射（1次SQL）
+        Map<Integer, String> nameMap = new HashMap<>();
+        if (!uploaderIds.isEmpty()) {
+            List<User> users = userMapper.selectBatchIds(uploaderIds);
+            nameMap = users.stream()
+                    .collect(Collectors.toMap(User::getId, User::getUsername, (a, b) -> a));
+        }
+
+        // 逐一转换实体到VO，并填入对应的用户名
+        Map<Integer, String> finalNameMap = nameMap;
         List<VideoVO> voList = entityPage.getRecords().stream().map(video -> {
             VideoVO vo = new VideoVO();
             BeanUtils.copyProperties(video, vo);
+            vo.setUploaderName(video.getUploaderId() != null
+                    ? finalNameMap.getOrDefault(video.getUploaderId().intValue(), "")
+                    : "");
             return vo;
         }).collect(Collectors.toList());
         voPage.setRecords(voList);
