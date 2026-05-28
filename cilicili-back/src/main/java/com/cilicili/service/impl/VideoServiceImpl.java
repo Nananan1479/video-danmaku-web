@@ -199,7 +199,8 @@ public class VideoServiceImpl implements VideoService {
 
 
     /**
-     * 根据文件名，从服务器固定目录读取图片，并以 Resource 形式返回给浏览器。
+     * 根据文件名，从服务器固定目录读取图片，并以 Resource 形式返回给浏览器。<br>
+     * 若文件夹不存在，则会创建文件
      *
      * @param filename 封面名字（包含后缀）
      *
@@ -213,6 +214,8 @@ public class VideoServiceImpl implements VideoService {
         try {
             File file = new File(COVER_DIR, filename);
             if (!file.exists()) {
+                Path dir = Paths.get(COVER_DIR);
+                Files.createDirectories(dir);  // 自动创建所有不存在的父目录
                 return ResponseEntity.notFound().build();
             }
             Resource resource = new FileSystemResource(file);

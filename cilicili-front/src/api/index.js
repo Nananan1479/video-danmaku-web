@@ -98,6 +98,15 @@ export const getRecommendVideos = (params) => {
 }
 
 /**
+ * 获取视频页侧边栏相关推荐视频
+ * @param {*} params { pageNum, pageSize, currentVideoId }
+ * @returns 
+ */
+export const getRelatedVideos = (params) => {
+    return request.get('/api/videos/related', { params })
+}
+
+/**
  * 获取视频封面URL（通过视频ID直接获取图片）
  * @param {*} videoId
  * @returns {string}

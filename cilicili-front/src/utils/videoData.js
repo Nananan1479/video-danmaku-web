@@ -1,5 +1,5 @@
 
-import { getRecommendVideos, getVideoInfo } from '@/api/index'
+import { getRecommendVideos, getRelatedVideos, getVideoInfo } from '@/api/index'
 /**
  * 获取视频数据
  * @param {*} pageNum 页码
@@ -25,6 +25,32 @@ export const fetchVideos = async (pageNum, pageSize) => {
             total: 0
         }
     }
+}
+
+/**
+ * 获取视频页侧边栏相关推荐视频
+ * @param {*} currentVideoId 当前视频ID（排除此项）
+ * @param {*} pageSize 每页数量
+ * @returns {{ videos: Array, total: number }}
+ */
+export const fetchRelatedVideos = async (currentVideoId, pageSize) => {
+    if (!currentVideoId) return { videos: [], total: 0 }
+    try {
+        const res = await getRelatedVideos({
+            pageNum: 1,
+            pageSize: pageSize || 50,
+            currentVideoId
+        })
+        if (res.data.code === 200) {
+            return {
+                videos: res.data.data.records,
+                total: res.data.data.total
+            }
+        }
+    } catch (err) {
+        console.error('加载相关视频失败', err)
+    }
+    return { videos: [], total: 0 }
 }
 
 /**

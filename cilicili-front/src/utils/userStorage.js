@@ -1,6 +1,6 @@
 // 用户数据存储模块
 // 使用 localStorage 存储用户信息
-import { login } from '@/api/index.js'
+import { login, getUserById } from '@/api/index.js'
 import { register } from '../api/index.js'
 import { useStaticDataStore } from '@/stores/index.js'
 import { USER_STORAGE_KEY, USER_TOKEN_KEY } from "@/constants/userSettingConstants.js";
@@ -69,4 +69,29 @@ export const logoutUser = () => {
 // 检查用户是否已登录
 export const isLoggedIn = () => {
     return getCurrentUser() !== null
+}
+
+/**
+ * 根据用户ID从后端获取用户信息
+ * @param {*} id 用户ID
+ * @returns {Object} { username, nickname, avatar, signature, ... }
+ */
+export const fetchUserById = async (id) => {
+    if (!id) return null
+    try {
+        const res = await getUserById(id)
+        if (res.data) {
+            return {
+                id: res.data.id,
+                username: res.data.username,
+                nickname: res.data.nickname,
+                avatar: res.data.avatar,
+                signature: res.data.signature
+            }
+        }
+        return null
+    } catch (err) {
+        console.error('获取用户信息失败', err)
+        return null
+    }
 }
