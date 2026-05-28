@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { getCurrentUser } from '@/utils/userStorage'
 import { getAvatarUrl } from '@/api/index'
+import UserMenuPopover from './UserMenuPopover.vue'
 
 const router = useRouter();
 
@@ -50,9 +51,11 @@ const skipUpload = () => {
 
         <!-- 右侧：用户操作 -->
         <div class="navRight">
-            <div class="userAvatar" @click="skipLogin">
-                <img :src="avatarSrc" alt="头像" />
-            </div>
+            <UserMenuPopover :avatar-src="avatarSrc">
+                <div class="userAvatar" @click="skipLogin">
+                    <img :src="avatarSrc" alt="头像" />
+                </div>
+            </UserMenuPopover>
             <div class="userActions">
                 <div class="actionItem" @click="skipLogin">
                     <i class="icon iconVip"></i>大会员

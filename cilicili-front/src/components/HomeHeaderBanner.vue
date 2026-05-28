@@ -3,19 +3,18 @@ import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { getCurrentUser } from '@/utils/userStorage'
 import { getAvatarUrl } from '@/api/index'
+import UserMenuPopover from './UserMenuPopover.vue'
 
 const router = useRouter()
 
 // computed 创建一个基于现有响应式数据计算出来的值,它返回一个只读的 Ref 对象
 const currentUser = computed(() => getCurrentUser())
-console.log(currentUser.value)
 const avatarSrc = computed(() => {
     if (currentUser.value && currentUser.value.avatar) {
         return getAvatarUrl(currentUser.value.avatar)
     }
     return new URL('@/assets/images/Akalin.png', import.meta.url).href
 })
-console.log(avatarSrc.value)
 
 const navItems = [
     { label: '首页', icon: 'tv03', isHome: true },
@@ -82,9 +81,11 @@ function handleNavClick(item) {
 
             <!-- 右侧导航栏 -->
             <div class="headerBanner__right">
-                <div class="headerBanner__avatar" @click="skipLogin">
-                    <img :src="avatarSrc" alt="头像" />
-                </div>
+                <UserMenuPopover :avatar-src="avatarSrc">
+                    <div class="headerBanner__avatar" @click="skipLogin">
+                        <img :src="avatarSrc" alt="头像" />
+                    </div>
+                </UserMenuPopover>
                 <div class="headerBanner__actions">
                     <div
                         v-for="action in userActions"

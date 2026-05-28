@@ -1,32 +1,90 @@
 <script setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, computed, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { getVideoCoverUrlById, getAvatarUrl } from '@/api/index'
+import { fetchVideoInfo, fetchRelatedVideos, formatCount } from '@/utils/videoData'
+import { fetchUserById } from '@/utils/userStorage'
+
+const route = useRoute()
+const videoId = computed(() => Number(route.query.id) || null)
 
 const upUser = reactive({
-    name: '用户名',
-    signature: '个人签名',
+    name: '加载中...',
+    signature: '',
     fans: 0,
     avatar: ''
 })
 
-const recommendList = ref([
-    {
-        id: 1,
-        cover: '@/assets/images/6ff74a8f45317f579bb358521a0aa33a917bafb9.png',
-        title: '此…此视频无人能白嫖！',
-        uploader: '果冻lui',
-        date: '2020-06-25',
-        playCount: 0,
-        danmakuCount: 0
+async function loadUploader() {
+    if (!videoId.value) return
+    try {
+        const videoData = await fetchVideoInfo(videoId.value)
+        if (videoData && videoData.uploaderId) {
+            const user = await fetchUserById(videoData.uploaderId)
+            if (user) {
+                upUser.name = user.nickname || user.username || 'UP主'
+                upUser.signature = user.signature || ''
+                upUser.avatar = user.avatar || ''
+            }
+        }
+    } catch (err) {
+        console.error('加载UP主信息失败', err)
     }
-])
+}
+
+const avatarBackground = computed(() => {
+    const url = getAvatarUrl(upUser.avatar)
+    return url ? `url(${url})` : 'url(@/assets/images/Akalin.png)'
+})
+
+const recommendList = ref([])
+const relatedTotal = ref(0)
+const isExpanded = ref(false)
+
+const INITIAL_SHOW = 20
+
+const displayList = computed(() => {
+    if (isExpanded.value || recommendList.value.length <= INITIAL_SHOW) {
+        return recommendList.value
+    }
+    return recommendList.value.slice(0, INITIAL_SHOW)
+})
+
+const remainingCount = computed(() => {
+    return Math.max(0, recommendList.value.length - INITIAL_SHOW)
+})
+
+async function loadRelatedVideos() {
+    if (!videoId.value) return
+    try {
+        const result = await fetchRelatedVideos(videoId.value, 50)
+        if (result) {
+            recommendList.value = result.videos
+            relatedTotal.value = result.total
+        }
+    } catch (err) {
+        console.error('加载相关视频失败', err)
+    }
+}
+
+function toggleExpand() {
+    isExpanded.value = !isExpanded.value
+}
+
+watch(videoId, (newId) => {
+    if (newId) {
+        loadUploader()
+        loadRelatedVideos()
+        isExpanded.value = false
+    }
+}, { immediate: true })
 </script>
 
 <template>
     <aside class="video-sidebar">
         <!-- UP主信息 -->
         <div class="up-info">
-            <div class="up-avatar" :style="{ backgroundImage: `url(${getAvatarUrl(upUser.avatar) || '@/assets/images/Akalin.png'})` }"></div>
+            <div class="up-avatar" :style="{ backgroundImage: avatarBackground }"></div>
             <div class="up-detail">
                 <div class="up-name">{{ upUser.name }}</div>
                 <div class="up-sign">{{ upUser.signature }}</div>
@@ -47,21 +105,34 @@ const recommendList = ref([
 
         <!-- 推荐视频列表 -->
         <div class="recommend-list">
-            <div v-for="item in recommendList" :key="item.id" class="recommend-item">
+            <div v-for="item in displayList" :key="item.id" class="recommend-item">
                 <div class="rec-cover" :style="{ backgroundImage: `url(${getVideoCoverUrlById(item.id)})` }"></div>
                 <div class="rec-info">
                     <div class="rec-title">{{ item.title }}</div>
                     <div class="rec-meta">
-                        <!-- <span class="rec-uploader"> -->
-                            <i class="icon icon-up"></i>{{ item.uploader }}
-                        <!-- </span> -->
-                        <!-- <span class="rec-date">{{ item.date }}</span> -->
+                        <i class="icon icon-up"></i>{{ item.uploaderName || 'UP主' }}
                     </div>
                     <div class="rec-stats">
-                        <span><i class="icon icon-play-sm"></i>{{ item.playCount }}</span>
-                        <span><i class="icon icon-danmaku-sm"></i>{{ item.danmakuCount }}</span>
+                        <span><i class="icon icon-play-sm"></i>{{ formatCount(item.playCount) }}</span>
+                        <span><i class="icon icon-danmaku-sm"></i>{{ formatCount(item.danmakuCount) }}</span>
                     </div>
                 </div>
+            </div>
+
+            <div
+                v-if="remainingCount > 0 && !isExpanded"
+                class="expand-bar"
+                @click="toggleExpand"
+            >
+                展开更多 {{ remainingCount }} 条
+            </div>
+
+            <div
+                v-if="isExpanded && recommendList.length > INITIAL_SHOW"
+                class="expand-bar expand-bar--collapse"
+                @click="toggleExpand"
+            >
+                收起
             </div>
         </div>
     </aside>
@@ -206,6 +277,28 @@ const recommendList = ref([
     display: inline-flex;
     align-items: center;
     gap: 3px;
+}
+
+.expand-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    margin-top: 8px;
+    border-radius: 6px;
+    background: #f6f7f8;
+    color: #00AEEC;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.expand-bar:hover {
+    background: #e8edf0;
+}
+
+.expand-bar--collapse {
+    color: #9499a0;
 }
 
 /* 图标 */
