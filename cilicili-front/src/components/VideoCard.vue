@@ -26,7 +26,8 @@ function skipAuthorSpace(id) {
 }
 
 function skipVideo(video) {
-    router.push({ name: 'VideoPage', query: { id: video.id } })
+    const url = router.resolve({ name: 'VideoPage', query: { id: video.id } })
+    window.open(url.href, '_blank')
 }
 
 </script>

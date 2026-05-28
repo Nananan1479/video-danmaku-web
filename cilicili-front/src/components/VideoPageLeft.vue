@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, computed, watch, onMounted } from 'vue'
+import { ref, reactive, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute } from 'vue-router'
 import CustomPlayer from './VideoPage_CustomPlayer.vue'
 import { fetchVideoInfo, formatCount, formatDuration, formatDate } from '@/utils/videoData'
@@ -64,7 +64,17 @@ async function loadVideoData() {
 
 watch(videoId, (newId) => {
     if (newId) loadVideoData()
-}, { immediate: true })// 立即执行一次，确保初始加载时获取到视频数据
+}, { immediate: true })
+
+watch(() => video.title, (title) => {
+    if (title && title !== '加载中...') {
+        document.title = title + ' - CiliCili'
+    }
+})
+
+onBeforeUnmount(() => {
+    document.title = 'CiliCili'
+})
 
 // 弹幕状态
 const danmakuOn = ref(true)
