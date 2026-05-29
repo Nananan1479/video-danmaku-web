@@ -1,9 +1,11 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { getCurrentUser } from '@/utils/userStorage'
+import { getCurrentUser, skipLogin } from '@/utils/userStorage'
 import { getAvatarUrl } from '@/api/index'
 import UserMenuPopover from './UserMenuPopover.vue'
+import Login_default from '@/assets/images/Login_default_icon.svg'
+
 
 const router = useRouter()
 
@@ -13,7 +15,7 @@ const avatarSrc = computed(() => {
     if (currentUser.value && currentUser.value.avatar) {
         return getAvatarUrl(currentUser.value.avatar)
     }
-    return new URL('@/assets/images/Akalin.png', import.meta.url).href
+    return Login_default
 })
 
 const navItems = [
@@ -36,29 +38,21 @@ const userActions = [
     { label: '创作中心', icon: 'Idea' }
 ]
 
-function skipLogin() {
-    router.push('/login')
+function handleSkipLogin() {
+    skipLogin(router)
 }
 
 function skipHome() {
     router.push('/home')
 }
 
-function skipUpload() {
-    router.push('/upload')
-}
-
-function handleNavClick(item) {
-    if (item.isHome) {
-        skipHome()
-    }
-}
 </script>
 
 <template>
-    <div class="headerBanner">
+    <!-- <div class="headerBanner"> -->
         <div class="headerBanner__inner">
             <!-- 左侧导航栏 -->
+             <!-- TODO: 导航栏文字设置动画效果 -->
             <div class="headerBanner__left">
                 <div class="headerBanner__nav-item headerBanner__nav-item--home" @click="skipHome">
                     <span class="headerBanner__home-icon"></span>
@@ -82,7 +76,7 @@ function handleNavClick(item) {
             <!-- 右侧导航栏 -->
             <div class="headerBanner__right">
                 <UserMenuPopover :avatar-src="avatarSrc">
-                    <div class="headerBanner__avatar" @click="skipLogin">
+                    <div class="headerBanner__avatar" @click="handleSkipLogin">
                         <img :src="avatarSrc" alt="头像" />
                     </div>
                 </UserMenuPopover>
@@ -91,19 +85,19 @@ function handleNavClick(item) {
                         v-for="action in userActions"
                         :key="action.label"
                         class="headerBanner__action"
-                        @click="skipLogin"
+                        @click="handleSkipLogin"
                     >
                         <span class="headerBanner__action-icon" :class="`headerBanner__action-icon--${action.icon}`"></span>
                         <span class="headerBanner__action-label">{{ action.label }}</span>
                     </div>
                 </div>
-                <button class="headerBanner__upload-btn" @click="skipUpload">
+                <button class="headerBanner__upload-btn" @click="handleSkipLogin">
                     <span class="headerBanner__upload-icon"></span>
                     投稿
                 </button>
             </div>
         </div>
-    </div>
+    <!-- </div> -->
 </template>
 
 <style scoped>
@@ -213,6 +207,7 @@ function handleNavClick(item) {
 .headerBanner__avatar {
     width: 38px;
     height: 38px;
+    background-color: #c7c8ca;
     border-radius: 50%;
     overflow: hidden;
 }

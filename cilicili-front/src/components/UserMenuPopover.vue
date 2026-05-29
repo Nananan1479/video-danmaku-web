@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { getCurrentUser, logoutUser } from '@/utils/userStorage'
 import { getAvatarUrl } from '@/api/index'
@@ -12,10 +12,32 @@ const props = defineProps({
 })
 
 const router = useRouter()
-// 原本为false
-const isVisible = ref(true)
+const wrapRef = ref(null)
+const isVisible = ref(false)
+const popoverStyle = ref({})
 let showTimer = null
 let hideTimer = null
+
+function updatePosition() {
+    if (!wrapRef.value) return
+    const rect = wrapRef.value.getBoundingClientRect()
+    popoverStyle.value = {
+        position: 'fixed',
+        top: rect.bottom + 10 + 'px',
+        left: rect.left + rect.width / 2 + 'px',
+        marginLeft: '-130px'
+    }
+}
+
+onMounted(() => {
+    window.addEventListener('scroll', updatePosition, true)
+    window.addEventListener('resize', updatePosition)
+})
+
+onBeforeUnmount(() => {
+    window.removeEventListener('scroll', updatePosition, true)
+    window.removeEventListener('resize', updatePosition)
+})
 
 const user = computed(() => getCurrentUser())
 
@@ -37,6 +59,7 @@ const bigAvatarSrc = computed(() => {
 function onMouseEnter() {
     if (!user.value) return
     clearTimeout(hideTimer)
+    updatePosition()
     showTimer = setTimeout(() => {
         isVisible.value = true
     }, 200)
@@ -46,7 +69,7 @@ function onMouseLeave() {
     clearTimeout(showTimer)
     hideTimer = setTimeout(() => {
         // 原本为false
-        isVisible.value = true
+        isVisible.value = false
     }, 150)
 }
 
@@ -73,77 +96,81 @@ function handleLogout() {
 
 <template>
     <div
+        ref="wrapRef"
         class="user-avatar-wrap"
         @mouseenter="onMouseEnter"
         @mouseleave="onMouseLeave"
     >
         <slot />
 
-        <Transition name="popover">
-            <div
-                v-if="isVisible"
-                class="user-popover"
-                @mouseenter="onPopoverEnter"
-                @mouseleave="onPopoverLeave"
-            >
+        <Teleport to="body">
+            <Transition name="popover">
+                <div
+                    v-if="isVisible"
+                    class="user-popover"
+                    :style="popoverStyle"
+                    @mouseenter="onPopoverEnter"
+                    @mouseleave="onPopoverLeave"
+                >
                 <!-- <div class="user-popover__arrow"></div> -->
 
-                <div class="user-popover__header">
-                    <div class="user-popover__avatar">
-                        <img :src="bigAvatarSrc" alt="" />
+                    <div class="user-popover__header">
+                        <div class="user-popover__avatar">
+                            <img :src="bigAvatarSrc" alt="" />
+                        </div>
+                        <div class="user-popover__info">
+                            <div class="user-popover__name">{{ displayName }}</div>
+                            <div class="user-popover__uid">
+                                UID: {{ user?.id || '---' }}
+                            </div>
+                        </div>
                     </div>
-                    <div class="user-popover__info">
-                        <div class="user-popover__name">{{ displayName }}</div>
-                        <div class="user-popover__uid">
-                            UID: {{ user?.id || '---' }}
+
+                    <div class="user-popover__signature">{{ signature }}</div>
+
+                    <div class="user-popover__stats">
+                        <div class="user-popover__stat">
+                            <span class="user-popover__stat-num">0</span>
+                            <span class="user-popover__stat-label">粉丝</span>
+                        </div>
+                        <div class="user-popover__stat">
+                            <span class="user-popover__stat-num">0</span>
+                            <span class="user-popover__stat-label">关注</span>
+                        </div>
+                        <div class="user-popover__stat">
+                            <span class="user-popover__stat-num">0</span>
+                            <span class="user-popover__stat-label">获赞</span>
+                        </div>
+                    </div>
+
+                    <div class="user-popover__menu">
+                        <div class="user-popover__menu-item" @click="goToUserCenter">
+                            <span class="user-popover__menu-icon">👤</span>
+                            <span>个人中心</span>
+                        </div>
+                        <div class="user-popover__menu-item">
+                            <span class="user-popover__menu-icon">📺</span>
+                            <span>我的视频</span>
+                        </div>
+                        <div class="user-popover__menu-item">
+                            <span class="user-popover__menu-icon">📋</span>
+                            <span>稍后再看</span>
+                        </div>
+                        <div class="user-popover__menu-item">
+                            <span class="user-popover__menu-icon">⚙</span>
+                            <span>设置</span>
+                        </div>
+                        <div
+                            class="user-popover__menu-item user-popover__menu-item--logout"
+                            @click="handleLogout"
+                        >
+                            <span class="user-popover__menu-icon">🚪</span>
+                            <span>退出登录</span>
                         </div>
                     </div>
                 </div>
-
-                <div class="user-popover__signature">{{ signature }}</div>
-
-                <div class="user-popover__stats">
-                    <div class="user-popover__stat">
-                        <span class="user-popover__stat-num">0</span>
-                        <span class="user-popover__stat-label">粉丝</span>
-                    </div>
-                    <div class="user-popover__stat">
-                        <span class="user-popover__stat-num">0</span>
-                        <span class="user-popover__stat-label">关注</span>
-                    </div>
-                    <div class="user-popover__stat">
-                        <span class="user-popover__stat-num">0</span>
-                        <span class="user-popover__stat-label">获赞</span>
-                    </div>
-                </div>
-
-                <div class="user-popover__menu">
-                    <div class="user-popover__menu-item" @click="goToUserCenter">
-                        <span class="user-popover__menu-icon">👤</span>
-                        <span>个人中心</span>
-                    </div>
-                    <div class="user-popover__menu-item">
-                        <span class="user-popover__menu-icon">📺</span>
-                        <span>我的视频</span>
-                    </div>
-                    <div class="user-popover__menu-item">
-                        <span class="user-popover__menu-icon">📋</span>
-                        <span>稍后再看</span>
-                    </div>
-                    <div class="user-popover__menu-item">
-                        <span class="user-popover__menu-icon">⚙</span>
-                        <span>设置</span>
-                    </div>
-                    <div
-                        class="user-popover__menu-item user-popover__menu-item--logout"
-                        @click="handleLogout"
-                    >
-                        <span class="user-popover__menu-icon">🚪</span>
-                        <span>退出登录</span>
-                    </div>
-                </div>
-            </div>
-        </Transition>
+            </Transition>
+        </Teleport>
     </div>
 </template>
 
@@ -152,30 +179,16 @@ function handleLogout() {
     position: relative;
     display: inline-flex;
 }
+</style>
 
+<style>
 .user-popover {
-    position: absolute;
-    top: calc(100% + 10px);
-    left: 50%;
-    transform: translateX(-50%);
     width: 260px;
     background: #fff;
     border-radius: 12px;
     box-shadow: 0 8px 36px rgba(0, 0, 0, 0.15);
     padding: 18px 20px 12px;
-    z-index: 1100;
-}
-
-.user-popover__arrow {
-    position: absolute;
-    top: -6px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 12px;
-    height: 12px;
-    background: #fff;
-    rotate: 45deg;
-    box-shadow: -2px -2px 4px rgba(0, 0, 0, 0.04);
+    z-index: 9999;
 }
 
 .user-popover__header {
@@ -297,11 +310,11 @@ function handleLogout() {
 
 .popover-enter-from {
     opacity: 0;
-    transform: translateX(-50%) translateY(-4px);
+    transform: translateY(-4px);
 }
 
 .popover-leave-to {
     opacity: 0;
-    transform: translateX(-50%) translateY(-4px);
+    transform: translateY(-4px);
 }
 </style>

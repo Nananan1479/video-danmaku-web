@@ -1,9 +1,10 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { getCurrentUser } from '@/utils/userStorage'
+import { getCurrentUser, skipLogin } from '@/utils/userStorage'
 import { getAvatarUrl } from '@/api/index'
 import UserMenuPopover from './UserMenuPopover.vue'
+import Login_default from '@/assets/images/Login_default_icon.svg'
 
 const router = useRouter();
 
@@ -12,12 +13,13 @@ const avatarSrc = computed(() => {
     if (currentUser.value && currentUser.value.avatar) {
         return getAvatarUrl(currentUser.value.avatar)
     }
-    return new URL('@/assets/images/Akalin.png', import.meta.url).href
+    return Login_default
 })
 
-const skipLogin = () => {
-    router.push('/login');
+function handleSkipLogin() {
+    skipLogin(router)
 }
+
 const skipHome = () => {
     router.push('/home');
 }
@@ -52,12 +54,12 @@ const skipUpload = () => {
         <!-- 右侧：用户操作 -->
         <div class="navRight">
             <UserMenuPopover :avatar-src="avatarSrc">
-                <div class="userAvatar" @click="skipLogin">
+                <div class="userAvatar" @click="handleSkipLogin">
                     <img :src="avatarSrc" alt="头像" />
                 </div>
             </UserMenuPopover>
             <div class="userActions">
-                <div class="actionItem" @click="skipLogin">
+                <div class="actionItem" @click="handleSkipLogin">
                     <i class="icon iconVip"></i>大会员
                 </div>
                 <span class="actionItem">

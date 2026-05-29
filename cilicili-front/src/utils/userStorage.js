@@ -26,6 +26,7 @@ export const registerUser = (userData) => {
     if (!phoneRegex.test(userData.phone)) {
         return Promise.resolve({ success: false, message: '请输入正确的手机号' });
     }
+    // TODO 此处需加密密码，避免明文存储密码
     return register(userData.username, userData.phone, userData.password).then(res => {
         // console.log(res)
         if (res.data.code == 200) {
@@ -58,6 +59,17 @@ export const loginUser = (username, password) => {
 export const getCurrentUser = () => {
     const user = localStorage.getItem(USER_STORAGE_KEY)
     return user ? JSON.parse(user) : null
+}
+
+export const getCurrentUserByToken = () => {
+    
+    const token = localStorage.getItem(USER_TOKEN_KEY)
+    if (!token) {
+        console.log('获取用户token失败')
+        return null
+    }
+    return JSON.parse(atob(token.split('.')[1]))
+
 }
 
 // 用户登出
@@ -93,5 +105,13 @@ export const fetchUserById = async (id) => {
     } catch (err) {
         console.error('获取用户信息失败', err)
         return null
+    }
+}
+
+export const skipLogin = (router) => {
+    if (isLoggedIn()) {
+        router.push('/userSpace')
+    } else {
+        router.push('/login')
     }
 }

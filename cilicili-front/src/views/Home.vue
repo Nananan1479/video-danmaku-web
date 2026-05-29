@@ -25,7 +25,9 @@ onUnmounted(() => {
         <div class="home-page__content">
             <FloatBanner v-show="isShow" />
             <div class="home-page__inner">
-                <HomeHeaderBanner />
+                <div class="headerBanner">
+                    <HomeHeaderBanner />
+                </div>
                 <HomeCenterBanner />
                 <HomeMain />
             </div>
@@ -53,6 +55,19 @@ onUnmounted(() => {
     flex-direction: column;
     align-items: center;
     background-color: #fff;
+}
+
+.headerBanner {
+    width: 100%;
+    height: 156px;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url(@/assets/images/73a22f6747cbf58a20f68484ef95224a79feeb2b.png);
 }
 
 .home-page__inner {

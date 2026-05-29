@@ -111,6 +111,7 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
+        user.setAvatar("D:\\CiliCili\\Avatars\\Akalin.webp");
         user.setPhone(phone);
         user.setNickname(username);
         user.setStatus((byte) 1);

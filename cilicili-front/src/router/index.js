@@ -38,6 +38,12 @@ const routes = [
         name: "Upload",
         component: () => import("@/views/Upload.vue"),
         meta: { requiresAuth: true }
+    },
+    {
+        path: "/userSpace",
+        name: "UserSpace",
+        component: () => import("@/views/UserSpace.vue"),
+        meta: { requiresAuth: true }
     }
 ];
 

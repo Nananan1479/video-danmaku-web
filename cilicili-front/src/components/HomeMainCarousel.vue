@@ -112,7 +112,8 @@ import Carousel2 from '@/assets/images/Carousel2.png'
                                 class="carouselDot"
                                 :class="{ 'carouselDot--active': dotIndex === currentIndex }"
                                 @click="goTo(dotIndex)"
-                            ></span>
+                            >
+                            </span>
                         </div>
                     </div>
                     <div class="carouselArrow">
@@ -258,16 +259,17 @@ import Carousel2 from '@/assets/images/Carousel2.png'
 .carouselDots {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
     padding-left: 5px;
     flex-shrink: 0;
 }
 
 .carouselDot {
-    width: 12px;
-    height: 12px;
+    width: 20px;
+    height: 20px;
     background-image: url(@/assets/images/CarouselDot.png);
-    background-size: 100% 100%;
+    background-size: 70% 70%;
+    background-position: center;
     background-repeat: no-repeat;
     cursor: pointer;
     transition: transform 0.2s ease;
@@ -275,8 +277,8 @@ import Carousel2 from '@/assets/images/Carousel2.png'
 }
 
 .carouselDot--active {
-    width: 20px;
-    height: 20px;
+    background-size: 100% 100%;
+    background-position: center;
 }
 
 .carouselArrow {
