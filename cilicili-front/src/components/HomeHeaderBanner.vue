@@ -137,6 +137,16 @@ function skipHome() {
     cursor: pointer;
 }
 
+.headerBanner__nav-item:hover {
+    animation: navBounce 0.3s ease;
+}
+
+@keyframes navBounce {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+    100% { transform: translateY(0); }
+}
+
 .headerBanner__nav-item--home {
     width: 55px;
     height: 24px;
@@ -154,7 +164,7 @@ function skipHome() {
 
 .headerBanner__nav-label {
     font-size: 14px;
-    font-family: "Noto Sans SC-Medium", sans-serif;
+    /* font-family: "Noto Sans SC-Medium", sans-serif; */
     font-weight: 500;
     color: #fff;
     white-space: nowrap;
@@ -229,6 +239,10 @@ function skipHome() {
     flex-direction: column;
     align-items: center;
     cursor: pointer;
+}
+
+.headerBanner__action:hover .headerBanner__action-icon {
+    animation: navBounce 0.3s ease;
 }
 
 .headerBanner__action-icon {

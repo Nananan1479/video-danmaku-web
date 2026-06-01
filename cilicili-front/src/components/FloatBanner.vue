@@ -33,7 +33,7 @@ const skipUpload = () => {
         <!-- 左侧：Logo + 导航菜单 -->
         <nav class="navLeft">
             <a href="#" class="logo" @click="skipHome">CiliCili</a>
-            <a href="#" class="navItem" @click="skipHome">首页</a>
+            <a href="#" class="navItem" @click="skipHome"><span>首页</span></a>
             <a href="#" class="navItem">番剧</a>
             <a href="#" class="navItem">直播</a>
             <a href="#" class="navItem">游戏中心</a>
@@ -114,7 +114,7 @@ const skipUpload = () => {
 .logo {
     width: 95px;
     height: 40px;
-    font-size: 30px;
+    font-size: 28px;
     font-weight: 600;
     line-height: 43px;
     color: #00AEEC;
@@ -124,12 +124,19 @@ const skipUpload = () => {
 .navItem {
     font-size: 14px;
     font-weight: 500;
-    color: #444;
+    color: #000000;
     text-decoration: none;
     white-space: nowrap;
+    transition: color 0.15s ease;
 }
 .navItem:hover {
-    color: #00a1d6;
+    animation: navBounce 0.3s ease;
+}
+
+@keyframes navBounce {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+    100% { transform: translateY(0); }
 }
 .download {
     display: inline-flex;
@@ -184,8 +191,11 @@ const skipUpload = () => {
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* gap: 4px; */
     cursor: pointer;
+}
+
+.actionItem:hover .icon {
+    animation: navBounce 0.3s ease;
 }
 .uploadBtn {
     display: inline-flex;
@@ -205,8 +215,8 @@ const skipUpload = () => {
 /* 图标占位 */
 .icon {
     display: inline-block;
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
