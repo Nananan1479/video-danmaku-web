@@ -28,10 +28,27 @@ public class JwtInterceptor implements HandlerInterceptor {
      * @return boolean
      */
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request,
+                             HttpServletResponse response,
+                             Object handler) throws Exception {
 //        System.out.println("request"+request.toString());
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
             return true;
+        }
+
+        String path = request.getRequestURI();
+        String method = request.getMethod();
+
+        // 放行公开的视频接口（GET 请求，且路径匹配 /api/videos/*）
+        if (path.startsWith("/api/videos/")) {
+            // 获取视频流：GET /api/videos/{id}
+            // 获取视频信息：GET /api/videos/{id}/info
+            // 获取封面：GET /api/videos/cover/**
+            // 推荐列表：GET /api/videos/recommend 等
+            if ("GET".equalsIgnoreCase(method) && !path.endsWith("/upload")) {
+                return true;
+            }
+            // 上传视频：POST /api/videos/upload 需要验证
         }
 
         // 从请求头获取 Authorization 字段（以Bearer为开头）。

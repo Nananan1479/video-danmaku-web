@@ -1,11 +1,12 @@
 <script setup>
 import { reactive, ref, computed, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { getVideoCoverUrlById, getAvatarUrl } from '@/api/index'
 import { fetchVideoInfo, fetchRelatedVideos, formatCount } from '@/utils/videoData'
 import { fetchUserById } from '@/utils/userStorage'
 
 const route = useRoute()
+const router = useRouter()
 const videoId = computed(() => Number(route.query.id) || null)
 
 const upUser = reactive({
@@ -44,13 +45,57 @@ const isExpanded = ref(false)
 // 推荐的视频初始显示20条
 const INITIAL_SHOW = 20
 
-const displayList = computed(() => {
+// 侧边栏默认推荐视频
+let displayList = ref([
+    {
+        id: 1,
+        title: '推荐视频1',
+        cover: '',
+        views: 0,
+        comments: 0,
+        likes: 0
+    },
+    {
+        id: 2,
+        title: '推荐视频2',
+        cover: '',
+        views: 0,
+        comments: 0,
+        likes: 0
+    },
+    {
+        id: 3,
+        title: '推荐视频3',
+        cover: '',
+        views: 0,
+        comments: 0,
+        likes: 0
+    },
+    {
+        id: 4,
+        title: '推荐视频4',
+        cover: '',
+        views: 0,
+        comments: 0,
+        likes: 0
+    },
+    {
+        id: 5,
+        title: '推荐视频5',
+        cover: '',
+        views: 0,
+        comments: 0,
+        likes: 0
+    },
+   ])
+displayList = computed(() => {
     if (isExpanded.value || recommendList.value.length <= INITIAL_SHOW) {
         return recommendList.value
     }
     return recommendList.value.slice(0, INITIAL_SHOW)
 })
 
+// 侧边栏推荐视频剩余数量（点击展开后显示）
 const remainingCount = computed(() => {
     return Math.max(0, recommendList.value.length - INITIAL_SHOW)
 })
@@ -70,6 +115,14 @@ async function loadRelatedVideos() {
 
 function toggleExpand() {
     isExpanded.value = !isExpanded.value
+}
+
+function skipVideo(videoId) {
+    router.push({ name: 'VideoPage', query: { id: videoId } })
+}
+
+function skipAuthorSpace(uploaderId) {
+    router.push('/userSpace')
 }
 
 watch(videoId, (newId) => {
@@ -107,11 +160,14 @@ watch(videoId, (newId) => {
         <!-- 推荐视频列表 -->
         <div class="recommend-list">
             <div v-for="item in displayList" :key="item.id" class="recommend-item">
+                <!-- 视频封面 -->
                 <div class="rec-cover" :style="{ backgroundImage: `url(${getVideoCoverUrlById(item.id)})` }"></div>
+                <!-- 视频信息 -->
                 <div class="rec-info">
-                    <div class="rec-title">{{ item.title }}</div>
+                    <a class="rec-title" @click="skipVideo(item.id)">{{ item.title }}</a>
                     <div class="rec-meta">
-                        <i class="icon icon-up"></i>{{ item.uploaderName || 'UP主' }}
+                        <i class="icon icon-up"></i>
+                        <a class="rec-uploader-name" @click="skipAuthorSpace(item.uploaderId)">{{ item.uploaderName || 'UP主' }}</a>
                     </div>
                     <div class="rec-stats">
                         <span><i class="icon icon-play-sm"></i>{{ formatCount(item.playCount) }}</span>
@@ -253,6 +309,13 @@ watch(videoId, (newId) => {
     overflow: hidden;
     flex-shrink: 1;
     min-height: 0;
+    text-decoration: none;
+    transition: color 0.2s linear;
+    cursor: pointer;
+}
+
+.rec-title:hover {
+    color: rgba(0, 174, 236, 1);
 }
 .rec-meta {
     height: 22px;
@@ -260,12 +323,22 @@ watch(videoId, (newId) => {
     align-items: center;
     gap: 4px;
     font-size: 13px;
-    -webkit-line-clamp: 2;
     color: #9499a0;
     flex-shrink: 0;
 }
 .rec-uploader {
     font-size: 13px;
+}
+
+.rec-uploader-name {
+    color: #9499a0;
+    text-decoration: none;
+    transition: color 0.2s linear;
+    cursor: pointer;
+}
+
+.rec-uploader-name:hover {
+    color: rgba(0, 174, 236, 1);
 }
 .rec-stats {
     height: 22px;

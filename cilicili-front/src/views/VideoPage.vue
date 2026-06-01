@@ -10,8 +10,8 @@ import VideoPageRight from '../components/VideoPageRight.vue'
     <div class="scroll-container">
         <div class="video-page">
             <div class="video-page-content">
-                <VideoPageLeft />
-                <VideoPageRight />
+                <VideoPageLeft class="video-page-left" />
+                <VideoPageRight class="video-page-right" />
             </div>
         </div>
     </div>
@@ -35,13 +35,22 @@ import VideoPageRight from '../components/VideoPageRight.vue'
     }
 
     .video-page-content {
+        width: 100%;
         display: flex;
         justify-content: center;
         background-color: #fff;
         gap: 30px;
-        max-width: 1500px;
+        /* max-width: 1500px; */
         padding: 26px 61px;
         min-height: 1200px; /* 确保内容足够长以显示滚动条 */
+    }
+
+    .video-page-left {
+        width: 70%;
+    }
+
+    .video-page-right {
+        width: 30%;
     }
 
     /* 响应式：窄屏时左右堆叠 */
@@ -49,6 +58,22 @@ import VideoPageRight from '../components/VideoPageRight.vue'
         .video-page-content {
             flex-direction: column;
             align-items: center;
+        }
+    }
+
+    @media (max-width: 1500px) {
+        .video-page-content {
+            padding: 26px 61px;
+        }
+    }
+    @media (min-width: 1500px) and (max-width: 1800px) {
+        .video-page-content {
+            padding: 26px 151px;
+        }
+    }
+    @media (min-width: 1800px) and (max-width: 2000px) {
+        .video-page-content {
+            padding: 26px 201px;
         }
     }
 </style>

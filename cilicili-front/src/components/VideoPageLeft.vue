@@ -515,8 +515,8 @@ const submitComment = () => {
 /* 通用图标 */
 .icon {
     display: inline-block;
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;

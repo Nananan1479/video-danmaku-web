@@ -73,7 +73,7 @@ public class VideoController {
     }
 
     /**
-     * 根据Url中的id返回标题、时长、播放量等元数据
+     * 根据Url中的id返回标题、时长、播放量等元数据，用于视频详情页的视频数据
      *
 
      * @param id
@@ -173,7 +173,7 @@ public class VideoController {
     }
 
     /**
-     * 根据Id返回用户头像
+     * 根据Id返回视频封面
      *
      * @param id
      *
@@ -194,7 +194,7 @@ public class VideoController {
     }
 
     /**
-     * 发送给前端首页推荐视频（分页）
+     * 首页推荐视频（分页）
      *
      * @param pageNum 第几页
      * @param pageSize 该页需要的数据多少
@@ -225,7 +225,7 @@ public class VideoController {
      * @author Nananan1479
      * @date 2026/5/25 22:32
 
-     * @return com.cilicili.common.Result<com.baomidou.mybatisplus.extension.plugins.pagination.Page < com.cilicili.entity.vo.VideoVO>>
+     * @return com.cilicili.common.Result<com.baomidou.mybatisplus.extension.plugins.pagination.Page < com.cilicili.entity.vo.VideoVO>> VideoVO
      */
     @GetMapping("/related")
     public Result<Page<VideoVO>> getRelatedVideos(
