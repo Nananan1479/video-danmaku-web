@@ -92,6 +92,8 @@ export const fetchUserById = async (id) => {
     if (!id) return null
     try {
         const res = await getUserById(id)
+        console.log(res)
+        
         if (res.data) {
             return {
                 id: res.data.id,

@@ -66,9 +66,9 @@ instance.interceptors.response.use(
             localStorage.removeItem(USER_STORAGE_KEY)
 
             // 跳转登录（避免重复跳转）
-            if (router.currentRoute.value.path !== '/login') {
-                router.push('/login')
-            }
+            // if (router.currentRoute.value.path !== '/login') {
+            //     router.push('/login')
+            // }
 
             // 返回一个 resolved promise，终止错误传播
             return Promise.resolve()

@@ -47,6 +47,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/api/**")
                 // 放行的路径（白名单）
                 .excludePathPatterns(
+                        "/api/users/getById/{id}",
                         "/api/users/login",
                         "/api/users/register",
                         "/api/users/avatar/**",

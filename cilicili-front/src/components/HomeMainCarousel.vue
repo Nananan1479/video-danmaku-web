@@ -90,10 +90,6 @@ import Carousel2 from '@/assets/images/Carousel2.png'
                     class="carouselImg"
                     :src="slide.Image"
                     alt="轮播图图片">
-                <!-- <div class="carousel__event">
-                    <h2 class="carousel__event-title">{{ slide.eventTitle }}</h2>
-                    <p class="carousel__event-sub">{{ slide.eventTitle }}</p>
-                </div> -->
                 <div
                     class="carouselOverlay"
                     :style="{background: slide.TitleBg}"
@@ -169,32 +165,6 @@ import Carousel2 from '@/assets/images/Carousel2.png'
     height: auto;
     object-fit: cover;
 }
-
-/* .carousel__event {
-    position: absolute;
-    left: 28px;
-    top: 50%;
-    transform: translateY(calc(-50% - 30px));
-    z-index: 2;
-}
-
-.carousel__event-title {
-    font-size: 28px;
-    font-family: "Noto Sans SC-Bold", "PingFang SC", sans-serif;
-    font-weight: 700;
-    color: #fff;
-    margin: 0 0 8px;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-}
-
-.carousel__event-sub {
-    font-size: 16px;
-    font-family: "Noto Sans SC-Regular", sans-serif;
-    font-weight: 400;
-    color: rgba(255, 255, 255, 0.9);
-    margin: 0;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-} */
 
 .carouselOverlay {
     position: absolute;

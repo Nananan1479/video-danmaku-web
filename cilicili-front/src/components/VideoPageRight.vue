@@ -9,7 +9,7 @@ const route = useRoute()
 const videoId = computed(() => Number(route.query.id) || null)
 
 const upUser = reactive({
-    name: '加载中...',
+    name: '---',
     signature: '',
     fans: 0,
     avatar: ''
@@ -41,6 +41,7 @@ const recommendList = ref([])
 const relatedTotal = ref(0)
 const isExpanded = ref(false)
 
+// 推荐的视频初始显示20条
 const INITIAL_SHOW = 20
 
 const displayList = computed(() => {
@@ -148,13 +149,14 @@ watch(videoId, (newId) => {
 .up-info {
     display: flex;
     gap: 16px;
-    margin-bottom: 16px;
+    margin-bottom: 17px;
 }
 .up-avatar {
     width: 54px;
     height: 54px;
     border-radius: 50%;
-    background: url(@/assets/images/Akalin.png) center/cover;
+    background: center/cover;
+    background-color: #f1f2f3;
 }
 .up-detail {
     flex: 1;

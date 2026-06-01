@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 public interface UserService  {
-    public User getUserById(int id);
+    public User getUserById(long id);
     public Result<User> login(String username, String password);
     public Result<User> register(String username, String phone, String password);
     String uploadAvatar(MultipartFile file, int userId);

@@ -2,8 +2,10 @@ package com.cilicili.controller;
 
 import com.cilicili.common.Result;
 import com.cilicili.entity.User;
+import com.cilicili.entity.vo.UserVO;
 import com.cilicili.service.UserService;
 import com.cilicili.util.JwtUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +27,11 @@ public class UserController {
     private JwtUtil jwtUtil;
 
     @PostMapping("getById/{id}")
-    public User getUserById(@PathVariable int id) {
-        return userService.getUserById(id);
+    public UserVO getUserById(@PathVariable long id) {
+        UserVO userVO = new UserVO();
+        // 将User类里的值传给UserVO
+        BeanUtils.copyProperties(userService.getUserById(id),userVO);
+        return userVO;
     }
 
     @PostMapping("login")

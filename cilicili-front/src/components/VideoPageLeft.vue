@@ -236,7 +236,7 @@ const submitComment = () => {
     font-weight: 500;
     color: #18191c;
     margin: 0 0 10px;
-    line-height: 1.3;
+    /* line-height: 1.3; */
 }
 .meta-info {
     display: flex;
