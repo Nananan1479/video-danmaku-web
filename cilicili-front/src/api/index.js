@@ -143,3 +143,29 @@ export function uploadAvatar(formData) {
         data: formData
     })
 }
+
+//================= 弹幕相关接口 =================================
+/**
+ * 发送弹幕
+ * @param {*} data 
+ * @returns 
+ */
+export function sendDanmakuHTTP(data) {
+    return request({
+        url: '/api/danmaku/send',
+        method: 'POST',
+        data
+    })
+}
+
+/**
+ * 获取视频弹幕
+ * @param {*} videoId 
+ * @returns 
+ */
+export function fetchDanmakuByVideoId(videoId) {
+    return request({
+        url: `/api/danmaku/${videoId}`,
+        method: 'GET'
+    })
+}

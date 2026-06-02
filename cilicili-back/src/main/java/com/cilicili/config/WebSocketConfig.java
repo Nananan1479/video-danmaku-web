@@ -46,8 +46,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
      */
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
+        registry.addEndpoint("/ws-native")
+                .setAllowedOriginPatterns("*");
         registry.addEndpoint("/ws")
-                .setAllowedOriginPatterns("*")   // 允许跨域
-                .withSockJS();                   // 兼容不支持 WebSocket 的浏览器
+                .setAllowedOriginPatterns("*")
+                .withSockJS();
     }
 }

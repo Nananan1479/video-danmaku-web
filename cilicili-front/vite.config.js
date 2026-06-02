@@ -6,7 +6,7 @@ import { fileURLToPath, URL } from 'node:url'
 export default defineConfig({
     plugins: [vue()],
     define:{
-        __VUE_PROD_HYDRATION_MISMATCH_DETAILS__:'true'
+        __VUE_PROD_HYDRATION_MISMATCH_DETAILS__:'true',
     },
     server:{
         //服务器端口号

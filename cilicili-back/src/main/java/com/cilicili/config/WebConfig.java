@@ -51,7 +51,8 @@ public class WebConfig implements WebMvcConfigurer {
                         "/api/users/login",
                         "/api/users/register",
                         "/api/users/avatar/**",
-                        "/ws/**", // WebSocket握手请求
+                        "/api/danmaku/**",
+                        "/ws/**",
                         "/topic/**",
                         "/app/**"
                 );

@@ -2,6 +2,9 @@ package com.cilicili.service;
 
 import com.cilicili.entity.Danmaku;
 
+import java.util.List;
+
 public interface DanmakuService {
-    public Danmaku saveDanmaku(Danmaku danmaku);
+    Danmaku saveDanmaku(Danmaku danmaku);
+    List<Danmaku> getDanmakuByVideoId(Long videoId);
 }

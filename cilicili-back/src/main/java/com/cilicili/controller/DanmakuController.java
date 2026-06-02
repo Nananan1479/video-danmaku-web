@@ -5,12 +5,10 @@ import com.cilicili.entity.Danmaku;
 import com.cilicili.entity.dto.DanmakuSendDTO;
 import com.cilicili.service.DanmakuService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/danmaku")
@@ -34,6 +32,12 @@ public class DanmakuController {
         danmaku.setMode(dto.getMode());
         danmaku.setFontSize(dto.getFontSize());
         danmakuService.saveDanmaku(danmaku);
-        return Result.success(Result.RESULT_OK,danmaku); // 返回完整弹幕对象（含生成id）
+        return Result.success(Result.RESULT_OK,danmaku);
+    }
+
+    @GetMapping("/{videoId}")
+    public Result<List<Danmaku>> getDanmakuByVideoId(@PathVariable Long videoId) {
+        List<Danmaku> list = danmakuService.getDanmakuByVideoId(videoId);
+        return Result.success(Result.RESULT_OK, list);
     }
 }

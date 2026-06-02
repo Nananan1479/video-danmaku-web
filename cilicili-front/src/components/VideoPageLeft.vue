@@ -1,12 +1,22 @@
 <script setup>
+/**
+ * VideoPageLeft - 视频播放页左侧主内容区
+ * 包含视频播放器、弹幕层、互动操作栏、简介标签及评论区。
+ */
 import { ref, reactive, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute } from 'vue-router'
 import CustomPlayer from './VideoPage_CustomPlayer.vue'
+import DanmakuOverlay from './DanmakuOverlay.vue'
 import { fetchVideoInfo, formatCount, formatDuration, formatDate } from '@/utils/videoData'
+import { sendDanmakuHTTP, fetchDanmakuByVideoId } from '@/api/index'
+import { useWebSocket } from '@/hooks/useWebSocket'
+import { getCurrentUser } from '@/utils/userStorage'
 
 const route = useRoute()
+/** 当前视频 ID，从路由 query 参数中获取 */
 const videoId = computed(() => Number(route.query.id) || null)
 
+/** 视频信息响应式对象 */
 const video = reactive({
     id: null,
     title: '加载中...',
@@ -25,12 +35,20 @@ const video = reactive({
     tags: []
 })
 
+/** 格式化后的播放量 */
 const displayPlayCount = computed(() => formatCount(video.playCount))
+/** 格式化后的弹幕数 */
 const displayDanmakuCount = computed(() => formatCount(video.danmakuCount))
+/** 格式化后的视频时长 */
 const displayDuration = computed(() => formatDuration(video.duration))
+/** 格式化后的发布日期 */
 const displayDate = computed(() => formatDate(video.createdAt))
+/** 视频数据加载中 */
 const loading = ref(true)
 
+/**
+ * 根据 videoId 从后端加载视频信息
+ */
 async function loadVideoData() {
     if (!videoId.value) return
     loading.value = true
@@ -62,35 +80,106 @@ async function loadVideoData() {
     }
 }
 
+// 视频 ID 变化时重新加载数据
 watch(videoId, (newId) => {
     if (newId) loadVideoData()
 }, { immediate: true })
 
+// 监听视频标题变化，更新浏览器标签页标题
 watch(() => video.title, (title) => {
     if (title && title !== '加载中...') {
         document.title = title + ' - CiliCili'
     }
 })
 
+// 组件卸载时恢复默认标题
 onBeforeUnmount(() => {
     document.title = 'CiliCili'
 })
 
-// 弹幕状态
+// ---- 弹幕相关状态 ----
+/** 弹幕开关 */
 const danmakuOn = ref(true)
+/** 当前在线人数 */
 const danmakuOnline = ref(0)
+/** 弹幕总数 */
 const danmakuTotal = ref(0)
+/** 弹幕输入框内容 */
 const danmakuInput = ref('')
+/** 弹幕叠加层组件引用 */
+const danmakuOverlayRef = ref(null)
 
-// 发送弹幕
-const sendDanmaku = () => {
-    if (!danmakuInput.value.trim()) return
-    // TODO: 调用发送弹幕接口
-    console.log('发送弹幕:', danmakuInput.value)
-    danmakuInput.value = ''
+// 初始化 WebSocket 弹幕连接
+const { connect, disconnect, onDanmakuReceived } = useWebSocket(videoId)
+
+/**
+ * 从后端加载当前视频的历史弹幕
+ */
+async function loadDanmaku() {
+    if (!videoId.value) return
+    try {
+        const res = await fetchDanmakuByVideoId(videoId.value)
+        if (res.data.code === 200) {
+            const list = res.data.data || []
+            danmakuTotal.value = list.length
+            // 将历史弹幕推入 Canvas 覆盖层渲染
+            if (danmakuOverlayRef.value && list.length > 0) {
+                danmakuOverlayRef.value.addDanmakus(list)
+            }
+        }
+    } catch (err) {
+        console.error('加载弹幕失败', err)
+    }
 }
 
-// 评论数据
+/**
+ * 发送弹幕：校验登录态 -> 构造请求 -> HTTP 发送
+ */
+const sendDanmaku = () => {
+    if (!danmakuInput.value.trim()) return
+    const currentUser = getCurrentUser()
+    if (!currentUser) {
+        // 未登录时清空输入框并跳过
+        danmakuInput.value = ''
+        return
+    }
+    const data = {
+        videoId: videoId.value,
+        content: danmakuInput.value,
+        playTime: 0,
+        color: '#FFFFFF',
+        mode: 1,
+        fontSize: 16
+    }
+    sendDanmakuHTTP(data).then(res => {
+        if (res.data.code === 200) {
+            danmakuInput.value = ''
+        }
+    }).catch(err => {
+        console.error('发送弹幕失败', err)
+        danmakuInput.value = ''
+    })
+}
+
+// 注册 WebSocket 弹幕到达回调：将弹幕推入 Canvas 叠加层并更新总数
+onDanmakuReceived((danmaku) => {
+    if (danmakuOverlayRef.value) {
+        danmakuOverlayRef.value.addDanmaku(danmaku)
+    }
+    danmakuTotal.value++
+})
+
+onMounted(() => {
+    connect()
+    loadDanmaku()
+})
+
+onBeforeUnmount(() => {
+    disconnect()
+})
+
+// ---- 评论区相关 ----
+/** 评论列表（当前为静态 mock 数据） */
 const comments = ref([
     { id: 1, username: "用户1", content: "这个视频太棒了，内容很有深度！", date: "2024-01-15", time: "14:30", likes: 256, replies: 12 },
     { id: 2, username: "用户2", content: "学到了很多新知识，感谢分享！", date: "2024-01-14", time: "09:15", likes: 189, replies: 8 },
@@ -98,12 +187,17 @@ const comments = ref([
     { id: 3, username: "用户3", content: "制作精良，期待更多精彩内容！", date: "2024-01-13", time: "20:45", likes: 342, replies: 0 }
 ])
 
+/** 评论排序方式：latest | hot */
 const commentSort = ref('latest')
+/** 评论输入框内容 */
 const commentInput = ref('')
 
+/**
+ * 提交评论
+ */
 const submitComment = () => {
     if (!commentInput.value.trim()) return
-    // TODO: 发表评论
+    // TODO: 接入后端评论接口
     console.log('发表评论:', commentInput.value)
     commentInput.value = ''
 }
@@ -132,6 +226,7 @@ const submitComment = () => {
         <!-- 视频播放器 -->
         <div class="video-player">
             <CustomPlayer :video-id="videoId" controls></CustomPlayer>
+            <DanmakuOverlay ref="danmakuOverlayRef" :visible="danmakuOn" />
         </div>
 
         <!-- 弹幕控制栏 -->
@@ -257,6 +352,7 @@ const submitComment = () => {
 
 /* 视频播放器占位 */
 .video-player {
+    position: relative;
     width: 100%;
     height: 486px;
     background: #000;
