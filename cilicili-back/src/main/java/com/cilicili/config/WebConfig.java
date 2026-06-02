@@ -50,7 +50,10 @@ public class WebConfig implements WebMvcConfigurer {
                         "/api/users/getById/{id}",
                         "/api/users/login",
                         "/api/users/register",
-                        "/api/users/avatar/**"
+                        "/api/users/avatar/**",
+                        "/ws/**", // WebSocket握手请求
+                        "/topic/**",
+                        "/app/**"
                 );
     }
 }

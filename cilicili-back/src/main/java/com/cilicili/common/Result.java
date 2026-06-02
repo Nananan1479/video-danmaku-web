@@ -44,7 +44,7 @@ public class Result<T> {
      * 请求成功
      */
     public static final int RESULT_OK = 200;
-    public static final int RESULT_BAD_REQUEST = 200;
+    public static final int RESULT_BAD_REQUEST = 400;
 
     private int code;       // 状态码
     private String message; // 提示信息

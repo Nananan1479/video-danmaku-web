@@ -115,18 +115,17 @@
             <version>0.9.1</version>
         </dependency>
 
-        <!-- MP4 解析（纯Java，获取视频时长，无需安装ffprobe） -->
-<!--        <dependency>-->
-<!--            <groupId>com.googlecode.mp4parser</groupId>-->
-<!--            <artifactId>isoparser</artifactId>-->
-<!--            <version>1.1.22</version>-->
-<!--        </dependency>-->
-
         <!-- 获取视频时长工具 -->
         <dependency>
             <groupId>ws.schild</groupId>
             <artifactId>jave-all-deps</artifactId>
             <version>3.5.0</version>
+        </dependency>
+
+        <!-- 网络通信协议,主动向客户端推送消息，用于实现弹幕实时推送给客户端 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
         </dependency>
     </dependencies>
 

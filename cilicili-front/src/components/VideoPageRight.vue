@@ -87,7 +87,7 @@ let displayList = ref([
         comments: 0,
         likes: 0
     },
-   ])
+])
 displayList = computed(() => {
     if (isExpanded.value || recommendList.value.length <= INITIAL_SHOW) {
         return recommendList.value
