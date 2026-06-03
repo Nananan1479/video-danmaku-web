@@ -9,9 +9,14 @@ export default defineConfig({
         __VUE_PROD_HYDRATION_MISMATCH_DETAILS__:'true',
     },
     server:{
-        //服务器端口号
+        // dev 模式仅本机访问
         port:8000,
-        
+        host: 'localhost',
+    },
+    preview:{
+        // serve 模式允许局域网其他设备访问
+        port:8000,
+        host: '0.0.0.0',
     },
     resolve:{
         alias:{

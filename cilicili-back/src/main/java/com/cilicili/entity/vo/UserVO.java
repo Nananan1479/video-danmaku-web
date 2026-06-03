@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class UserVO {
-    private int id;
+    private Long id;
     private String username;
 //    private String password;
     private String nickname;
@@ -13,7 +13,7 @@ public class UserVO {
     private String signature;
     private String email;
 //    private String phone;
-    private byte status;
+    private Byte status;
     private String created_at;
 //    private String updated_at;
 }

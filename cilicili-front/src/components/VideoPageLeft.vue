@@ -108,6 +108,12 @@ const danmakuTotal = ref(0)
 const danmakuInput = ref('')
 /** 弹幕叠加层组件引用 */
 const danmakuOverlayRef = ref(null)
+/** 播放器组件引用，用于获取播放状态 */
+const customPlayerRef = ref(null)
+/** 视频是否正在播放（由 CustomPlayer 暴露） */
+const isVideoPlaying = computed(() => customPlayerRef.value?.isPlaying ?? true)
+/** 视频当前播放时间（由 CustomPlayer 暴露） */
+const videoCurrentTime = computed(() => customPlayerRef.value?.currentTime ?? 0)
 
 // 初始化 WebSocket 弹幕连接
 const { connect, disconnect, onDanmakuReceived } = useWebSocket(videoId)
@@ -137,26 +143,39 @@ async function loadDanmaku() {
  */
 const sendDanmaku = () => {
     if (!danmakuInput.value.trim()) return
-    const currentUser = getCurrentUser()
+    let currentUser
+    try {
+        currentUser = getCurrentUser()
+    } catch (e) {
+        console.error('获取用户信息失败', e)
+        danmakuInput.value = ''
+        return
+    }
     if (!currentUser) {
-        // 未登录时清空输入框并跳过
+        console.warn('未登录，无法发送弹幕')
         danmakuInput.value = ''
         return
     }
     const data = {
         videoId: videoId.value,
         content: danmakuInput.value,
-        playTime: 0,
+        playTime: videoCurrentTime.value ?? 0,
         color: '#FFFFFF',
         mode: 1,
         fontSize: 16
     }
     sendDanmakuHTTP(data).then(res => {
+        if (!res || !res.data) {
+            console.warn('发送弹幕失败：响应为空')
+            return
+        }
         if (res.data.code === 200) {
             danmakuInput.value = ''
+        } else {
+            console.warn('发送弹幕失败:', res.data.message)
         }
     }).catch(err => {
-        console.error('发送弹幕失败', err)
+        console.error('发送弹幕异常', err)
         danmakuInput.value = ''
     })
 }
@@ -225,8 +244,11 @@ const submitComment = () => {
 
         <!-- 视频播放器 -->
         <div class="video-player">
-            <CustomPlayer :video-id="videoId" controls></CustomPlayer>
-            <DanmakuOverlay ref="danmakuOverlayRef" :visible="danmakuOn" />
+            <CustomPlayer ref="customPlayerRef" :video-id="videoId" controls>
+                <template #danmaku-overlay>
+                    <DanmakuOverlay ref="danmakuOverlayRef" :visible="danmakuOn" :is-playing="isVideoPlaying" :current-time="videoCurrentTime" />
+                </template> 
+            </CustomPlayer>
         </div>
 
         <!-- 弹幕控制栏 -->

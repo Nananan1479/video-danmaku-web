@@ -51,6 +51,11 @@ public class JwtInterceptor implements HandlerInterceptor {
             // 上传视频：POST /api/videos/upload 需要验证
         }
 
+        // 放行公开的弹幕查询接口（GET 获取弹幕无需登录，POST 发送弹幕需要登录）
+        if (path.startsWith("/api/danmaku/") && "GET".equalsIgnoreCase(method)) {
+            return true;
+        }
+
         // 从请求头获取 Authorization 字段（以Bearer为开头）。
         String token = request.getHeader("Authorization");
         // 若不存在或不以 Bearer 开头，返回 JSON 错误信息

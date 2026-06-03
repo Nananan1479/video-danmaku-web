@@ -75,7 +75,7 @@ public class UserController {
 
     @PostMapping("currentUser")
     public Result<User> currentUser(HttpServletRequest request) {
-        Integer userId = (Integer) request.getAttribute("userId");
+        Long userId = (Long) request.getAttribute("userId");
 //        System.out.println("request"+request);
         if (userId == null) {
             return Result.fail(401, "未登录");
@@ -90,7 +90,7 @@ public class UserController {
 
     @GetMapping("check")
     public Result<Object> checkToken(HttpServletRequest request) {
-        Integer userId = (Integer) request.getAttribute("userId");
+        Long userId = (Long) request.getAttribute("userId");
         System.out.println("当前登录的userId（by-checkToken()）:" + userId);
         if (userId == null) {
             return Result.fail(401, "token无效");
@@ -100,7 +100,7 @@ public class UserController {
 
     @PostMapping("avatar")
     public Result<String> uploadAvatar(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
-        Integer userId = (Integer) request.getAttribute("userId");
+        Long userId = (Long) request.getAttribute("userId");
         if (userId == null) {
             return Result.fail(401, "未登录");
         }

@@ -41,7 +41,7 @@ public class JwtUtil {
 
      * @return java.lang.String
      */
-    public String generateToken(int userId, String username) {
+    public String generateToken(long userId, String username) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userId);
         claims.put("username", username);
@@ -109,9 +109,13 @@ public class JwtUtil {
 
      * @return int
      */
-    public int getUserIdFromToken(String token) {
+    public long getUserIdFromToken(String token) {
         Claims claims = parseToken(token);
-        return (int) claims.get("userId");
+        Object userIdObj = claims.get("userId");
+        if (userIdObj instanceof Integer) {
+            return ((Integer) userIdObj).longValue();
+        }
+        return ((Number) userIdObj).longValue();
     }
 
     /**

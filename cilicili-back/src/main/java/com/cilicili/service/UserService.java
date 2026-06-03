@@ -11,6 +11,6 @@ public interface UserService  {
     public User getUserById(long id);
     public Result<User> login(String username, String password);
     public Result<User> register(String username, String phone, String password);
-    String uploadAvatar(MultipartFile file, int userId);
+    String uploadAvatar(MultipartFile file, long userId);
     ResponseEntity<Resource> getAvatar(String filename);
 }

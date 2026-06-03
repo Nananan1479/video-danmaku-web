@@ -264,7 +264,7 @@ public class VideoController {
                 .collect(Collectors.toSet());
 
         // 批量查询用户表，构建 id -> username 映射（1次SQL）
-        Map<Integer, String> nameMap = new HashMap<>();
+        Map<Long, String> nameMap = new HashMap<>();
         if (!uploaderIds.isEmpty()) {
             List<User> users = userMapper.selectBatchIds(uploaderIds);
             nameMap = users.stream()
@@ -272,12 +272,12 @@ public class VideoController {
         }
 
         // 逐一转换实体到VO，并填入对应的用户名
-        Map<Integer, String> finalNameMap = nameMap;
+        Map<Long, String> finalNameMap = nameMap;
         List<VideoVO> voList = entityPage.getRecords().stream().map(video -> {
             VideoVO vo = new VideoVO();
             BeanUtils.copyProperties(video, vo);
             vo.setUploaderName(video.getUploaderId() != null
-                    ? finalNameMap.getOrDefault(video.getUploaderId().intValue(), "")
+                    ? finalNameMap.getOrDefault(video.getUploaderId(), "")
                     : "");
             return vo;
         }).collect(Collectors.toList());

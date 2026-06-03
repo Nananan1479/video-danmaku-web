@@ -136,7 +136,7 @@ public class UserServiceImpl implements UserService {
      * @return java.lang.String
      */
     @Override
-    public String uploadAvatar(MultipartFile file, int userId) {
+    public String uploadAvatar(MultipartFile file, long userId) {
         try {
             Files.createDirectories(Paths.get(AVATAR_DIR));
             String originalName = file.getOriginalFilename();

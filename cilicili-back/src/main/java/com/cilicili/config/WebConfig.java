@@ -51,7 +51,6 @@ public class WebConfig implements WebMvcConfigurer {
                         "/api/users/login",
                         "/api/users/register",
                         "/api/users/avatar/**",
-                        "/api/danmaku/**",
                         "/ws/**",
                         "/topic/**",
                         "/app/**"

@@ -14,7 +14,7 @@ const props = defineProps({
 
 const videoSrc = computed(() => {
     if (props.src) return props.src
-    if (props.videoId) return `http://localhost:6060/api/videos/${props.videoId}`
+    if (props.videoId) return `${import.meta.env.VITE_API_URL}/api/videos/${props.videoId}`
     return ''
 })
 
@@ -55,6 +55,9 @@ const onProgress = () => {
 const onPlay = () => { isPlaying.value = true }
 const onPause = () => { isPlaying.value = false }
 const onEnded = () => { isPlaying.value = false }
+
+// 向父组件暴露播放状态与当前时间，用于控制弹幕暂停/恢复及按时间显示
+defineExpose({ isPlaying, currentTime })
 
 const onError = (e) => {
     const video = e.target
@@ -148,6 +151,9 @@ const formatTime = (sec) => {
 <template>
     <div class="custom-player" ref="playerContainer">
         <!-- 视频元素（隐藏原生控件） -->
+
+        <!-- 将弹幕层放到 CustomPlayer 内部，让它随播放器一起进入全屏。 -->
+        <slot name="danmaku-overlay" />
         <video
             ref="videoRef"
             :src="videoSrc"

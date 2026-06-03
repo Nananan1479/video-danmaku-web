@@ -1,14 +1,24 @@
 <script setup>
 /**
  * DanmakuOverlay - Canvas 弹幕叠加层
- * 使用 Canvas 渲染滚动弹幕，替代 DOM 节点方式，提升大量弹幕时的渲染性能。
+ * 使用 Canvas 渲染滚动弹幕，支持拖回进度条时重新显示已滚过的弹幕。
  */
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
 
 const props = defineProps({
     visible: {
         type: Boolean,
         default: true
+    },
+    /** 视频是否正在播放（暂停时弹幕停止滚动） */
+    isPlaying: {
+        type: Boolean,
+        default: true
+    },
+    /** 视频当前播放时间（秒），用于按时间过滤弹幕 */
+    currentTime: {
+        type: Number,
+        default: 0
     }
 })
 
@@ -16,7 +26,12 @@ const props = defineProps({
 const canvasRef = ref(null)
 
 // ---- 弹幕数据 ----
-/** @type {import('vue').Ref<Array<{id:number|string, content:string, color:string, fontSize:number, mode:number, laneIndex:number, x:number}>>} */
+/**
+ * 每条弹幕的状态：
+ * - pending: playTime 未到达，等待激活
+ * - active: 正在滚动中
+ * - finished: 已滚出屏幕左侧
+ */
 const danmakuItems = ref([])
 
 // ---- 轨道池管理 ----
@@ -57,6 +72,38 @@ function releaseLane(index) {
         lanePool.push(index)
     }
 }
+
+// ---- 进度跳转检测 ----
+/** 上一次的 currentTime，用于检测用户是否拖回进度条 */
+let prevTime = 0
+
+/**
+ * 将指定 playTime 之后（含）的所有弹幕重置为 pending 状态，
+ * 让它们在播放到对应时间时重新从右侧滚入。
+ */
+function resetDanmakuFromTime(time) {
+    const items = danmakuItems.value
+    for (let i = 0; i < items.length; i++) {
+        const item = items[i]
+        if (item.playTime >= time) {
+            if (item.state === 'active' || item.state === 'finished') {
+                // 释放轨道
+                releaseLane(item.laneIndex)
+            }
+            item.state = 'pending'
+            item.started = false
+        }
+    }
+}
+
+// currentTime 回退时重置弹幕
+watch(() => props.currentTime, (newTime, oldTime) => {
+    if (newTime < oldTime - 1) {
+        // 用户拖回了进度条（>1秒的回退才算拖动）
+        resetDanmakuFromTime(newTime)
+    }
+    prevTime = newTime
+})
 
 // ---- 渲染循环 ----
 /** 上一次帧的时间戳 */
@@ -126,38 +173,49 @@ function renderLoop(timestamp) {
     const scrollSpeed = 150
     const dx = (scrollSpeed * delta) / 1000
 
-    const toRemove = []
     const items = danmakuItems.value
+    const ct = props.currentTime
 
     for (let i = 0; i < items.length; i++) {
         const item = items[i]
 
-        // 模式1（滚动弹幕）：更新 x 坐标
-        if (item.mode === 1) {
+        // === 状态迁跃 ===
+
+        // pending -> active: 播放时间到达 playTime
+        if (item.state === 'pending' && ct >= item.playTime) {
+            item.state = 'active'
+            item.started = true
+            item.laneIndex = occupyLane()
+            item.x = currentWidth
+        }
+
+        // === 滚动位置更新 ===
+        if (item.state === 'active' && item.started && item.mode === 1 && props.isPlaying) {
             item.x -= dx
         }
 
-        const textWidth = measureTextWidth(ctx, item)
-        const inView = item.x + textWidth > 0
-
-        if (item.mode === 1 && !inView) {
-            releaseLane(item.laneIndex)
-            toRemove.push(i)
-            continue
+        // === 出屏检测 ===
+        if (item.state === 'active' && item.mode === 1) {
+            const textWidth = measureTextWidth(ctx, item)
+            if (item.x + textWidth <= 0) {
+                item.state = 'finished'
+                releaseLane(item.laneIndex)
+                continue // 不再绘制
+            }
         }
 
+        // === 绘制 ===
         if (!props.visible) continue
+        if (item.state !== 'active') continue
 
-        // 跳过完全在屏幕右侧之外的弹幕（刚添加还没进入可视区的情况由 inView 处理）
+        // 跳过右侧尚未进入视图的弹幕
         if (item.mode === 1 && item.x > currentWidth) continue
 
-        // 绘制弹幕文字
         ctx.save()
         ctx.font = `bold ${item.fontSize}px "Microsoft YaHei", "PingFang SC", sans-serif`
         ctx.fillStyle = item.color
         ctx.textBaseline = 'top'
 
-        // 文字描边（模拟 text-shadow 效果）
         ctx.strokeStyle = 'rgba(0,0,0,0.6)'
         ctx.lineWidth = 2
         ctx.lineJoin = 'round'
@@ -166,19 +224,11 @@ function renderLoop(timestamp) {
         ctx.restore()
     }
 
-    // 移除已出屏的弹幕
-    if (toRemove.length > 0) {
-        danmakuItems.value = items.filter((_, i) => !toRemove.includes(i))
-    }
-
     animFrameId = requestAnimationFrame(renderLoop)
 }
 
 /**
  * 测量弹幕文字的渲染宽度
- * @param {CanvasRenderingContext2D} ctx
- * @param {{content:string, fontSize:number}} item
- * @returns {number} 文字宽度
  */
 function measureTextWidth(ctx, item) {
     ctx.save()
@@ -191,36 +241,60 @@ function measureTextWidth(ctx, item) {
 // ---- 对外 API ----
 
 /**
- * 添加一条弹幕到画布
- * @param {{id?:number|string, content:string, color?:string, fontSize?:number, mode?:number}} danmaku
+ * 添加一条弹幕（来自 WebSocket 实时推送）
  */
 function addDanmaku(danmaku) {
     if (!props.visible) return
-    const laneIndex = occupyLane()
+    // 如果当前时间已经过了 playTime，仍然立即显示
+    const shouldStartNow = props.currentTime >= (danmaku.playTime ?? 0)
     const item = {
         id: danmaku.id || Date.now() + Math.random(),
         content: danmaku.content,
         color: danmaku.color || '#FFFFFF',
         fontSize: danmaku.fontSize || 16,
         mode: danmaku.mode || 1,
-        laneIndex,
-        x: currentWidth || 902 // 起始位置：屏幕右侧边缘，currentWidth===0 时兜底
+        playTime: danmaku.playTime ?? 0,
+        state: 'pending',
+        started: false,
+        laneIndex: 0,
+        x: currentWidth || 902
+    }
+    if (shouldStartNow) {
+        item.state = 'active'
+        item.started = true
+        item.laneIndex = occupyLane()
+        item.x = currentWidth || 902
     }
     danmakuItems.value.push(item)
 }
 
 /**
- * 批量添加弹幕（历史弹幕加载用）
- * @param {Array} list 弹幕数据数组
+ * 批量加载历史弹幕
  */
 function addDanmakus(list) {
     if (!list || !list.length) return
     initLanePool()
+    // 重置所有状态
     danmakuItems.value = []
+    prevTime = props.currentTime
+    const ct = props.currentTime
+
     list.forEach((d, i) => {
-        setTimeout(() => {
-            addDanmaku(d)
-        }, i * 200)
+        const playTime = d.playTime ?? 0
+        const shouldStartNow = ct >= playTime
+        const item = {
+            id: d.id || Date.now() + Math.random() + i,
+            content: d.content,
+            color: d.color || '#FFFFFF',
+            fontSize: d.fontSize || 16,
+            mode: d.mode || 1,
+            playTime,
+            state: shouldStartNow ? 'active' : 'pending',
+            started: shouldStartNow,
+            laneIndex: shouldStartNow ? occupyLane() : 0,
+            x: currentWidth || 902
+        }
+        danmakuItems.value.push(item)
     })
 }
 
@@ -230,6 +304,7 @@ defineExpose({ addDanmaku, addDanmakus })
 // ---- 生命周期 ----
 onMounted(() => {
     initLanePool()
+    prevTime = props.currentTime
     animFrameId = requestAnimationFrame(renderLoop)
 })
 
