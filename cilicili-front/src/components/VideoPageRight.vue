@@ -161,7 +161,11 @@ watch(videoId, (newId) => {
         <div class="recommend-list">
             <div v-for="item in displayList" :key="item.id" class="recommend-item">
                 <!-- 视频封面 -->
-                <div class="rec-cover" :style="{ backgroundImage: `url(${getVideoCoverUrlById(item.id)})` }"></div>
+                <div 
+                    class="rec-cover" 
+                    :style="{ backgroundImage: `url(${getVideoCoverUrlById(item.id)})` }"
+                    @click="skipVideo(item.id)"
+                ></div>
                 <!-- 视频信息 -->
                 <div class="rec-info">
                     <a class="rec-title" @click="skipVideo(item.id)">{{ item.title }}</a>
@@ -289,6 +293,7 @@ watch(videoId, (newId) => {
     background-size: cover;
     background-position: center;
     flex-shrink: 0;
+    cursor: pointer;
 }
 .rec-info {
     flex: 1;
@@ -333,12 +338,8 @@ watch(videoId, (newId) => {
 .rec-uploader-name {
     color: #9499a0;
     text-decoration: none;
-    transition: color 0.2s linear;
+    transition: color 0.2s ease;
     cursor: pointer;
-}
-
-.rec-uploader-name:hover {
-    color: rgba(0, 174, 236, 1);
 }
 .rec-stats {
     height: 22px;
@@ -385,14 +386,45 @@ watch(videoId, (newId) => {
     background-repeat: no-repeat;
     background-position: center;
 }
-/* .video-icon {
-    width: 16px;
-    height: 16px;
-} */
+
 .icon.icon-follow { background-image: url(@/assets/images/Stroke2addplus.png); }
-.icon-up { background-image: url(@/assets/images/uploader_icon.png); }
+.icon-up {
+    position: relative;
+    /* 使用 SVG mask，颜色由 background 控制 */
+    background-color: currentColor;
+    mask-size: cover;
+    mask-position: center;
+    mask-repeat: no-repeat;
+    mask-image: url(@/assets/images/uploader_default_icon.svg);
+    -webkit-mask-size: cover;
+    -webkit-mask-position: center;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-image: url(@/assets/images/uploader_default_icon.svg);
+    transition: color 0.2s ease;
+}
+
+/* 伪元素承载渐变，通过 opacity 过渡避免闪烁 */
+.icon-up::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #00a1d6, #00c8ff, #00a1d6);
+    mask: inherit;
+    -webkit-mask: inherit;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.rec-meta:hover .icon-up,
+.rec-meta:hover .rec-uploader-name {
+    color: rgba(0, 174, 236, 1);
+}
+
+.rec-meta:hover .icon-up::after {
+    opacity: 1;
+}
 .icon-play-sm { background-image: url(@/assets/images/playsNum_gray.png); width:16px; height:13px; }
-.icon-danmaku-sm { background-image: url(@/assets/images/papernote.png); width:16px; height:16px; }
+.icon-danmaku-sm { background-image: url(@/assets/images/papernote0.png); width:16px; height:16px; }
 .arrow-icon {
     display: inline-block;
     width: 10px;

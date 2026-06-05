@@ -80,10 +80,19 @@ async function loadVideoData() {
     }
 }
 
-// 视频 ID 变化时重新加载数据
+// 视频 ID 变化时重新加载全部数据（首次由 onMounted 处理，这里仅处理切换）
 watch(videoId, (newId) => {
-    if (newId) loadVideoData()
-}, { immediate: true })
+    if (!newId) return
+    loadVideoData()
+    // 清空旧弹幕并重连 WebSocket，加载新视频弹幕
+    if (danmakuOverlayRef.value) {
+        danmakuOverlayRef.value.clearAll()
+    }
+    danmakuTotal.value = 0
+    disconnect()
+    connect()
+    loadDanmaku()
+})
 
 // 监听视频标题变化，更新浏览器标签页标题
 watch(() => video.title, (title) => {
@@ -189,6 +198,7 @@ onDanmakuReceived((danmaku) => {
 })
 
 onMounted(() => {
+    loadVideoData()
     connect()
     loadDanmaku()
 })

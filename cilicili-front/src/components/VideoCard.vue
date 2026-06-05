@@ -203,21 +203,39 @@ function skipVideo(video) {
 }
 
 .video-card__up-badge {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     width: 16px;
     height: 15px;
-    /* 使用CSS mask确保可以自动变色 */
+    /* 使用 SVG mask，颜色由 background 控制 */
     background-color: currentColor;
     mask-size: cover;
     mask-position: center;
     mask-repeat: no-repeat;
-    mask-image: url(@/assets/images/uploader_icon.png);
+    mask-image: url(@/assets/images/uploader_default_icon.svg);
     -webkit-mask-size: cover;
     -webkit-mask-position: center;
     -webkit-mask-repeat: no-repeat;
-    -webkit-mask-image: url(@/assets/images/uploader_icon.png);
+    -webkit-mask-image: url(@/assets/images/uploader_default_icon.svg);
+}
+
+/* 伪元素承载渐变，通过 opacity 过渡避免闪烁 */
+.video-card__up-badge::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #00a1d6, #00c8ff, #00a1d6);
+    mask: inherit;
+    -webkit-mask: inherit;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+/* hover 时蓝色渐变填满 mask 区域 */
+.video-card__meta a:hover .video-card__up-badge::after {
+    opacity: 1;
 }
 
 .video-card__author {

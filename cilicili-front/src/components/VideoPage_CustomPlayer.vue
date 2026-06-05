@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 
 const props = defineProps({
     videoId: {
@@ -35,6 +35,25 @@ let errorMessage = ref('')
 // 百分比计算
 const currentPercent = computed(() => (duration.value ? (currentTime.value / duration.value) * 100 : 0))
 const bufferPercent = computed(() => (duration.value ? (buffered.value / duration.value) * 100 : 0))
+
+// videoId 变化时，重置播放状态
+watch(() => props.videoId, () => {
+    isPlaying.value = false
+    // duration.value = 0
+    // currentTime.value = 0
+    errorMessage.value = ''
+})
+
+// 视频数据加载完成，尝试自动播放
+const onCanPlay = () => {
+    const video = videoRef.value
+    if (video && video.paused) {
+        video.play().catch((e) => {
+            // 浏览器自动播放策略可能拦截，静默处理
+            console.warn('自动播放被阻止:', e.message)
+        })
+    }
+}
 
 // 事件处理
 const onLoaded = () => {
@@ -163,6 +182,7 @@ const formatTime = (sec) => {
             @play="onPlay"
             @pause="onPause"
             @ended="onEnded"
+            @canplay="onCanPlay"
             @error="onError"
         ></video>
 
