@@ -36,16 +36,58 @@ let errorMessage = ref('')
 const currentPercent = computed(() => (duration.value ? (currentTime.value / duration.value) * 100 : 0))
 const bufferPercent = computed(() => (duration.value ? (buffered.value / duration.value) * 100 : 0))
 
-// videoId 变化时，重置播放状态
-watch(() => props.videoId, () => {
+// ---- 观看进度保存与恢复 ----
+const PROGRESS_KEY_PREFIX = 'cilicili_video_progress_'
+
+/** 保存当前视频进度到 sessionStorage */
+function saveProgress() {
+    const vid = props.videoId
+    if (!vid || duration.value <= 0) return
+    sessionStorage.setItem(PROGRESS_KEY_PREFIX + vid, currentTime.value.toFixed(2))
+}
+
+/** 读取并恢复指定视频的观看进度 */
+function restoreProgress() {
+    const vid = props.videoId
+    if (!vid) return
+    const saved = sessionStorage.getItem(PROGRESS_KEY_PREFIX + vid)
+    if (saved == null) return
+    const time = parseFloat(saved)
+    if (time > 0 && videoRef.value) {
+        videoRef.value.currentTime = time
+    }
+}
+
+/** 上次保存进度的时间戳，用于节流 */
+let lastSaveTime = 0
+
+/** 带节流的进度保存（至少间隔 5 秒） */
+function saveProgressThrottled() {
+    const now = Date.now()
+    if (now - lastSaveTime < 5000) return
+    lastSaveTime = now
+    saveProgress()
+}
+
+// videoId 变化时：先保存旧视频进度，再重置状态
+watch(() => props.videoId, (newId, oldId) => {
+    // 保存旧视频的观看进度
+    if (oldId && duration.value > 0) {
+        localStorage.setItem(PROGRESS_KEY_PREFIX + oldId, currentTime.value.toFixed(2))
+    }
     isPlaying.value = false
-    // duration.value = 0
-    // currentTime.value = 0
+    duration.value = 0
+    currentTime.value = 0
+    lastSaveTime = 0
     errorMessage.value = ''
+    autoPlayAttempted = false
 })
 
-// 视频数据加载完成，尝试自动播放
+// 视频首次数据就绪时自动播放（只触发一次，避免缓冲时重复播放）
+let autoPlayAttempted = false
 const onCanPlay = () => {
+    if (autoPlayAttempted) return
+    autoPlayAttempted = true
     const video = videoRef.value
     if (video && video.paused) {
         video.play().catch((e) => {
@@ -59,10 +101,14 @@ const onCanPlay = () => {
 const onLoaded = () => {
     duration.value = videoRef.value.duration
     videoRef.value.volume = volume.value
+    // 恢复上次观看进度
+    restoreProgress()
 }
 
 const onTimeUpdate = () => {
     currentTime.value = videoRef.value.currentTime
+    // 播放中每 5 秒保存一次进度
+    saveProgressThrottled()
 }
 
 const onProgress = () => {
@@ -157,7 +203,10 @@ onMounted(() => {
     playerContainer.value.addEventListener('mousemove', resetHideTimer)
     playerContainer.value.addEventListener('mouseleave', () => showControls.value = false)
 })
-onUnmounted(() => clearTimeout(hideTimer))
+onUnmounted(() => {
+    saveProgress()
+    clearTimeout(hideTimer)
+})
 
 // 时间格式化
 const formatTime = (sec) => {

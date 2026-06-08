@@ -1,4 +1,13 @@
 <script setup>
+import danmuSwitchOnDefaultIcon from '@/assets/images/danmuSwitch_on_default_icon.png'
+import danmuSwitchOffDefaultIcon from '@/assets/images/danmuSwitch_off_default_icon.png'
+import danmuSwitchOnHoverIcon from '@/assets/images/danmuSwitch_on_hover_icon.png'
+import danmuSwitchOffHoverIcon from '@/assets/images/danmuSwitch_off_hover_icon.png'
+import danmuSettingDefaultIcon from '@/assets/images/danmuSetting_default_icon.png'
+import danmuSettingHoverIcon from '@/assets/images/danmuSetting_hover_icon.png'
+
+import { ElMessage, ElMessageBox } from 'element-plus'
+
 /**
  * VideoPageLeft - 视频播放页左侧主内容区
  * 包含视频播放器、弹幕层、互动操作栏、简介标签及评论区。
@@ -151,20 +160,27 @@ async function loadDanmaku() {
  * 发送弹幕：校验登录态 -> 构造请求 -> HTTP 发送
  */
 const sendDanmaku = () => {
-    if (!danmakuInput.value.trim()) return
     let currentUser
     try {
         currentUser = getCurrentUser()
     } catch (e) {
         console.error('获取用户信息失败', e)
         danmakuInput.value = ''
-        return
+        return ElMessage.error('未知错误')
     }
     if (!currentUser) {
         console.warn('未登录，无法发送弹幕')
         danmakuInput.value = ''
-        return
+        ElMessageBox.confirm('请先登录', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            window.location.href = '/login'
+        })
+        return 
     }
+    if (!danmakuInput.value.trim()) return ElMessage.error('请输入弹幕内容')
     const data = {
         videoId: videoId.value,
         content: danmakuInput.value,
@@ -176,16 +192,20 @@ const sendDanmaku = () => {
     sendDanmakuHTTP(data).then(res => {
         if (!res || !res.data) {
             console.warn('发送弹幕失败：响应为空')
-            return
+            ElMessage.error('发送弹幕失败：响应为空')
+            return 
         }
         if (res.data.code === 200) {
             danmakuInput.value = ''
+            ElMessage.success('弹幕发送成功')
         } else {
             console.warn('发送弹幕失败:', res.data.message)
+            ElMessage.error(res.data.message || '发送弹幕失败')
         }
     }).catch(err => {
         console.error('发送弹幕异常', err)
         danmakuInput.value = ''
+        ElMessage.error('发送弹幕异常')
     })
 }
 
@@ -263,14 +283,37 @@ const submitComment = () => {
 
         <!-- 弹幕控制栏 -->
         <div class="danmaku-bar">
+            <!-- 观看人数和弹幕总数 -->
             <div class="danmaku-status">
                 <span class="online"><strong>{{ danmakuOnline }}</strong>人正在观看，已装填</span>
                 <span class="total"><strong>{{ danmakuTotal }}</strong>条弹幕</span>
             </div>
+            <!-- 弹幕开关和设置按钮 -->
             <div class="danmaku-switches">
-                <button class="switch-btn" :class="{ on: danmakuOn }" @click="danmakuOn = !danmakuOn"></button>
-                <button class="settings-btn"></button>
+                
+                <button class="switch-btn" :class="{ on: danmakuOn }" @click="danmakuOn = !danmakuOn">
+                    <img class="icon-default" :src="danmakuOn ? danmuSwitchOnDefaultIcon : danmuSwitchOffDefaultIcon" alt="弹幕开关" />
+                    <img class="icon-hover" :src="danmakuOn ? danmuSwitchOnHoverIcon : danmuSwitchOffHoverIcon" alt="弹幕开关" />
+                </button>
+                <el-popover
+                    placement="top"
+                    trigger="hover"
+                    :width="300"
+                    popper-class="settings-popover"
+                >
+                    <div class="danmakuSettings-showArea">
+                        显示区域
+                        <el-slider v-model="value2" :step="25" show-stops />
+                    </div>
+                    <template #reference>
+                        <button class="settings-btn">
+                            <img class="icon-default" :src="danmuSettingDefaultIcon" alt="弹幕设置" />
+                            <img class="icon-hover" :src="danmuSettingHoverIcon" alt="弹幕设置" />
+                        </button>
+                    </template>
+                </el-popover>
             </div>
+            <!-- 弹幕发送区域 -->
             <div class="danmaku-send">
                 <div class="send-input">
                     <i class="icon icon-word-setting"></i>
@@ -416,18 +459,53 @@ const submitComment = () => {
     gap: 12px;
 }
 .switch-btn, .settings-btn {
+    position: relative;
     width: 24px;
     height: 24px;
     border: none;
     background: center/contain no-repeat;
     cursor: pointer;
 }
-.switch-btn {
+/* .switch-btn {
     background-image: url(@/assets/images/danmuSwitch_on_default_icon.png);
 }
+
 .settings-btn {
     background-image: url(@/assets/images/danmuSetting_default_icon.png);
+} */
+
+
+
+
+.switch-btn img, .settings-btn img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: opacity 0.25s ease;
 }
+.switch-btn .icon-default, .settings-btn .icon-default {
+    opacity: 1;
+}
+.switch-btn .icon-hover, .settings-btn .icon-hover {
+    opacity: 0;
+}
+.switch-btn:hover .icon-default, .settings-btn:hover .icon-default {
+    opacity: 0;
+}
+.switch-btn:hover .icon-hover, .settings-btn:hover .icon-hover {
+    opacity: 1;
+}
+
+.danmakuSettings-showArea {
+    width: 100%;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
 .danmaku-send {
     display: flex;
     align-items: center;
@@ -666,4 +744,35 @@ const submitComment = () => {
 .icon-share { background-image: url(@/assets/images/share_icon.png); }
 .icon-report { background-image: url(@/assets/images/attentiontriangle.png); }
 .icon-comment-like { background-image: url(@/assets/images/Mobile0.png); }
+</style>
+
+
+<!-- 专门用于控制ElementPlus的Popover组件 -->
+<style>
+.settings-popover {
+    background: #0000008c !important;
+    /* border-radius: 4px; */
+    margin-bottom: 12px;
+    padding: 12px;
+    border: none !important;
+    color: #fff !important;
+}
+.settings-popover .el-popper__arrow {
+    display: none !important;
+}
+.settings-popover .el-slider {
+    --el-slider-height: 4px;
+    --el-slider-main-bg-color-height: 4px;
+    --el-slider-button-size: 12px;
+}
+.settings-popover .el-slider__runway {
+    height: 4px;
+}
+.settings-popover .el-slider__bar {
+    height: 4px;
+}
+.settings-popover .el-slider__button {
+    width: 12px;
+    height: 12px;
+}
 </style>
