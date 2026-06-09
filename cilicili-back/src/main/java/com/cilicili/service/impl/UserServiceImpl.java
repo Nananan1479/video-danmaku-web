@@ -67,7 +67,13 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             return Result.fail(400,"用户名或密码错误");
         }
-//         3. 核对密码（使用 BCrypt 加密比对）
+
+        // 确认用户状态
+        int userState = user.getStatus();
+        if (userState == 0 || userState == 2) {
+            return Result.fail(400,"账户状态异常");
+        }
+        // 核对密码（使用 BCrypt 加密比对）
         if (!passwordEncoder.matches(password, user.getPassword())) {
             return Result.fail(400,"用户名或密码错误");
         }

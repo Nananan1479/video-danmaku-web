@@ -68,6 +68,10 @@ public class VideoServiceImpl implements VideoService {
             return ResponseEntity.notFound().build();
         }
 
+        // status值不为1时错误
+        if (!(video.getStatus() == 1)) {
+            return ResponseEntity.badRequest().build();
+        }
 
         Path filePath = Paths.get(video.getVideoUrl());
         // 对应地址无视频返回错误
@@ -175,7 +179,7 @@ public class VideoServiceImpl implements VideoService {
             video.setDescription(description);
             video.setVideoUrl(videoPath.toString());
             video.setCoverUrl(coverName != null ? Paths.get(COVER_DIR, coverName).toString() : null);
-            video.setStatus(1);
+            video.setStatus(2);
             video.setUploaderId(uploaderId);
             video.setPlayCount(0L);
             video.setDanmakuCount(0L);

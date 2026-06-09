@@ -44,7 +44,8 @@ public class UserController {
             User user = result.getData();
             user.setPassword(null);
             user.setPhone(null);
-            String token = jwtUtil.generateToken(user.getId(), user.getUsername());
+            int role = user.getRole() != null ? user.getRole() : 0;
+            String token = jwtUtil.generateToken(user.getId(), user.getUsername(), role);
             result.setToken(token);
         }
         return result;
@@ -67,7 +68,8 @@ public class UserController {
         Result<User> result = userService.register(username, phone, password);
         if (result.getCode() == 200) {
             User user = result.getData();
-            String token = jwtUtil.generateToken(user.getId(), user.getUsername());
+            int role = user.getRole() != null ? user.getRole() : 0;
+            String token = jwtUtil.generateToken(user.getId(), user.getUsername(), role);
             result.setToken(token);
         }
         return result;

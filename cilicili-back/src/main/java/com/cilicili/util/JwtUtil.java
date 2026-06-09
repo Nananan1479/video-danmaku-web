@@ -31,20 +31,21 @@ public class JwtUtil {
     private long expiration;
 
     /**
-     * 生成 Token
+     * 生成 Token（含用户角色）
      *
-     * @param userId
-     * @param username
+     * @param userId   用户ID
+     * @param username 用户名
+     * @param role     角色（0=普通用户，1=管理员）
      *
      * @author Nananan1479
      * @date 2026/5/25 14:38
-
      * @return java.lang.String
      */
-    public String generateToken(long userId, String username) {
+    public String generateToken(long userId, String username, int role) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userId);
         claims.put("username", username);
+        claims.put("role", role);
 
         Date now = new Date();
         Date expireDate = new Date(now.getTime() + expiration);
@@ -112,6 +113,9 @@ public class JwtUtil {
     public long getUserIdFromToken(String token) {
         Claims claims = parseToken(token);
         Object userIdObj = claims.get("userId");
+        if (userIdObj == null) {
+            return 0;
+        }
         if (userIdObj instanceof Integer) {
             return ((Integer) userIdObj).longValue();
         }
@@ -128,6 +132,21 @@ public class JwtUtil {
 
      * @return java.lang.String
      */
+    /**
+     * 从 Token 中提取角色
+     */
+    public int getRoleFromToken(String token) {
+        Claims claims = parseToken(token);
+        Object roleObj = claims.get("role");
+        if (roleObj == null) {
+            return 0;
+        }
+        if (roleObj instanceof Integer) {
+            return (Integer) roleObj;
+        }
+        return ((Number) roleObj).intValue();
+    }
+
     public String getUsernameFromToken(String token) {
         Claims claims = parseToken(token);
         return (String) claims.get("username");

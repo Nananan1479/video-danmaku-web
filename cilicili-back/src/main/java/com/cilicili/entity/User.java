@@ -16,6 +16,7 @@ public class User {
     private String email;
     private String phone;
     private Byte status;
+    private Byte role;
     private String created_at;
     private String updated_at;
 }

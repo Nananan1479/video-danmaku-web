@@ -66,10 +66,17 @@ public class VideoController {
     @GetMapping("{id}")
     public ResponseEntity<byte[]> getVideo(
             @PathVariable Long id,
-            // 前端请求中视频拖拽进度条的需求的请求头（请求头为Range）（video标签自动完成发送）
             @RequestHeader(value = "Range", required = false) String rangeHeader) {
 
-        return videoService.getVideo(id,rangeHeader);
+        Video video = videoMapper.selectById(id);
+        if (video == null) {
+            return ResponseEntity.notFound().build();
+        }
+        if (video.getStatus() == null || video.getStatus() != 1) {
+            return ResponseEntity.status(403).body(null);
+        }
+
+        return videoService.getVideo(id, rangeHeader);
     }
 
     /**
@@ -88,6 +95,10 @@ public class VideoController {
         Video video = videoMapper.selectById(id);
         if (video == null) {
             return ResponseEntity.notFound().build();
+        }
+        // status=1（正常）才返回视频详情
+        if (video.getStatus() == null || video.getStatus() != 1) {
+            return ResponseEntity.status(403).body(null);
         }
 
         Map<String, Object> info = new HashMap<>();
