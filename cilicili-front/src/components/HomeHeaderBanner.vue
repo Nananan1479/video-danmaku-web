@@ -52,7 +52,7 @@ function skipHome() {
     <!-- <div class="headerBanner"> -->
         <div class="headerBanner__inner">
             <!-- 左侧导航栏 -->
-             <!-- TODO: 导航栏文字设置动画效果 -->
+            <!-- TODO: 导航栏文字设置动画效果 -->
             <div class="headerBanner__left">
                 <div class="headerBanner__nav-item headerBanner__nav-item--home" @click="skipHome">
                     <span class="headerBanner__home-icon"></span>
@@ -91,10 +91,10 @@ function skipHome() {
                         <span class="headerBanner__action-label">{{ action.label }}</span>
                     </div>
                 </div>
-                <button class="headerBanner__upload-btn" @click="handleSkipLogin">
+                <a href="/upload" class="headerBanner__upload-btn">
                     <span class="headerBanner__upload-icon"></span>
                     投稿
-                </button>
+                </a>
             </div>
         </div>
     <!-- </div> -->

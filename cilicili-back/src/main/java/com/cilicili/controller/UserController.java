@@ -90,6 +90,22 @@ public class UserController {
         return Result.success(200, user);
     }
 
+    /**
+     * 更新用户信息（昵称、签名、邮箱、电话）
+     */
+    @PostMapping("update")
+    public Result<User> updateUser(@RequestBody Map<String, String> body, HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+        if (userId == null) {
+            return Result.fail(401, "未登录");
+        }
+        return userService.updateUser(userId,
+                body.get("nickname"),
+                body.get("signature"),
+                body.get("email"),
+                body.get("phone"));
+    }
+
     @GetMapping("check")
     public Result<Object> checkToken(HttpServletRequest request) {
         Long userId = (Long) request.getAttribute("userId");

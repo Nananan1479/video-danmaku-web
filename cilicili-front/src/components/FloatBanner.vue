@@ -20,9 +20,6 @@ function handleSkipLogin() {
     skipLogin(router)
 }
 
-const skipHome = () => {
-    router.push('/home');
-}
 const skipUpload = () => {
     router.push('/upload');
 }
@@ -32,8 +29,8 @@ const skipUpload = () => {
     <header class="topNav">
         <!-- 左侧：Logo + 导航菜单 -->
         <nav class="navLeft">
-            <a href="#" class="logo" @click="skipHome">CiliCili</a>
-            <a href="#" class="navItem" @click="skipHome"><span>首页</span></a>
+            <a href="/home" class="logo">CiliCili</a>
+            <a href="/home" class="navItem"><span>首页</span></a>
             <a href="#" class="navItem">番剧</a>
             <a href="#" class="navItem">直播</a>
             <a href="#" class="navItem">游戏中心</a>

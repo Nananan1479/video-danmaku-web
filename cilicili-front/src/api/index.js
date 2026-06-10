@@ -144,6 +144,19 @@ export function uploadAvatar(formData) {
     })
 }
 
+/**
+ * 更新用户信息（昵称、签名、邮箱、电话）
+ * @param {*} data { nickname, signature, email, phone }
+ * @returns
+ */
+export function updateUserInfo(data) {
+    return request({
+        url: '/api/users/update/',
+        method: 'POST',
+        data
+    })
+}
+
 //================= 弹幕相关接口 =================================
 /**
  * 发送弹幕

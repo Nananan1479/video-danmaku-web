@@ -44,6 +44,12 @@ const routes = [
         name: "UserSpace",
         component: () => import("@/views/UserSpace.vue"),
         meta: { requiresAuth: true }
+    },
+    {
+        path: "/userAccount",
+        name: "UserAccount",
+        component: () => import("@/views/UserAccount.vue"),
+        meta: { requiresAuth: true }
     }
 ];
 

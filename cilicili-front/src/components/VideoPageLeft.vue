@@ -32,6 +32,7 @@ const video = reactive({
     description: '',
     playCount: 0,
     danmakuCount: 0,
+    commentCount: 0,
     duration: 0,
     coverUrl: '',
     likeCount: 0,
@@ -48,10 +49,20 @@ const video = reactive({
 const displayPlayCount = computed(() => formatCount(video.playCount))
 /** 格式化后的弹幕数 */
 const displayDanmakuCount = computed(() => formatCount(video.danmakuCount))
+/** 格式化后的评论数 */
+const displayCommentCount = computed(() => formatCount(video.commentCount))
 /** 格式化后的视频时长 */
 const displayDuration = computed(() => formatDuration(video.duration))
 /** 格式化后的发布日期 */
 const displayDate = computed(() => formatDate(video.createdAt))
+/** 格式化后的点赞数 */
+const displayLikeCount = computed(() => formatCount(video.likeCount))
+/** 格式化后的投币数 */
+const displayCoinCount = computed(() => formatCount(video.coinCount))
+/** 格式化后的收藏数 */
+const displayCollectCount = computed(() => formatCount(video.collectCount))
+/** 格式化后的分享数 */
+const displayShareCount = computed(() => formatCount(video.shareCount))
 /** 视频数据加载中 */
 const loading = ref(true)
 
@@ -70,6 +81,7 @@ async function loadVideoData() {
                 description: data.description || '',
                 playCount: data.playCount ?? 0,
                 danmakuCount: data.danmakuCount ?? 0,
+                commentCount: data.commentCount ?? 0,
                 duration: data.duration ?? 0,
                 coverUrl: data.coverUrl || '',
                 likeCount: data.likeCount ?? 0,
@@ -262,10 +274,9 @@ const submitComment = () => {
                     <i class="icon icon-play"></i>{{ displayPlayCount }}
                 </span>
                 <span class="meta-item">
-                    <i class="icon icon-danmaku"></i>{{ displayDanmakuCount }}
+                    <i class="icon icon-comment"></i>{{ displayCommentCount }}
                 </span>
                 <span class="meta-item">{{ displayDate }}</span>
-                <span class="meta-item">{{ displayDuration }}</span>
                 <span class="meta-item copyright">
                     <i class="icon icon-copyright"></i>{{ video.copyright }}
                 </span>
@@ -327,10 +338,10 @@ const submitComment = () => {
         <!-- 互动操作栏 (点赞投币收藏分享) -->
         <div class="action-bar">
             <div class="actions">
-                <button class="action-btn"><i class="icon-videoReward icon icon-like"></i>{{ video.likeCount }}</button>
-                <button class="action-btn"><i class="icon-videoReward icon icon-coin"></i>{{ video.coinCount }}</button>
-                <button class="action-btn"><i class="icon-videoReward icon icon-collect"></i>{{ video.collectCount }}</button>
-                <button class="action-btn"><i class="icon-videoReward icon icon-share"></i>{{ video.shareCount }}</button>
+                <button class="action-btn"><i class="icon-videoReward icon icon-like"></i>{{ displayLikeCount }}</button>
+                <button class="action-btn"><i class="icon-videoReward icon icon-coin"></i>{{ displayCoinCount }}</button>
+                <button class="action-btn"><i class="icon-videoReward icon icon-collect"></i>{{ displayCollectCount }}</button>
+                <button class="action-btn"><i class="icon-videoReward icon icon-share"></i>{{ displayShareCount }}</button>
             </div>
             <div class="report">
                 <i class="icon icon-report"></i>稿件举报
@@ -349,7 +360,7 @@ const submitComment = () => {
         <div class="comment-section">
             <div class="comment-header">
                 <div class="comment-title">
-                    评论 <span class="comment-count">{{ comments.length }}</span>
+                    评论 <span class="comment-count">{{ displayCommentCount }}</span>
                 </div>
                 <div class="comment-sort">
                     <span :class="{ active: commentSort === 'latest' }" @click="commentSort = 'latest'">最新</span>
@@ -588,6 +599,7 @@ const submitComment = () => {
     color: #18191c;
     line-height: 1.6;
     margin-bottom: 14px;
+    white-space: pre-wrap;
 }
 .tags {
     display: flex;
@@ -735,7 +747,7 @@ const submitComment = () => {
 }
 
 .icon-play { background-image: url(@/assets/images/playsNum_gray.png); }
-.icon-danmaku { background-image: url(@/assets/images/papernote0.png); }
+.icon-comment { background-image: url(@/assets/images/papernote0.png); }
 .icon-copyright { background-image: url(@/assets/images/PhosphoriconsSecurityWarningsPhosphoriconsProhibit.png); }
 .icon-word-setting { background-image: url(@/assets/images/wordSetting_icon.png); }
 .icon-like { background-image: url(@/assets/images/like_solid.png); }

@@ -112,6 +112,7 @@ public class VideoController {
         info.put("coinCount", video.getCoinCount());
         info.put("collectCount", video.getCollectCount());
         info.put("shareCount", video.getShareCount());
+        info.put("commentCount", video.getCommentCount());
         info.put("coverUrl", video.getCoverUrl());
         info.put("uploaderId", video.getUploaderId());
         info.put("createdAt", video.getCreatedAt());

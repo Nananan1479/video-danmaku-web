@@ -166,6 +166,48 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * 更新用户信息（昵称、签名、邮箱、电话）
+     *
+     * @param userId
+     * @param nickname
+     * @param signature
+     * @param email
+     * @param phone
+     *
+     * @author Nananan1479
+     * @date 2026/6/10
+     * @return com.cilicili.common.Result<com.cilicili.entity.User>
+     */
+    @Override
+    public Result<User> updateUser(long userId, String nickname, String signature, String email, String phone) {
+        User user = userMapper.selectById(userId);
+        if (user == null) {
+            return Result.fail(404, "用户不存在");
+        }
+        if (nickname != null && !nickname.trim().isEmpty()) {
+            user.setNickname(nickname.trim());
+        }
+        if (signature != null) {
+            user.setSignature(signature.trim());
+        }
+        if (email != null && !email.trim().isEmpty()) {
+            user.setEmail(email.trim());
+        }
+        if (phone != null && !phone.trim().isEmpty()) {
+            String phonePattern = "^1[3-9]\\d{9}$";
+            if (!phone.matches(phonePattern)) {
+                return Result.fail(400, "手机号格式不正确");
+            }
+            user.setPhone(phone.trim());
+        }
+        String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        user.setUpdated_at(now);
+        userMapper.updateById(user);
+        user.setPassword(null);
+        return Result.success(200, user);
+    }
+
+    /**
      * 获取用户头像
      *
      * @param filename 需要的头像名称（仅支持png）

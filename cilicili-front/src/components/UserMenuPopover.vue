@@ -85,6 +85,7 @@ function onPopoverLeave() {
 
 function goToUserCenter() {
     isVisible.value = false
+    router.push('/userAccount')
 }
 
 function handleLogout() {

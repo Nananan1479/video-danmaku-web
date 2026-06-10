@@ -77,6 +77,9 @@ export const fetchVideoInfo = async (videoId) => {
  */
 export function formatCount(num) {
     if (num == null) return '0'
+    if (num >= 100000000) {
+        return (num / 100000000).toFixed(num % 100000000 === 0 ? 0 : 1) + '亿'
+    }
     if (num >= 10000) {
         return (num / 10000).toFixed(num % 10000 === 0 ? 0 : 1) + '万'
     }
