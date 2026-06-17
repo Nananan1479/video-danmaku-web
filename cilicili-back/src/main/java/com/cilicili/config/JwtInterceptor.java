@@ -56,8 +56,19 @@ public class JwtInterceptor implements HandlerInterceptor {
             return true;
         }
 
+        // 放行获取头像（GET 无需登录，POST 上传头像需要登录）
+        if (path.startsWith("/api/users/avatar/") && "GET".equalsIgnoreCase(method)) {
+            return true;
+        }
+
         // 从请求头获取 Authorization 字段（以Bearer为开头）。
         String token = request.getHeader("Authorization");
+
+        // 兼容 <video> 标签等无法自定义请求头的场景：从 query 参数读取 token
+        if ((token == null || !token.startsWith("Bearer ")) && request.getParameter("token") != null) {
+            token = "Bearer " + request.getParameter("token");
+        }
+
         // 若不存在或不以 Bearer 开头，返回 JSON 错误信息
         if (token == null || !token.startsWith("Bearer ")) {
 //            System.out.println("token:"+token);

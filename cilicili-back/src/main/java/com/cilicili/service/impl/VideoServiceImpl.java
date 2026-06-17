@@ -69,9 +69,9 @@ public class VideoServiceImpl implements VideoService {
         }
 
         // status值不为1时错误
-        if (!(video.getStatus() == 1)) {
-            return ResponseEntity.badRequest().build();
-        }
+//        if (!(video.getStatus() == 1)) {
+//            return ResponseEntity.badRequest().build();
+//        }
 
         Path filePath = Paths.get(video.getVideoUrl());
         // 对应地址无视频返回错误

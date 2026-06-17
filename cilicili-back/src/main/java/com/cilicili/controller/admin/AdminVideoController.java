@@ -1,9 +1,13 @@
 package com.cilicili.controller.admin;
 
 import com.cilicili.common.Result;
+import com.cilicili.entity.Video;
 import com.cilicili.entity.vo.VideoVO;
+import com.cilicili.mapper.VideoMapper;
+import com.cilicili.service.VideoService;
 import com.cilicili.service.admin.AdminVideoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +20,12 @@ public class AdminVideoController {
 
     @Autowired
     private AdminVideoService adminVideoService;
+
+    @Autowired
+    private VideoMapper videoMapper;
+
+    @Autowired
+    private VideoService videoService;
 
     /**
      * 获取视频列表
@@ -30,6 +40,38 @@ public class AdminVideoController {
         }
         List<VideoVO> list = adminVideoService.getVideoList(status);
         return Result.success(200, list);
+    }
+
+
+    /**
+     * 按视频 ID 从数据库查出 video_url ，再把磁盘文件以流的形式返回给浏览器
+     *
+
+     * @param id
+     * @param rangeHeader
+     *
+     * @author Nananan1479
+     * @date 2026/5/25 14:13
+
+     * @return org.springframework.http.ResponseEntity<byte[]>
+     */
+    @GetMapping("{id}")
+    public ResponseEntity<byte[]> getVideo(
+            @PathVariable Long id,
+            @RequestHeader(value = "Range", required = false) String rangeHeader,
+            HttpServletRequest request) {
+        Integer role = (Integer) request.getAttribute("role");
+
+        if (role == null || role != 1) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Video video = videoMapper.selectById(id);
+        if (video == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return videoService.getVideo(id, rangeHeader);
     }
 
     /**

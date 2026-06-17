@@ -153,7 +153,7 @@ async function handleAvatarChange(e) {
             const stored = getCurrentUser()
             if (stored) {
                 stored.avatar = newAvatar
-                saveUsers(stored, localStorage.getItem('userToken'))
+                // saveUsers(stored, localStorage.getItem('userToken'))
             }
             ElMessage.success('头像更新成功')
         } else {

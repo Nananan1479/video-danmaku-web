@@ -19,9 +19,9 @@ public class AdminUserController {
 
     /**
      * 管理员登录
-     * POST /api/admin/login
-     * body: { "username": "...", "password": "..." }
-     * 仅 role=1 的管理员可登录成功
+     * POST /api/admin/login <br>
+     * body: { "username": "...", "password": "..." } <br>
+     * 仅 role=1 的管理员可登录成功。
      */
     @PostMapping("/login")
     public Result<?> login(@RequestBody Map<String, String> body) {

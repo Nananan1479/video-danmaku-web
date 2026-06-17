@@ -5,6 +5,15 @@ import { Search, Delete, Refresh, Plus, VideoCameraFilled } from '@element-plus/
 import { getAdminVideoList, updateAdminVideoStatus, deleteAdminVideo } from '@/api/index'
 
 const apiBaseUrl = import.meta.env.VITE_API_URL || ''
+import { USER_TOKEN_KEY } from '@/constants/userSettingConstants.js'
+
+/** 构造携带 token 的受保护视频 URL（<video> 标签无法自定义请求头，只能通过 query 参数传 token） */
+function getVideoUrl(videoId) {
+    //TODO：此处因改为使用签名 URL以应对video标签无法自定义请求头的问题，将token塞到url中有风险
+    const token = localStorage.getItem(USER_TOKEN_KEY)
+    const sep = token ? `?token=${encodeURIComponent(token)}` : ''
+    return `${apiBaseUrl}/api/admin/videos/${videoId}${sep}`
+}
 
 // status: 1=正常, 0=下架, 2=审核中
 const STATUS = { NORMAL: 1, REMOVED: 0, PENDING: 2 }
@@ -131,7 +140,7 @@ defineExpose({ loadVideos, setFilter, pendingCount })
         <el-dialog v-model="videoDetailVisible" title="视频详情" width="900px" destroy-on-close top="3vh">
             <div class="video-detail-layout">
                 <div class="video-detail-layout__player">
-                    <video v-if="currentVideo.id" class="video-detail-layout__video" :src="`${apiBaseUrl}/api/videos/${currentVideo.id}`" controls preload="metadata">您的浏览器不支持视频播放</video>
+                    <video v-if="currentVideo.id" class="video-detail-layout__video" :src="getVideoUrl(currentVideo.id)" controls preload="metadata">您的浏览器不支持视频播放</video>
                     <div v-else class="video-detail-layout__placeholder"><el-icon :size="48"><VideoCameraFilled /></el-icon><span>暂无视频</span></div>
                 </div>
                 <div class="video-detail-layout__info">
