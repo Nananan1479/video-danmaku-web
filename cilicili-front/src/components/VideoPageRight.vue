@@ -175,7 +175,7 @@ watch(videoId, (newId) => {
                     </div>
                     <div class="rec-stats">
                         <span><i class="icon icon-play-sm"></i>{{ formatCount(item.playCount) }}</span>
-                        <span><i class="icon icon-danmaku-sm"></i>{{ formatCount(item.danmakuCount) }}</span>
+                        <span><i class="icon icon-danmaku-sm"></i>{{ formatCount(item.commentCount) }}</span>
                     </div>
                 </div>
             </div>
@@ -231,6 +231,10 @@ watch(videoId, (newId) => {
     font-size: 13px;
     color: #9499a0;
     margin-bottom: 6px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
 }
 .up-actions {
     display: flex;

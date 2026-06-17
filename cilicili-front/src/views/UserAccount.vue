@@ -178,10 +178,10 @@ async function handleAvatarChange(e) {
         <!-- Banner 区 -->
         <div class="banner">
             <div class="banner__inner">
-                <div class="banner__profile">
+                <!-- <div class="banner__profile">
                     <img class="banner__avatar" :src="avatarSrc" alt="头像" />
                     <span class="banner__nickname">{{ user.nickname || user.username || '未登录' }}</span>
-                </div>
+                </div> -->
             </div>
         </div>
 
@@ -441,8 +441,8 @@ async function handleAvatarChange(e) {
     flex-shrink: 0;
 }
 
-.icon-home   { background-image: url(@/assets/images/tv03.png); }
-.icon-info   { background-image: url(@/assets/images/Idea.png); }
+.icon-home   { background-image: url(@/assets/images/House_Black_Icon.svg); }
+.icon-info   { background-image: url(@/assets/images/User_black_icon.svg); }
 .icon-avatar { background-image: url(@/assets/images/Group_black_icon.png); }
 
 /* ==================== 内容区 ==================== */
