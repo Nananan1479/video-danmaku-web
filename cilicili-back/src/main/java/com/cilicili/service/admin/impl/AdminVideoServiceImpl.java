@@ -8,6 +8,7 @@ import com.cilicili.mapper.VideoMapper;
 import com.cilicili.service.admin.AdminVideoService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +16,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class AdminVideoServiceImpl implements AdminVideoService {
+
+    @Value("${file.video-dir}")
+    private String VIDEO_DIR;
+
+    @Value("${file.cover-dir}")
+    private String COVER_DIR;
 
     @Autowired
     private VideoMapper videoMapper;
@@ -55,13 +62,13 @@ public class AdminVideoServiceImpl implements AdminVideoService {
         if (video == null) {
             return Result.fail(404, "视频不存在");
         }
-        // 删除视频文件和封面文件
+        // 删除磁盘文件（数据库只存文件名，用配置目录拼接）
         try {
             if (video.getVideoUrl() != null) {
-                new java.io.File(video.getVideoUrl()).delete();
+                new java.io.File(VIDEO_DIR, video.getVideoUrl()).delete();
             }
             if (video.getCoverUrl() != null) {
-                new java.io.File(video.getCoverUrl()).delete();
+                new java.io.File(COVER_DIR, video.getCoverUrl()).delete();
             }
         } catch (Exception ignored) {}
         videoMapper.deleteById(videoId);

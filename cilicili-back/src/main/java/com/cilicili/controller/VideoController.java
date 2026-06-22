@@ -20,7 +20,6 @@ import org.springframework.util.unit.DataSize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
@@ -200,9 +199,8 @@ public class VideoController {
         if (video == null || video.getCoverUrl() == null) {
             return ResponseEntity.notFound().build();
         }
-        String coverUrl = video.getCoverUrl();
-        String filename = coverUrl.substring(coverUrl.lastIndexOf(File.separator) + 1);
-        return videoService.getCover(filename);
+        // coverUrl 现在只存文件名，直接传入
+        return videoService.getCover(video.getCoverUrl());
     }
 
     /**

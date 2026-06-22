@@ -73,7 +73,8 @@ public class VideoServiceImpl implements VideoService {
 //            return ResponseEntity.badRequest().build();
 //        }
 
-        Path filePath = Paths.get(video.getVideoUrl());
+        // 数据库只存文件名，用配置目录拼接完整路径
+        Path filePath = Paths.get(VIDEO_DIR, video.getVideoUrl());
         // 对应地址无视频返回错误
         if (!Files.exists(filePath)) {
             return ResponseEntity.notFound().build();
@@ -177,8 +178,9 @@ public class VideoServiceImpl implements VideoService {
             Video video = new Video();
             video.setTitle(title);
             video.setDescription(description);
-            video.setVideoUrl(videoPath.toString());
-            video.setCoverUrl(coverName != null ? Paths.get(COVER_DIR, coverName).toString() : null);
+            // 数据库只存文件名，读取时用 YAML 配置的目录拼接
+            video.setVideoUrl(videoName);
+            video.setCoverUrl(coverName);
             video.setStatus(2);
             video.setUploaderId(uploaderId);
             video.setPlayCount(0L);
