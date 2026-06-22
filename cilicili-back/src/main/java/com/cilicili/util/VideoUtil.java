@@ -1,10 +1,17 @@
 package com.cilicili.util;
 
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import ws.schild.jave.MultimediaObject;
 import ws.schild.jave.info.MultimediaInfo;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class VideoUtil {
     /*
@@ -53,6 +60,59 @@ public class VideoUtil {
         } catch (Exception e) {
             e.printStackTrace();
             return 0;
+        }
+    }
+
+    /**
+     * 从磁盘读取视频文件，支持 Range 分段请求（拖拽进度条）。
+     *
+     * @param filePath    视频文件完整路径
+     * @param rangeHeader 前端 Range 请求头（可为 null）
+     * @return ResponseEntity 包含视频字节流
+     */
+    public static ResponseEntity<byte[]> serveVideoFile(Path filePath, String rangeHeader) {
+        if (!Files.exists(filePath)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        try {
+            long fileSize = Files.size(filePath);
+            String contentType = Files.probeContentType(filePath);
+            if (contentType == null) contentType = "video/mp4";
+
+            // 无 Range 头 → 返回完整视频
+            if (rangeHeader == null) {
+                byte[] data = Files.readAllBytes(filePath);
+                return ResponseEntity.ok()
+                        .contentType(MediaType.parseMediaType(contentType))
+                        .contentLength(fileSize)
+                        .body(data);
+            }
+
+            // 解析 Range: bytes=start-end
+            String[] ranges = rangeHeader.replace("bytes=", "").split("-");
+            long start = (ranges[0] != null && !ranges[0].isEmpty()) ? Long.parseLong(ranges[0]) : 0;
+            long end = fileSize - 1;
+            if (ranges.length > 1 && ranges[1] != null && !ranges[1].isEmpty()) {
+                end = Long.parseLong(ranges[1]);
+            }
+            if (end >= fileSize) end = fileSize - 1;
+
+            long contentLength = end - start + 1;
+            byte[] data = new byte[(int) contentLength];
+            try (RandomAccessFile raf = new RandomAccessFile(filePath.toFile(), "r")) {
+                raf.seek(start);
+                raf.readFully(data);
+            }
+
+            return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .header(HttpHeaders.CONTENT_RANGE, "bytes " + start + "-" + end + "/" + fileSize)
+                    .contentLength(contentLength)
+                    .body(data);
+
+        } catch (IOException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 }

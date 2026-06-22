@@ -151,11 +151,11 @@ defineExpose({ loadVideos, setFilter, pendingCount })
                             <el-tag :type="getStatusType(currentVideo.status)" size="small" effect="plain">{{ getStatusLabel(currentVideo.status) }}</el-tag>
                         </el-descriptions-item>
                         <el-descriptions-item label="时长">{{ formatDuration(currentVideo.duration) }}</el-descriptions-item>
-                        <el-descriptions-item label="播放量">{{ formatCount(currentVideo.playCount) }}</el-descriptions-item>
-                        <el-descriptions-item label="弹幕数">{{ formatCount(currentVideo.danmakuCount) }}</el-descriptions-item>
-                        <el-descriptions-item label="点赞数">{{ formatCount(currentVideo.likeCount) }}</el-descriptions-item>
+                        <el-descriptions-item v-if="Number(currentVideo.status) !== STATUS.PENDING" label="播放量">{{ formatCount(currentVideo.playCount) }}</el-descriptions-item>
+                        <el-descriptions-item v-if="Number(currentVideo.status) !== STATUS.PENDING" label="弹幕数">{{ formatCount(currentVideo.danmakuCount) }}</el-descriptions-item>
+                        <el-descriptions-item v-if="Number(currentVideo.status) !== STATUS.PENDING" label="点赞数">{{ formatCount(currentVideo.likeCount) }}</el-descriptions-item>
                         <el-descriptions-item label="上传日期">{{ currentVideo.createdAt || '--' }}</el-descriptions-item>
-                        <el-descriptions-item label="描述"><span class="video-detail-layout__desc-text">{{ currentVideo.description || '--' }}</span></el-descriptions-item>
+                        <el-descriptions-item label="描述"><p class="video-detail-layout__desc-text">{{ currentVideo.description || '--' }}</p></el-descriptions-item>
                     </el-descriptions>
                 </div>
             </div>
@@ -195,7 +195,8 @@ defineExpose({ loadVideos, setFilter, pendingCount })
 .video-detail-layout__placeholder { display: flex; flex-direction: column; align-items: center; gap: 12px; color: #666; font-size: 14px; }
 .video-detail-layout__info { flex: 1; min-width: 0; }
 .video-detail-layout__title { font-size: 16px; font-weight: 600; color: #18191c; margin: 0 0 12px 0; line-height: 1.4; }
-.video-detail-layout__desc-text { color: #61666d; font-size: 13px; line-height: 1.5; }
+.video-detail-layout__desc-text { color: #61666d; font-size: 13px; line-height: 1.5; 
+    white-space: pre-wrap; }
 .video-detail-actions__row { display: flex; align-items: center; gap: 12px; }
 .video-detail-actions__label { font-size: 14px; font-weight: 500; color: #18191c; white-space: nowrap; }
 .video-detail-actions__btns { display: flex; flex-wrap: wrap; gap: 10px; }

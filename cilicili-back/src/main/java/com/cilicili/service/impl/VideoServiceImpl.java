@@ -10,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -19,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -63,74 +60,15 @@ public class VideoServiceImpl implements VideoService {
     @Override
     public ResponseEntity<byte[]> getVideo(Long id, String rangeHeader) {
         Video video = videoMapper.selectById(id);
-        // 未查询到返回 错误
         if (video == null || video.getVideoUrl() == null) {
             return ResponseEntity.notFound().build();
         }
 
-        // status值不为1时错误
-//        if (!(video.getStatus() == 1)) {
-//            return ResponseEntity.badRequest().build();
-//        }
-
         // 数据库只存文件名，用配置目录拼接完整路径
         Path filePath = Paths.get(VIDEO_DIR, video.getVideoUrl());
-        // 对应地址无视频返回错误
-        if (!Files.exists(filePath)) {
-            return ResponseEntity.notFound().build();
-        }
 
-        try {
-            // 读取磁盘
-            long fileSize = Files.size(filePath);
-            // 探测文件的内容类型。
-            String contentType = Files.probeContentType(filePath);
-            if (contentType == null) {
-                contentType = "video/mp4";
-            }
-
-            // 无 Range 头 → 返回整个视频
-            if (rangeHeader == null) {
-                byte[] data = Files.readAllBytes(filePath);
-                return ResponseEntity.ok()
-                        .contentType(MediaType.parseMediaType(contentType))
-                        .contentLength(fileSize)
-                        .body(data);
-            }
-
-            // 有 Range 头 → 返回指定片段
-            // 解析 Range 请求,提取起始和结束位置。
-            String[] ranges = rangeHeader.replace("bytes=", "").split("-");
-            long start = (ranges[0] != null && !ranges[0].isEmpty()) ? Long.parseLong(ranges[0]) : 0;
-            long end = fileSize - 1;
-            if (ranges.length > 1 && ranges[1] != null && !ranges[1].isEmpty()) {
-                end = Long.parseLong(ranges[1]);
-            }
-            if (end >= fileSize) {
-                end = fileSize - 1;
-            }
-
-            // 使用 RandomAccessFile 直接定位到文件的指定位置，只读取需要的那一段字节
-            long contentLength = end - start + 1;
-
-            byte[] data = new byte[(int) contentLength];
-            try (RandomAccessFile raf = new RandomAccessFile(filePath.toFile(), "r")) {
-                raf.seek(start);
-                raf.readFully(data);
-            }
-
-            // 返回 206(分段响应的标准状态码)
-            // 设置 Content-Range 头,告知浏览器当前返回的是哪一段、总共多大。
-            return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
-                    .contentType(MediaType.parseMediaType(contentType))
-                    // 例如 bytes 0-1048575/123456789
-                    .header(HttpHeaders.CONTENT_RANGE, "bytes " + start + "-" + end + "/" + fileSize)
-                    .contentLength(contentLength)
-                    .body(data);
-
-        } catch (IOException e) {
-            return ResponseEntity.notFound().build();
-        }
+        // 委托 VideoUtil 处理文件读取和 Range 分段
+        return VideoUtil.serveVideoFile(filePath, rangeHeader);
     }
 
     /**

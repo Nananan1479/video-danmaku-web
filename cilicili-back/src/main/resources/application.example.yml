@@ -72,8 +72,9 @@ spring:
         login-password: 123
         allow: 127.0.0.1           # 允许访问的地址，如果allow没有配置或者为空，则允许所有访问
         deny:
-  mvc:
-    static-path-pattern: /picture/**
+  # mvc:
+  # static-path-pattern: /picture/**
+  # static-path-pattern 已移除，使用 Controller 提供视频流
 
 mybatis-plus:
   mapper-locations: classpath*:META-INF.mybatis/mapper/**/*.xml
@@ -87,8 +88,17 @@ mybatis-plus:
 jwt:
   secret: cilicili-jwt-secret-key-by-Nananan1479@github-2025-this-is-a-very-long-secret
   expiration: 604800000 # 一天（单位为毫秒，1 * 24 * 60 * 60 * 1000）
+
 ########### 视频及封面地址 配置
 file:
-  video-dir: D:/CiliCili/
+  video-dir: D:/CiliCili
   cover-dir: D:/CiliCili/Covers
   avatar-dir: D:/CiliCili/Avatars
+
+########### 阿里云密钥信息 (出于安全原因不公开阿里云密钥)
+aliyun:
+  oss:
+    endpoint: oss-cn-hangzhou.aliyuncs.com       # 替换为你记录的 Endpoint
+    accessKeyId: LTAI5tYourAccessKeyId           # 替换为你的 AccessKey ID
+    accessKeySecret: YourAccessKeySecret         # 替换为你的 AccessKey Secret
+    bucketName: your-bucket-name                 # 替换为你的 Bucket 名称
