@@ -139,7 +139,7 @@ console.log(fetchVideos())
 <template>
     <div class="homeMain">
         <div class="homeMain_grid">
-            <HomeMainCarousel />
+            <HomeMainCarousel class="HomeMainCarousel" />
 
             <VideoCard
                 v-for="video in videos"
@@ -153,7 +153,7 @@ console.log(fetchVideos())
 <style scoped>
 .homeMain {
     width: 100%;
-    max-width: 1430px;
+    /* max-width: 1430px; */
     display: flex;
     justify-content: center;
 }
@@ -168,9 +168,15 @@ console.log(fetchVideos())
     /* padding: 0 72px 0 63px; */
 }
 
-/* 选中第 3 行及以后的卡片（每行3列，前两行共6个，n+7 即从第7个开始） */
+/* 选中第 3 行及以后的卡片，（每行3列，前两行共6个，n+7 即从第7个开始） */
 .homeMain_grid :deep(.video-card:nth-child(n+8)) {
     margin-top: 40px;
+}
+
+@media (max-width: 1374px) {
+    .homeMain_grid :deep(.video-card:nth-child(n+6)) {
+        margin-top: 30px;
+    }
 }
 
 /* 轮播图跨2列2行 */
@@ -179,29 +185,61 @@ console.log(fetchVideos())
     grid-row: span 2;
 } */
 
+@media (max-width: 2560px) {
+    .homeMain_grid {
+        grid-template-columns: repeat(5, minmax(200px, 1fr));
+        column-gap: 20px;
+        padding: 0 102px 0 93px;
+    }
+}
+
 @media (max-width: 1599px) {
     .homeMain_grid {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
         column-gap: 20px;
-        padding: 0 72px 0 63px;
+        padding: 0 102px 0 93px;
     }
 }
 
-@media (max-width: 1199px) {
+@media (max-width: 1135px) {
     .homeMain_grid {
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         column-gap: 16px;
-        padding: 0 32px 0 24px;
+        padding: 0 52px 0 44px;
         row-gap: 12px;
     }
+    /* .homeMain_grid :deep(.video-card:nth-child(n+8)) {
+        margin-top: 0;
+    } */
 }
 
-@media (max-width: 767px) {
+@media (max-width: 944px) {
     .homeMain_grid {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        column-gap: 16px;
+        padding: 0 52px 0 44px;
+        row-gap: 12px;
+    }
+    .homeMain_grid :deep(.video-card:nth-child(n)) {
+        margin-top: 20px;
+    }
+    .HomeMainCarousel {
+        display: none;
+    }
+}
+
+@media (max-width: 730px) {
+    .homeMain_grid {
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
         column-gap: 12px;
-        padding: 0 16px;
+        padding: 0 22px 0 14px;
         row-gap: 10px;
+    }
+    .homeMain_grid :deep(.video-card:nth-child(n)) {
+        margin-top: 20px;
+    }
+    .HomeMainCarousel {
+        display: none;
     }
 }
 
@@ -211,6 +249,12 @@ console.log(fetchVideos())
         column-gap: 8px;
         padding: 0 8px;
         row-gap: 8px;
+    }
+    .homeMain_grid :deep(.video-card:nth-child(n)) {
+        margin-top: 20px;
+    }
+    .HomeMainCarousel {
+        display: none;
     }
 }
 </style>

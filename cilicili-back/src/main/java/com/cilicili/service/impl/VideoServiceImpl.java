@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cilicili.entity.Video;
 import com.cilicili.mapper.VideoMapper;
 import com.cilicili.service.VideoService;
+import com.cilicili.util.OssUtil;
 import com.cilicili.util.VideoUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,6 +40,17 @@ public class VideoServiceImpl implements VideoService {
      */
     @Value("${file.cover-dir}")
     private String COVER_DIR ;
+    /**
+     * 阿里云 OSS 配置
+     */
+    @Value("${aliyun.oss.endpoint}")
+    private String ENDPOINT;
+    @Value("${aliyun.oss.accessKeyId}")
+    private String ACCESS_KEY_ID;
+    @Value("${aliyun.oss.accessKeySecret}")
+    private String ACCESS_KEY_SECRET;
+    @Value("${aliyun.oss.bucketName}")
+    private String BUCKET_NAME;
 
     @Autowired
     private VideoMapper videoMapper;
