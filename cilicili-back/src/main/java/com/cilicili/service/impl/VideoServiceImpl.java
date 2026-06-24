@@ -76,10 +76,22 @@ public class VideoServiceImpl implements VideoService {
             return ResponseEntity.notFound().build();
         }
 
-        // 数据库只存文件名，用配置目录拼接完整路径
-        Path filePath = Paths.get(VIDEO_DIR, video.getVideoUrl());
+        String videoName = video.getVideoUrl();
+        // 兼容旧数据：如果 DB 存的是全路径，只取文件名
+        String fileName = Paths.get(videoName).getFileName().toString();
 
-        // 委托 VideoUtil 处理文件读取和 Range 分段
+        // OSS：服务端代理读取，完整支持 Range（拖拽进度条）
+        if (ENDPOINT != null && !ENDPOINT.isEmpty()
+                && ACCESS_KEY_ID != null && !ACCESS_KEY_ID.isEmpty()) {
+            String objectName = VIDEO_DIR + fileName;
+            System.out.println("OSS 请求对象: bucket=" + BUCKET_NAME + " key=" + objectName);
+            return OssUtil.serveOssVideo(
+                    ENDPOINT, ACCESS_KEY_ID, ACCESS_KEY_SECRET, BUCKET_NAME,
+                    objectName, rangeHeader);
+        }
+
+        // 兜底：本地磁盘读取
+        Path filePath = Paths.get(VIDEO_DIR, videoName);
         return VideoUtil.serveVideoFile(filePath, rangeHeader);
     }
 
@@ -101,26 +113,59 @@ public class VideoServiceImpl implements VideoService {
     @Override
     public Video uploadVideo(MultipartFile videoFile, MultipartFile coverFile, String title, String description, Long uploaderId) {
         try {
-            Files.createDirectories(Paths.get(VIDEO_DIR));
-            Files.createDirectories(Paths.get(COVER_DIR));
-
             String videoExt = ".mp4";
-            // 视频
             String videoName = UUID.randomUUID().toString() + videoExt;
-            Path videoPath = Paths.get(VIDEO_DIR, videoName);
-            // 写入磁盘
-            videoFile.transferTo(videoPath.toFile());
 
-            // 封面写入磁盘
+            // 上传到 OSS
+            OssUtil.upload(ENDPOINT, ACCESS_KEY_ID, ACCESS_KEY_SECRET, BUCKET_NAME,
+                    VIDEO_DIR + videoName, videoFile.getInputStream());
+
             String coverName = null;
             if (coverFile != null && !coverFile.isEmpty()) {
                 String originalName = coverFile.getOriginalFilename();
                 String coverExt = originalName != null && originalName.contains(".") ?
                         originalName.substring(originalName.lastIndexOf(".")) : ".png";
-                // 为视频创建唯一的UUID
+                coverName = UUID.randomUUID().toString() + coverExt;
+                OssUtil.upload(ENDPOINT, ACCESS_KEY_ID, ACCESS_KEY_SECRET, BUCKET_NAME,
+                        COVER_DIR + coverName, coverFile.getInputStream());
+            }
+
+            // 数据库只存文件名
+            Video video = new Video();
+            video.setTitle(title);
+            video.setDescription(description);
+            video.setVideoUrl(videoName);
+            video.setCoverUrl(coverName);
+            video.setStatus(2);
+            video.setUploaderId(uploaderId);
+            video.setPlayCount(0L);
+            video.setDanmakuCount(0L);
+            video.setCommentCount(0L);
+            video.setLikeCount(0L);
+            video.setCoinCount(0L);
+            video.setCollectCount(0L);
+            video.setShareCount(0L);
+            video.setDuration(0);
+            String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            video.setCreatedAt(now);
+            video.setUpdatedAt(now);
+            videoMapper.insert(video);
+            return video;
+
+            // 兜底：本地磁盘
+            /*
+            Files.createDirectories(Paths.get(VIDEO_DIR));
+            Files.createDirectories(Paths.get(COVER_DIR));
+            Path videoPath = Paths.get(VIDEO_DIR, videoName);
+            videoFile.transferTo(videoPath.toFile());
+
+            String coverName = null;
+            if (coverFile != null && !coverFile.isEmpty()) {
+                String originalName = coverFile.getOriginalFilename();
+                String coverExt = originalName != null && originalName.contains(".") ?
+                        originalName.substring(originalName.lastIndexOf(".")) : ".png";
                 coverName = UUID.randomUUID().toString() + coverExt;
                 Path coverPath = Paths.get(COVER_DIR, coverName);
-                // 写入磁盘
                 coverFile.transferTo(coverPath.toFile());
             }
 
@@ -145,8 +190,7 @@ public class VideoServiceImpl implements VideoService {
             video.setCreatedAt(now);
             video.setUpdatedAt(now);
 
-            videoMapper.insert(video);
-            return video;
+            videoMapper.insert(video);*/
 
         } catch (IOException e) {
             throw new RuntimeException("上传失败", e);
@@ -245,6 +289,76 @@ public class VideoServiceImpl implements VideoService {
     public Page<Video> getAllVideos(int pageNum, int pageSize) {
         return videoMapper.selectPage(new Page<>(pageNum, pageSize), null);
     }
+
+    /*
+      上传视频和封面功能（上传到磁盘），视频仅支持MP4格式，图片仅支持png格式，视频大小不超500MB（可在application.yml里调整）。
+
+
+      @param videoFile
+     * @param coverFile
+     * @param title
+     * @param description
+     * @param uploaderId
+     *
+     * @author Nananan1479
+     * @date 2026/5/25 14:08
+
+     * @return com.cilicili.entity.Video
+     */
+//    @Override
+//    public Video uploadVideoByFile(MultipartFile videoFile, MultipartFile coverFile, String title, String description, Long uploaderId) {
+//        try {
+//            Files.createDirectories(Paths.get(VIDEO_DIR));
+//            Files.createDirectories(Paths.get(COVER_DIR));
+//
+//            String videoExt = ".mp4";
+//            // 视频
+//            String videoName = UUID.randomUUID().toString() + videoExt;
+//            Path videoPath = Paths.get(VIDEO_DIR, videoName);
+//            // 写入磁盘
+//            videoFile.transferTo(videoPath.toFile());
+//
+//            // 封面写入磁盘
+//            String coverName = null;
+//            if (coverFile != null && !coverFile.isEmpty()) {
+//                String originalName = coverFile.getOriginalFilename();
+//                String coverExt = originalName != null && originalName.contains(".") ?
+//                        originalName.substring(originalName.lastIndexOf(".")) : ".png";
+//                // 为视频创建唯一的UUID
+//                coverName = UUID.randomUUID().toString() + coverExt;
+//                Path coverPath = Paths.get(COVER_DIR, coverName);
+//                // 写入磁盘
+//                coverFile.transferTo(coverPath.toFile());
+//            }
+//
+//            // 存储视频信息(数据库)
+//            Video video = new Video();
+//            video.setTitle(title);
+//            video.setDescription(description);
+//            // 数据库只存文件名，读取时用 YAML 配置的目录拼接
+//            video.setVideoUrl(videoName);
+//            video.setCoverUrl(coverName);
+//            video.setStatus(2);
+//            video.setUploaderId(uploaderId);
+//            video.setPlayCount(0L);
+//            video.setDanmakuCount(0L);
+//            video.setCommentCount(0L);
+//            video.setLikeCount(0L);
+//            video.setCoinCount(0L);
+//            video.setCollectCount(0L);
+//            video.setShareCount(0L);
+//            video.setDuration((int) (VideoUtil.getDuration(videoPath.toFile())/1000));
+//            String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+//            video.setCreatedAt(now);
+//            video.setUpdatedAt(now);
+//
+//            videoMapper.insert(video);
+//            return video;
+//
+//        } catch (IOException e) {
+//            throw new RuntimeException("上传失败", e);
+//        }
+//    }
 
     /*
       解析MP4视频时长（使用isoparser文件解析库）

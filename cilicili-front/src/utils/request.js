@@ -39,39 +39,22 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
     (response) => response, // 正常响应直接返回
     (error) => {
-        console.log("response响应拦截器触发")
-        console.log(error)
-        console.log(error.response)
-        console.log(error.response.data)
-
         // 如果是 401 且后端明确返回未登录/未授权
         if (error.response?.status === 401) {
-            const tokenKey = USER_TOKEN_KEY
-            const userKey = USER_STORAGE_KEY
-
-            // 先取出原始 token 字符串（避免之前的变量引用错误）
-            const rawToken = localStorage.getItem(tokenKey)
-            if (rawToken) {
-                try {
-                    // 解析 token 中的 payload 部分
-                    const decodedPayload = JSON.parse(atob(rawToken.split('.')[1]))
-                    console.log('过期 token 内容：', decodedPayload)
-                } catch (e) {
-                    console.warn('解码 token 失败', e)
-                }
-            }
+            // 避免重复清除：如果 token 不存在说明已经处理过了
+            const token = localStorage.getItem(USER_TOKEN_KEY)
+            if (!token) return Promise.reject(error)
 
             // 清除过期信息
             localStorage.removeItem(USER_TOKEN_KEY)
             localStorage.removeItem(USER_STORAGE_KEY)
 
-            // 跳转登录（避免重复跳转）
-            // if (router.currentRoute.value.path !== '/login') {
-            //     router.push('/login')
-            // }
+            // 跳转登录
+            if (router.currentRoute.value.path !== '/login') {
+                router.push('/login')
+            }
 
-            // 返回一个 resolved promise，终止错误传播
-            return Promise.resolve()
+            return Promise.reject(error)
         }
         return Promise.reject(error)
     }

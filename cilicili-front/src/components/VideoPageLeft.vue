@@ -413,11 +413,12 @@ const submitComment = () => {
     padding: 0 0 40px;
 }
 .title {
-    font-size: 22px;
+    font-size: 19px;
     font-weight: 500;
-    color: #18191c;
+    color: #222;
     margin: 0 0 10px;
-    /* line-height: 1.3; */
+    letter-spacing: 1px;
+    font-family: "Noto Sans SC";
 }
 .meta-info {
     display: flex;

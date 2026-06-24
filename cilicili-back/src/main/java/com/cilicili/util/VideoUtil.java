@@ -64,7 +64,8 @@ public class VideoUtil {
     }
 
     /**
-     * 从磁盘读取视频文件，支持 Range 分段请求（拖拽进度条）。
+     * 从磁盘读取视频文件，支持 Range 分段请求（拖拽进度条）。<br>
+     * 项目转为使用阿里云oss读取视频，该方法不再适用
      *
      * @param filePath    视频文件完整路径
      * @param rangeHeader 前端 Range 请求头（可为 null）

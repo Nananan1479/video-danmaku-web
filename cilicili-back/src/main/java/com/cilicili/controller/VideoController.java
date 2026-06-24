@@ -163,6 +163,7 @@ public class VideoController {
             Video video = videoService.uploadVideo(videoFile, coverFile, title, description, uploaderId);
             return Result.success(200, video);
         } catch (RuntimeException e) {
+            e.printStackTrace();
             return Result.fail(500, "上传失败: " + e.getMessage());
         }
     }
