@@ -202,7 +202,7 @@ import Carousel2 from '@/assets/images/Carousel2.png'
 }
 
 .carouselTitle {
-    font-size: 20px;
+    font-size: 19px;
     line-height: 29px;
     color: #fff;
     margin: 0;
@@ -229,24 +229,27 @@ import Carousel2 from '@/assets/images/Carousel2.png'
 .carouselDots {
     display: flex;
     align-items: center;
-    gap: 4px;
-    padding-left: 5px;
+    gap: 2px;
+    /* padding-left: 5px; */
     flex-shrink: 0;
 }
 
 .carouselDot {
-    width: 20px;
-    height: 20px;
-    background-image: url(@/assets/images/CarouselDot.png);
-    background-size: 70% 70%;
+    width: 18px;
+    height: 18px;
+    background-image: url(@/assets/images/carousel_default.svg);
+    background-size: 50% 50%;
     background-position: center;
     background-repeat: no-repeat;
     cursor: pointer;
-    transition: transform 0.2s ease;
+    transition: all 0.2s ease;
     flex-shrink: 0;
 }
 
 .carouselDot--active {
+    width: 18px;
+    height: 18px;
+    background-image: url(@/assets/images/CarouselDot.png);
     background-size: 100% 100%;
     background-position: center;
 }

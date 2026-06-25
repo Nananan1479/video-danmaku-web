@@ -91,14 +91,15 @@ jwt:
 
 ########### 视频及封面地址 配置
 file:
-  video-dir: D:/CiliCili
-  cover-dir: D:/CiliCili/Covers
-  avatar-dir: D:/CiliCili/Avatars
+  video-dir: Videos/
+  cover-dir: Covers/
+  avatar-dir: Avatars/
 
 ########### 阿里云密钥信息 (出于安全原因不公开阿里云密钥)
 aliyun:
   oss:
-    endpoint: oss-cn-hangzhou.aliyuncs.com       # 替换为你记录的 Endpoint
-    accessKeyId: LTAI5tYourAccessKeyId           # 替换为你的 AccessKey ID
-    accessKeySecret: YourAccessKeySecret         # 替换为你的 AccessKey Secret
-    bucketName: your-bucket-name                 # 替换为你的 Bucket 名称
+    endpoint: oss-cn-hangzhou.aliyuncs.com         # 替换为你记录的 Endpoint
+    accessKeyId: LTAI5tYourAccessKeyId             # 替换为你的 AccessKey ID
+    accessKeySecret: YourAccessKeySecret           # 替换为你的 AccessKey Secret
+    private-bucketName: your-private-bucket-name   # 替换为你的 Bucket 名称
+    public-bucket: your-public-bucket-name         # 替换为你的 Bucket 名称

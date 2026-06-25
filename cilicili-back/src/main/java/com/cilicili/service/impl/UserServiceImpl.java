@@ -5,6 +5,7 @@ import com.cilicili.common.Result;
 import com.cilicili.entity.User;
 import com.cilicili.mapper.UserMapper;
 import com.cilicili.service.UserService;
+import com.cilicili.util.OssUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -30,6 +31,15 @@ public class UserServiceImpl implements UserService {
 
     @Value("${file.avatar-dir}")
     private String AVATAR_DIR;
+
+    @Value("${aliyun.oss.endpoint}")
+    private String ENDPOINT;
+    @Value("${aliyun.oss.accessKeyId}")
+    private String ACCESS_KEY_ID;
+    @Value("${aliyun.oss.accessKeySecret}")
+    private String ACCESS_KEY_SECRET;
+    @Value("${aliyun.oss.public-bucket}")
+    private String PUBLIC_BUCKET;
 
     @Autowired
     private UserMapper userMapper;
@@ -144,18 +154,27 @@ public class UserServiceImpl implements UserService {
     @Override
     public String uploadAvatar(MultipartFile file, long userId) {
         try {
-            Files.createDirectories(Paths.get(AVATAR_DIR));
             String originalName = file.getOriginalFilename();
             String ext = originalName != null && originalName.contains(".") ?
                     originalName.substring(originalName.lastIndexOf(".")) : ".png";
             String avatarName = UUID.randomUUID().toString() + ext;
-            Path avatarPath = Paths.get(AVATAR_DIR, avatarName);
-            file.transferTo(avatarPath.toFile());
+
+            // 上传到 OSS 公共桶
+            if (ENDPOINT != null && !ENDPOINT.isEmpty()) {
+                OssUtil.upload(ENDPOINT, ACCESS_KEY_ID, ACCESS_KEY_SECRET, PUBLIC_BUCKET,
+                        AVATAR_DIR + avatarName, file.getInputStream());
+            } else {
+                // 兜底：本地磁盘
+                Files.createDirectories(Paths.get(AVATAR_DIR));
+                Path avatarPath = Paths.get(AVATAR_DIR, avatarName);
+                file.transferTo(avatarPath.toFile());
+            }
 
             User user = userMapper.selectById(userId);
             if (user == null) {
                 throw new RuntimeException("用户不存在");
             }
+            // 数据库只存文件名
             user.setAvatar(avatarName);
             userMapper.updateById(user);
 
@@ -219,12 +238,17 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public ResponseEntity<Resource> getAvatar(String filename) {
-        try {
-            Path dir = Paths.get(AVATAR_DIR);
-            if (!Files.exists(dir)) {
-                Files.createDirectories(dir);  // 自动创建所有不存在的父目录
-            }
+        // OSS 公共桶：302 重定向到 OSS 公开 URL
+        if (ENDPOINT != null && !ENDPOINT.isEmpty() && PUBLIC_BUCKET != null) {
+            String avatarUrl = "https://" + PUBLIC_BUCKET + "." + ENDPOINT + "/"
+                    + AVATAR_DIR + filename;
+            return ResponseEntity.status(302)
+                    .header("Location", avatarUrl)
+                    .body(null);
+        }
 
+        // 兜底：本地磁盘
+        try {
             File file = new File(AVATAR_DIR, filename);
             if (!file.exists()) {
                 return ResponseEntity.notFound().build();

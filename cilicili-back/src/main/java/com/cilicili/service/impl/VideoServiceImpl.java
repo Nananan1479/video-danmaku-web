@@ -49,8 +49,10 @@ public class VideoServiceImpl implements VideoService {
     private String ACCESS_KEY_ID;
     @Value("${aliyun.oss.accessKeySecret}")
     private String ACCESS_KEY_SECRET;
-    @Value("${aliyun.oss.bucketName}")
-    private String BUCKET_NAME;
+    @Value("${aliyun.oss.private-bucketName}")
+    private String PRIVATE_BUCKET;           // 视频
+    @Value("${aliyun.oss.public-bucket}")
+    private String PUBLIC_BUCKET;            // 封面
 
     @Autowired
     private VideoMapper videoMapper;
@@ -84,9 +86,9 @@ public class VideoServiceImpl implements VideoService {
         if (ENDPOINT != null && !ENDPOINT.isEmpty()
                 && ACCESS_KEY_ID != null && !ACCESS_KEY_ID.isEmpty()) {
             String objectName = VIDEO_DIR + fileName;
-            System.out.println("OSS 请求对象: bucket=" + BUCKET_NAME + " key=" + objectName);
+            System.out.println("OSS 请求对象: bucket=" + PRIVATE_BUCKET + " key=" + objectName);
             return OssUtil.serveOssVideo(
-                    ENDPOINT, ACCESS_KEY_ID, ACCESS_KEY_SECRET, BUCKET_NAME,
+                    ENDPOINT, ACCESS_KEY_ID, ACCESS_KEY_SECRET, PRIVATE_BUCKET,
                     objectName, rangeHeader);
         }
 
@@ -117,7 +119,7 @@ public class VideoServiceImpl implements VideoService {
             String videoName = UUID.randomUUID().toString() + videoExt;
 
             // 上传到 OSS
-            OssUtil.upload(ENDPOINT, ACCESS_KEY_ID, ACCESS_KEY_SECRET, BUCKET_NAME,
+            OssUtil.upload(ENDPOINT, ACCESS_KEY_ID, ACCESS_KEY_SECRET, PRIVATE_BUCKET,
                     VIDEO_DIR + videoName, videoFile.getInputStream());
 
             String coverName = null;
@@ -126,7 +128,7 @@ public class VideoServiceImpl implements VideoService {
                 String coverExt = originalName != null && originalName.contains(".") ?
                         originalName.substring(originalName.lastIndexOf(".")) : ".png";
                 coverName = UUID.randomUUID().toString() + coverExt;
-                OssUtil.upload(ENDPOINT, ACCESS_KEY_ID, ACCESS_KEY_SECRET, BUCKET_NAME,
+                OssUtil.upload(ENDPOINT, ACCESS_KEY_ID, ACCESS_KEY_SECRET, PUBLIC_BUCKET,
                         COVER_DIR + coverName, coverFile.getInputStream());
             }
 
@@ -211,11 +213,19 @@ public class VideoServiceImpl implements VideoService {
      */
     @Override
     public ResponseEntity<Resource> getCover(String filename) {
+        // OSS 公共桶：302 重定向到 OSS 公开 URL
+        if (ENDPOINT != null && !ENDPOINT.isEmpty() && PUBLIC_BUCKET != null) {
+            String coverUrl = "https://" + PUBLIC_BUCKET + "." + ENDPOINT + "/"
+                    + COVER_DIR + filename;
+            return ResponseEntity.status(302)
+                    .header("Location", coverUrl)
+                    .body(null);
+        }
+
+        // 兜底：本地磁盘
         try {
             File file = new File(COVER_DIR, filename);
             if (!file.exists()) {
-                Path dir = Paths.get(COVER_DIR);
-                Files.createDirectories(dir);  // 自动创建所有不存在的父目录
                 return ResponseEntity.notFound().build();
             }
             Resource resource = new FileSystemResource(file);

@@ -17,7 +17,7 @@ public class OssService {
     private String accessKeyId;
     @Value("${aliyun.oss.accessKeySecret}")
     private String accessKeySecret;
-    @Value("${aliyun.oss.bucketName}")
+    @Value("${aliyun.oss.private-bucketName}")
     private String bucketName;
 
     // 上传文件的方法
