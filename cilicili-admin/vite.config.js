@@ -3,6 +3,7 @@ import vue from '@vitejs/plugin-vue'
 import { fileURLToPath, URL } from 'node:url'
 
 export default defineConfig({
+    base: '/admin/',
     plugins: [vue()],
     define: {
         __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: 'true',

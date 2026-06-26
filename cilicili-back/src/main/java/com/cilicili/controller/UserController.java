@@ -76,9 +76,8 @@ public class UserController {
     }
 
     @PostMapping("currentUser")
-    public Result<User> currentUser(HttpServletRequest request) {
+    public Result<UserVO> currentUser(HttpServletRequest request) {
         Long userId = (Long) request.getAttribute("userId");
-//        System.out.println("request"+request);
         if (userId == null) {
             return Result.fail(401, "未登录");
         }
@@ -86,8 +85,9 @@ public class UserController {
         if (user == null) {
             return Result.fail(404, "用户不存在");
         }
-        user.setPassword(null);
-        return Result.success(200, user);
+        UserVO userVO = new UserVO();
+        BeanUtils.copyProperties(user, userVO);
+        return Result.success(200, userVO);
     }
 
     /**

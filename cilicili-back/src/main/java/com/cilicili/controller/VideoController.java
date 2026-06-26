@@ -63,7 +63,7 @@ public class VideoController {
      * @return org.springframework.http.ResponseEntity<byte[]>
      */
     @GetMapping("{id}")
-    public ResponseEntity<byte[]> getVideo(
+    public ResponseEntity<Resource> getVideo(
             @PathVariable Long id,
             @RequestHeader(value = "Range", required = false) String rangeHeader) {
 
@@ -143,7 +143,7 @@ public class VideoController {
             @RequestParam("video") MultipartFile videoFile,
             @RequestParam(value = "cover", required = false) MultipartFile coverFile,
             @RequestParam("title") String title,
-            @RequestParam("description") String description,
+            @RequestParam(value = "description", required = false, defaultValue = "") String description,
             @RequestParam("uploaderId") Long uploaderId) {
 
         if (videoFile.isEmpty()) {

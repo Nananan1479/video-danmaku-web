@@ -118,7 +118,7 @@ const handleUpload = async () => {
         return
     }
 
-    const currentUser = getCurrentUser()
+    const currentUser = await getCurrentUser()
     if (!currentUser || !currentUser.id) {
         errorMessage.value = '请先登录'
         return
@@ -139,15 +139,16 @@ const handleUpload = async () => {
     try {
         const res = await uploadVideo(fd)
         if (res.data.code === 200) {
-            successMessage.value = '上传成功！即将跳转到视频页面...'
-            setTimeout(() => {
-                router.push({ name: 'VideoPage', query: { id: res.data.data.id } })
-            }, 2000)
+            successMessage.value = '上传成功！请等待视频审核通过...'
+            // setTimeout(() => {
+            //     router.push({ name: 'VideoPage', query: { id: res.data.data.id } })
+            // }, 2000)
         } else {
             errorMessage.value = res.data.message || '上传失败'
         }
     } catch (err) {
-        errorMessage.value = '网络错误，上传失败'
+        const backendMsg = err.response?.data?.message
+        errorMessage.value = backendMsg || '网络错误，上传失败'
     } finally {
         isUploading.value = false
         uploadPercent.value = 0

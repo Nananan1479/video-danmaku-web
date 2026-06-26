@@ -7,6 +7,7 @@ import com.cilicili.mapper.VideoMapper;
 import com.cilicili.service.VideoService;
 import com.cilicili.service.admin.AdminVideoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,7 +57,7 @@ public class AdminVideoController {
      * @return org.springframework.http.ResponseEntity<byte[]>
      */
     @GetMapping("{id}")
-    public ResponseEntity<byte[]> getVideo(
+    public ResponseEntity<Resource> getVideo(
             @PathVariable Long id,
             @RequestHeader(value = "Range", required = false) String rangeHeader,
             HttpServletRequest request) {

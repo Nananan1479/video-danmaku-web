@@ -122,17 +122,15 @@ const videos = ref([
 ])
 const total = ref(0)
 const pageNum = ref(1)
-const pageSize = ref(12)
+// TODO: 后续改为滚动加载更多（无限滚动），当前临时取全部视频
+const pageSize = ref(1000)
 const loading = ref(false)
 
 // 获取视频数据
 fetchVideos(pageNum.value, pageSize.value).then(res => {
-    console.log(res)
     videos.value = res.videos
     total.value = res.total
 })
-
-console.log(fetchVideos())
 
 </script>
 

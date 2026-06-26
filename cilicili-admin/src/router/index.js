@@ -4,7 +4,7 @@ import { USER_TOKEN_KEY } from '@/constants/userSettingConstants.js'
 const routes = [
     {
         path: '/',
-        redirect: '/admin'
+        redirect: '/login'
     },
     {
         path: '/admin',

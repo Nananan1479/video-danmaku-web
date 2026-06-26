@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
-import { getCurrentUser, logoutUser } from '@/utils/userStorage'
+import { currentUserRef, logoutUser } from '@/utils/userStorage'
 import { getAvatarUrl } from '@/api/index'
 
 const props = defineProps({
@@ -39,7 +39,7 @@ onBeforeUnmount(() => {
     window.removeEventListener('resize', updatePosition)
 })
 
-const user = computed(() => getCurrentUser())
+const user = computed(() => currentUserRef.value)
 
 const displayName = computed(() => {
     return user.value?.nickname || user.value?.username || '未登录'

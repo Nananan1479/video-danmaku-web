@@ -1,5 +1,6 @@
 import axios from 'axios'
-import { USER_TOKEN_KEY, USER_STORAGE_KEY } from '@/constants/userSettingConstants.js'
+import { USER_TOKEN_KEY } from '@/constants/userSettingConstants.js'
+import { currentAdminRef } from '@/utils/userState'
 import router from '@/router'
 
 const instance = axios.create({
@@ -25,8 +26,7 @@ instance.interceptors.response.use(
     (error) => {
         if (error.response?.status === 401) {
             localStorage.removeItem(USER_TOKEN_KEY)
-            localStorage.removeItem(USER_STORAGE_KEY)
-            // 跳转到前台登录页
+            currentAdminRef.value = null
             window.location.href = '/login'
             return Promise.resolve()
         }

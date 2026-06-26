@@ -52,8 +52,8 @@ const avatarSrc = computed(() => {
     return new URL('@/assets/images/Akalin.png', import.meta.url).href
 })
 
-onMounted(() => {
-    const stored = getCurrentUser()
+onMounted(async () => {
+    const stored = await getCurrentUser()
     if (stored) {
         user.nickname = stored.nickname || stored.username || '用户昵称'
         user.avatar = stored.avatar || ''

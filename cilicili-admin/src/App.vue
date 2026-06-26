@@ -2,14 +2,20 @@
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { USER_TOKEN_KEY } from '@/constants/userSettingConstants.js'
+import { getCurrentUser } from '@/utils/userStorage'
 
 const router = useRouter()
 
-onMounted(() => {
+onMounted(async () => {
     const token = localStorage.getItem(USER_TOKEN_KEY)
-    if (!token && router.currentRoute.value.path !== '/login') {
-        router.push('/login')
+    if (!token) {
+        if (router.currentRoute.value.path !== '/login') {
+            router.push('/login')
+        }
+        return
     }
+    // 初始化管理员缓存（getCurrentUser 内部会调用后端验证 token）
+    await getCurrentUser()
 })
 </script>
 

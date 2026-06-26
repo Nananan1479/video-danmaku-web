@@ -171,10 +171,10 @@ async function loadDanmaku() {
 /**
  * 发送弹幕：校验登录态 -> 构造请求 -> HTTP 发送
  */
-const sendDanmaku = () => {
+const sendDanmaku = async () => {
     let currentUser
     try {
-        currentUser = getCurrentUser()
+        currentUser = await getCurrentUser()
     } catch (e) {
         console.error('获取用户信息失败', e)
         danmakuInput.value = ''

@@ -72,7 +72,7 @@ public class VideoServiceImpl implements VideoService {
      * @return org.springframework.http.ResponseEntity<byte[]>
      */
     @Override
-    public ResponseEntity<byte[]> getVideo(Long id, String rangeHeader) {
+    public ResponseEntity<Resource> getVideo(Long id, String rangeHeader) {
         Video video = videoMapper.selectById(id);
         if (video == null || video.getVideoUrl() == null) {
             return ResponseEntity.notFound().build();
@@ -194,8 +194,9 @@ public class VideoServiceImpl implements VideoService {
 
             videoMapper.insert(video);*/
 
-        } catch (IOException e) {
-            throw new RuntimeException("上传失败", e);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("上传失败: " + e.getMessage(), e);
         }
     }
 

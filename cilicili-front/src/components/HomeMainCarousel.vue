@@ -235,10 +235,10 @@ import Carousel2 from '@/assets/images/Carousel2.png'
 }
 
 .carouselDot {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     background-image: url(@/assets/images/carousel_default.svg);
-    background-size: 50% 50%;
+    background-size: 70% 70%;
     background-position: center;
     background-repeat: no-repeat;
     cursor: pointer;
@@ -247,8 +247,8 @@ import Carousel2 from '@/assets/images/Carousel2.png'
 }
 
 .carouselDot--active {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     background-image: url(@/assets/images/CarouselDot.png);
     background-size: 100% 100%;
     background-position: center;

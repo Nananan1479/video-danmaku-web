@@ -1,14 +1,14 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { getCurrentUser, skipLogin } from '@/utils/userStorage'
+import { currentUserRef, skipLogin } from '@/utils/userStorage'
 import { getAvatarUrl } from '@/api/index'
 import UserMenuPopover from './UserMenuPopover.vue'
 import Login_default from '@/assets/images/Login_default_icon.svg'
 
 const router = useRouter();
 
-const currentUser = computed(() => getCurrentUser())
+const currentUser = computed(() => currentUserRef.value)
 const avatarSrc = computed(() => {
     if (currentUser.value && currentUser.value.avatar) {
         return getAvatarUrl(currentUser.value.avatar)

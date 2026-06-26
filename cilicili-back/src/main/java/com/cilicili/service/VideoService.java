@@ -10,7 +10,7 @@ import java.util.HashMap;
 
 public interface VideoService {
 
-    ResponseEntity<byte[]> getVideo(Long id, String rangeHeader);
+    ResponseEntity<Resource> getVideo(Long id, String rangeHeader);
 
     Video uploadVideo(MultipartFile videoFile, MultipartFile coverFile, String title, String description, Long uploaderId);
 

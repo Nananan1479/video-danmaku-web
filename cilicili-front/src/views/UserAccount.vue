@@ -2,7 +2,7 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import FloatBanner from '@/components/FloatBanner.vue'
-import { getCurrentUser, saveUsers } from '@/utils/userStorage'
+import { getCurrentUser, currentUserRef } from '@/utils/userStorage'
 import { getAvatarUrl, updateUserInfo, uploadAvatar } from '@/api/index'
 import Login_default from '@/assets/images/Login_default_icon.svg'
 
@@ -34,8 +34,8 @@ const avatarSrc = computed(() => {
 })
 
 /** 加载当前用户数据 */
-function loadUser() {
-    const stored = getCurrentUser()
+async function loadUser() {
+    const stored = await getCurrentUser()
     if (stored) {
         user.id = stored.id || null
         user.username = stored.username || ''
@@ -99,14 +99,12 @@ async function saveInfo() {
             if (data.signature !== undefined) user.signature = data.signature
             if (data.phone !== undefined) user.phone = data.phone
             if (data.email !== undefined) user.email = data.email
-            // 同步到 localStorage
-            const stored = getCurrentUser()
-            if (stored) {
-                if (data.nickname !== undefined) stored.nickname = data.nickname
-                if (data.signature !== undefined) stored.signature = data.signature
-                if (data.phone !== undefined) stored.phone = data.phone
-                if (data.email !== undefined) stored.email = data.email
-                saveUsers(stored, localStorage.getItem('userToken'))
+            // 同步更新缓存的用户数据
+            if (currentUserRef.value) {
+                if (data.nickname !== undefined) currentUserRef.value.nickname = data.nickname
+                if (data.signature !== undefined) currentUserRef.value.signature = data.signature
+                if (data.phone !== undefined) currentUserRef.value.phone = data.phone
+                if (data.email !== undefined) currentUserRef.value.email = data.email
             }
             ElMessage.success('保存成功')
         } else {
@@ -133,9 +131,9 @@ async function handleAvatarChange(e) {
     if (!file) return
 
     // 类型校验
-    const allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+    const allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif']
     if (!allowed.includes(file.type)) {
-        return ElMessage.warning('仅支持 JPG、PNG、GIF、WebP 格式')
+        return ElMessage.warning('仅支持 JPG、PNG、GIF、WebP、AVIF 格式')
     }
     if (file.size > 5 * 1024 * 1024) {
         return ElMessage.warning('头像大小不能超过 5MB')
@@ -149,11 +147,9 @@ async function handleAvatarChange(e) {
         if (res.data.code === 200) {
             const newAvatar = res.data.data
             user.avatar = newAvatar
-            // 同步到 localStorage
-            const stored = getCurrentUser()
-            if (stored) {
-                stored.avatar = newAvatar
-                // saveUsers(stored, localStorage.getItem('userToken'))
+            // 同步更新缓存的用户数据
+            if (currentUserRef.value) {
+                currentUserRef.value.avatar = newAvatar
             }
             ElMessage.success('头像更新成功')
         } else {
@@ -320,7 +316,7 @@ async function handleAvatarChange(e) {
                             <input
                                 ref="fileInputRef"
                                 type="file"
-                                accept="image/jpeg,image/png,image/gif,image/webp"
+                                accept="image/jpeg,image/png,image/gif,image/webp,image/avif"
                                 style="display: none"
                                 @change="handleAvatarChange"
                             />

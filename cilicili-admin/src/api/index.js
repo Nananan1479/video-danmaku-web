@@ -10,6 +10,14 @@ export function adminLogin(username, password) {
     })
 }
 
+/** 获取当前登录管理员信息（复用用户端接口，JWT 中 role=1 即可） */
+export function currentUser() {
+    return request({
+        url: '/api/users/currentUser/',
+        method: 'POST'
+    })
+}
+
 // ================= 用户管理 =================
 /** 获取用户列表 */
 export function getAdminUserList() {

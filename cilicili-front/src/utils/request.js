@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { useStaticDataStore } from '@/stores/index.js'
-import { USER_TOKEN_KEY, USER_STORAGE_KEY } from "@/constants/userSettingConstants.js";
+import { USER_TOKEN_KEY } from "@/constants/userSettingConstants.js";
+import { currentUserRef } from '@/utils/userState'
 import router from '@/router'
 
 // 创建 axios 实例（不与全局 axios 混淆）
@@ -16,15 +16,9 @@ const instance = axios.create({
  */
 instance.interceptors.request.use(
     (config) => {
-        // console.log("request请求拦截器触发")
-        // 从 Pinia 全局状态中读取 token 的存储键名（方便动态修改）
-        const staticDataStore = useStaticDataStore()
-        const tokenKey = USER_TOKEN_KEY
-        const token = localStorage.getItem(tokenKey)
-
-        // 如果存在 token，就拼成 Bearer xxx 格式放到 Authorization 头中
+        const token = localStorage.getItem(USER_TOKEN_KEY)
         if (token) {
-        config.headers.Authorization = `Bearer ${token}`
+            config.headers.Authorization = `Bearer ${token}`
         }
         return config
     },
@@ -47,7 +41,7 @@ instance.interceptors.response.use(
 
             // 清除过期信息
             localStorage.removeItem(USER_TOKEN_KEY)
-            localStorage.removeItem(USER_STORAGE_KEY)
+            currentUserRef.value = null
 
             // 跳转登录
             if (router.currentRoute.value.path !== '/login') {

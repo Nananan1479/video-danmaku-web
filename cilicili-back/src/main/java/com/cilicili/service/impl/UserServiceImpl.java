@@ -179,8 +179,9 @@ public class UserServiceImpl implements UserService {
             userMapper.updateById(user);
 
             return avatarName;
-        } catch (IOException e) {
-            throw new RuntimeException("头像上传失败", e);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("头像上传失败: " + e.getMessage(), e);
         }
     }
 

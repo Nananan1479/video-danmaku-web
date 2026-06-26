@@ -1,29 +1,15 @@
 <script setup>
     import { getCurrentInstance, onMounted } from 'vue';
-    import { checkToken } from '@/api/index';
-    import { USER_TOKEN_KEY, USER_STORAGE_KEY } from "@/constants/userSettingConstants.js";
-    import router from '@/router';
+    import { USER_TOKEN_KEY } from "@/constants/userSettingConstants.js";
+    import { getCurrentUser } from '@/utils/userStorage';
     window.app = getCurrentInstance();
 
     onMounted(async () => {
         const token = localStorage.getItem(USER_TOKEN_KEY)
         if (!token) return   // 未登录状态无需验证
 
-        try {
-            const res = await checkToken()
-            if (res.data.data.Icode === 200) {
-                console.log('token 有效')
-                // router.push('/')
-                // 正常，不做操作
-            }
-
-        } catch (error) {
-            // 401 表示 token 无效
-            console.log('token 无效')
-            // 清除 token
-            localStorage.removeItem(USER_TOKEN_KEY)
-            localStorage.removeItem(USER_STORAGE_KEY)
-        }
+        // 初始化用户缓存（getCurrentUser 内部会调用后端验证 token）
+        await getCurrentUser()
     })
 </script>
 

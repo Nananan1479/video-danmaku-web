@@ -1,5 +1,7 @@
 package com.cilicili.util;
 
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -71,7 +73,7 @@ public class VideoUtil {
      * @param rangeHeader 前端 Range 请求头（可为 null）
      * @return ResponseEntity 包含视频字节流
      */
-    public static ResponseEntity<byte[]> serveVideoFile(Path filePath, String rangeHeader) {
+    public static ResponseEntity<Resource> serveVideoFile(Path filePath, String rangeHeader) {
         if (!Files.exists(filePath)) {
             return ResponseEntity.notFound().build();
         }
@@ -81,13 +83,13 @@ public class VideoUtil {
             String contentType = Files.probeContentType(filePath);
             if (contentType == null) contentType = "video/mp4";
 
-            // 无 Range 头 → 返回完整视频
+            // 无 Range 头 → 返回完整视频（流式）
             if (rangeHeader == null) {
-                byte[] data = Files.readAllBytes(filePath);
+                FileSystemResource resource = new FileSystemResource(filePath);
                 return ResponseEntity.ok()
                         .contentType(MediaType.parseMediaType(contentType))
                         .contentLength(fileSize)
-                        .body(data);
+                        .body(resource);
             }
 
             // 解析 Range: bytes=start-end
@@ -110,7 +112,7 @@ public class VideoUtil {
                     .contentType(MediaType.parseMediaType(contentType))
                     .header(HttpHeaders.CONTENT_RANGE, "bytes " + start + "-" + end + "/" + fileSize)
                     .contentLength(contentLength)
-                    .body(data);
+                    .body(new org.springframework.core.io.ByteArrayResource(data));
 
         } catch (IOException e) {
             return ResponseEntity.notFound().build();

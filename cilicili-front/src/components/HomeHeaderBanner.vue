@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { getCurrentUser, skipLogin } from '@/utils/userStorage'
+import { currentUserRef, skipLogin } from '@/utils/userStorage'
 import { getAvatarUrl } from '@/api/index'
 import UserMenuPopover from './UserMenuPopover.vue'
 import Login_default from '@/assets/images/Login_default_icon.svg'
@@ -10,7 +10,7 @@ import Login_default from '@/assets/images/Login_default_icon.svg'
 const router = useRouter()
 
 // computed 创建一个基于现有响应式数据计算出来的值,它返回一个只读的 Ref 对象
-const currentUser = computed(() => getCurrentUser())
+const currentUser = computed(() => currentUserRef.value)
 const avatarSrc = computed(() => {
     if (currentUser.value && currentUser.value.avatar) {
         return getAvatarUrl(currentUser.value.avatar)
