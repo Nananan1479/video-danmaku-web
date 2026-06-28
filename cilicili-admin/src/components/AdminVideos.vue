@@ -2,18 +2,14 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Delete, Refresh, Plus, VideoCameraFilled } from '@element-plus/icons-vue'
-import { getAdminVideoList, updateAdminVideoStatus, deleteAdminVideo } from '@/api/index'
+import { getAdminVideoList, updateAdminVideoStatus, deleteAdminVideo, getAdminVideoSignedUrl } from '@/api/index'
 
-const apiBaseUrl = import.meta.env.VITE_API_URL || ''
-import { USER_TOKEN_KEY } from '@/constants/userSettingConstants.js'
-
-/** 构造携带 token 的受保护视频 URL（<video> 标签无法自定义请求头，只能通过 query 参数传 token） */
-function getVideoUrl(videoId) {
-    //TODO：此处因改为使用签名 URL以应对video标签无法自定义请求头的问题，将token塞到url中有风险
-    const token = localStorage.getItem(USER_TOKEN_KEY)
-    const sep = token ? `?token=${encodeURIComponent(token)}` : ''
-    return `${apiBaseUrl}/api/admin/videos/${videoId}${sep}`
-}
+/** 当前播放视频的 OSS 签名 URL */
+const signedVideoUrl = ref('')
+/** 视频元素引用 */
+const videoRef = ref(null)
+/** 签名续期标记 */
+const renewingUrl = ref(false)
 
 // status: 1=正常, 0=下架, 2=审核中
 const STATUS = { NORMAL: 1, REMOVED: 0, PENDING: 2 }
@@ -64,9 +60,43 @@ async function loadVideos() {
     videoLoading.value = false
 }
 
-function openVideoDetail(row) {
+async function openVideoDetail(row) {
     Object.assign(currentVideo, { id: row.id, title: row.title, description: row.description, duration: row.duration, playCount: row.playCount, danmakuCount: row.danmakuCount, likeCount: row.likeCount, status: row.status, createdAt: row.createdAt })
     videoDetailVisible.value = true
+    await refreshSignedUrl()
+}
+
+/** 获取/续期 OSS 签名 URL */
+async function refreshSignedUrl() {
+    if (renewingUrl.value) return
+    renewingUrl.value = true
+    try {
+        const res = await getAdminVideoSignedUrl(currentVideo.id)
+        if (res?.data?.code === 200) {
+            signedVideoUrl.value = res.data.data
+        }
+    } catch (e) { console.error('获取签名URL失败', e) } finally {
+        renewingUrl.value = false
+    }
+}
+
+/** 签名过期时自动续期，保持播放进度 */
+async function handleVideoError() {
+    if (!currentVideo.id || renewingUrl.value) return
+    // 保存当前播放位置
+    const video = videoRef.value
+    const savedTime = video?.currentTime || 0
+    const wasPlaying = video && !video.paused
+    // 续期签名
+    await refreshSignedUrl()
+    if (signedVideoUrl.value && videoRef.value) {
+        // 恢复播放位置
+        videoRef.value.addEventListener('loadedmetadata', () => {
+            videoRef.value.currentTime = savedTime
+            if (wasPlaying) videoRef.value.play().catch(() => {})
+        }, { once: true })
+        videoRef.value.load()
+    }
 }
 
 async function handleDeleteVideo(row) {
@@ -140,7 +170,8 @@ defineExpose({ loadVideos, setFilter, pendingCount })
         <el-dialog v-model="videoDetailVisible" title="视频详情" width="900px" destroy-on-close top="3vh">
             <div class="video-detail-layout">
                 <div class="video-detail-layout__player">
-                    <video v-if="currentVideo.id" class="video-detail-layout__video" :src="getVideoUrl(currentVideo.id)" controls preload="metadata">您的浏览器不支持视频播放</video>
+                    <video v-if="signedVideoUrl" ref="videoRef" class="video-detail-layout__video" :src="signedVideoUrl" controls preload="metadata" @error="handleVideoError">您的浏览器不支持视频播放</video>
+                    <div v-else-if="currentVideo.id" class="video-detail-layout__placeholder"><span>加载视频中...</span></div>
                     <div v-else class="video-detail-layout__placeholder"><el-icon :size="48"><VideoCameraFilled /></el-icon><span>暂无视频</span></div>
                 </div>
                 <div class="video-detail-layout__info">

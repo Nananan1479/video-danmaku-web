@@ -37,6 +37,11 @@ export function deleteAdminUser(id) {
 }
 
 // ================= 视频管理 =================
+/** 获取视频的 OSS 签名 URL（1 小时有效） */
+export function getAdminVideoSignedUrl(id) {
+    return request.get(`/api/admin/videos/${id}/signed-url`)
+}
+
 /** 获取视频列表（可传 { status } 筛选） */
 export function getAdminVideoList(params) {
     return request.get('/api/admin/videos', { params })

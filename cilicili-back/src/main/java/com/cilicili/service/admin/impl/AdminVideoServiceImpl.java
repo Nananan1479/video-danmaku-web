@@ -6,6 +6,7 @@ import com.cilicili.entity.Video;
 import com.cilicili.entity.vo.VideoVO;
 import com.cilicili.mapper.VideoMapper;
 import com.cilicili.service.admin.AdminVideoService;
+import com.cilicili.util.OssUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +23,17 @@ public class AdminVideoServiceImpl implements AdminVideoService {
 
     @Value("${file.cover-dir}")
     private String COVER_DIR;
+
+    @Value("${aliyun.oss.endpoint}")
+    private String ENDPOINT;
+    @Value("${aliyun.oss.accessKeyId}")
+    private String ACCESS_KEY_ID;
+    @Value("${aliyun.oss.accessKeySecret}")
+    private String ACCESS_KEY_SECRET;
+    @Value("${aliyun.oss.private-bucketName}")
+    private String PRIVATE_BUCKET;
+    @Value("${aliyun.oss.public-bucket}")
+    private String PUBLIC_BUCKET;
 
     @Autowired
     private VideoMapper videoMapper;
@@ -62,7 +74,19 @@ public class AdminVideoServiceImpl implements AdminVideoService {
         if (video == null) {
             return Result.fail(404, "视频不存在");
         }
-        // 删除磁盘文件（数据库只存文件名，用配置目录拼接）
+        // 删除 OSS 上的视频和封面
+        try {
+            if (video.getVideoUrl() != null && !ENDPOINT.isEmpty()) {
+                OssUtil.delete(ENDPOINT, ACCESS_KEY_ID, ACCESS_KEY_SECRET,
+                        PRIVATE_BUCKET, VIDEO_DIR + video.getVideoUrl());
+            }
+            if (video.getCoverUrl() != null && !ENDPOINT.isEmpty()) {
+                OssUtil.delete(ENDPOINT, ACCESS_KEY_ID, ACCESS_KEY_SECRET,
+                        PUBLIC_BUCKET, COVER_DIR + video.getCoverUrl());
+            }
+            System.out.println("视频被删除: videoId= " + video.getId() + " ，videoUrl= " + video.getVideoUrl());
+        } catch (Exception ignored) {}
+        // 兜底：删除本地磁盘文件
         try {
             if (video.getVideoUrl() != null) {
                 new java.io.File(VIDEO_DIR, video.getVideoUrl()).delete();

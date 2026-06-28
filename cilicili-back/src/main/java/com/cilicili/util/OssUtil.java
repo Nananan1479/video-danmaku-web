@@ -46,6 +46,19 @@ public class OssUtil {
     }
 
     /**
+     * 从 OSS 删除文件
+     */
+    public static void delete(String endpoint, String accessKeyId, String accessKeySecret,
+                               String bucketName, String objectName) {
+        OSS ossClient = buildClient(endpoint, accessKeyId, accessKeySecret);
+        try {
+            ossClient.deleteObject(bucketName, objectName);
+        } finally {
+            ossClient.shutdown();
+        }
+    }
+
+    /**
      * 生成带签名的临时访问URL（有效期1小时）
      */
     public static String generatePresignedUrl(String endpoint, String accessKeyId,

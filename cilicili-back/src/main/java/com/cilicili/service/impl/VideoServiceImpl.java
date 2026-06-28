@@ -152,6 +152,9 @@ public class VideoServiceImpl implements VideoService {
             video.setCreatedAt(now);
             video.setUpdatedAt(now);
             videoMapper.insert(video);
+
+            System.out.println("视频上传: UploaderId= " + video.getUploaderId() +
+                                " ,VideoUrl= " + video.getVideoUrl());
             return video;
 
             // 兜底：本地磁盘

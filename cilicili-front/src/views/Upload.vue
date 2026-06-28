@@ -21,6 +21,7 @@ const showCoverSelector = ref(false)
 const errorMessage = ref('')
 const successMessage = ref('')
 const isUploading = ref(false)
+const uploadDone = ref(false)
 const uploadPercent = ref(0)
 
 const MAX_VIDEO_SIZE = 500 * 1024 * 1024
@@ -140,6 +141,7 @@ const handleUpload = async () => {
         const res = await uploadVideo(fd)
         if (res.data.code === 200) {
             successMessage.value = '上传成功！请等待视频审核通过...'
+            uploadDone.value = true
             // setTimeout(() => {
             //     router.push({ name: 'VideoPage', query: { id: res.data.data.id } })
             // }, 2000)
@@ -269,7 +271,7 @@ onUnmounted(() => {
                     {{ successMessage }}
                 </div>
 
-                <button type="submit" class="upload-btn" :disabled="isUploading">上传视频</button>
+                <button type="submit" class="upload-btn" :disabled="isUploading || uploadDone">上传视频</button>
             </form>
 
             <button @click="goHome" class="goHome-btn">返回首页</button>

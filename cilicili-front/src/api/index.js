@@ -84,7 +84,8 @@ export function uploadVideo(formData) {
     return request({
         url: `/api/videos/upload/`,
         method: 'POST',
-        data: formData
+        data: formData,
+        timeout: 10 * 60 * 1000   // 上传视频超时 10 分钟（大文件 + OSS 传输慢）
     })
 }
 /**
@@ -138,7 +139,8 @@ export function uploadAvatar(formData) {
     return request({
         url: '/api/users/avatar/',
         method: 'POST',
-        data: formData
+        data: formData,
+        timeout: 2 * 60 * 1000   // 上传头像超时 2 分钟
     })
 }
 

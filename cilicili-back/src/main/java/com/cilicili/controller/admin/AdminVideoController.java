@@ -6,7 +6,9 @@ import com.cilicili.entity.vo.VideoVO;
 import com.cilicili.mapper.VideoMapper;
 import com.cilicili.service.VideoService;
 import com.cilicili.service.admin.AdminVideoService;
+import com.cilicili.util.OssUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +29,18 @@ public class AdminVideoController {
 
     @Autowired
     private VideoService videoService;
+
+    @Value("${file.video-dir}")
+    private String VIDEO_DIR;
+
+    @Value("${aliyun.oss.endpoint}")
+    private String ENDPOINT;
+    @Value("${aliyun.oss.accessKeyId}")
+    private String ACCESS_KEY_ID;
+    @Value("${aliyun.oss.accessKeySecret}")
+    private String ACCESS_KEY_SECRET;
+    @Value("${aliyun.oss.private-bucketName}")
+    private String PRIVATE_BUCKET;
 
     /**
      * 获取视频列表
@@ -94,6 +108,29 @@ public class AdminVideoController {
             return Result.fail(400, "status 参数无效");
         }
         return adminVideoService.updateVideoStatus(id, status);
+    }
+
+    /**
+     * 获取视频的 OSS 签名 URL（1 小时有效，前端可直接用于 <video> 标签）
+     * GET /api/admin/videos/{id}/signed-url
+     */
+    @GetMapping("/{id}/signed-url")
+    public Result<?> getSignedUrl(@PathVariable Long id, HttpServletRequest request) {
+        Integer role = (Integer) request.getAttribute("role");
+        if (role == null || role != 1) {
+            return Result.fail(403, "无管理员权限");
+        }
+        Video video = videoMapper.selectById(id);
+        if (video == null || video.getVideoUrl() == null) {
+            return Result.fail(404, "视频不存在");
+        }
+        if (ENDPOINT == null || ENDPOINT.isEmpty()) {
+            return Result.fail(500, "OSS 未配置");
+        }
+        String objectName = VIDEO_DIR + video.getVideoUrl();
+        String signedUrl = OssUtil.generatePresignedUrl(
+                ENDPOINT, ACCESS_KEY_ID, ACCESS_KEY_SECRET, PRIVATE_BUCKET, objectName);
+        return Result.success(200, signedUrl);
     }
 
     /**
