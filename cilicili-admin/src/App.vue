@@ -9,8 +9,8 @@ const router = useRouter()
 onMounted(async () => {
     const token = localStorage.getItem(USER_TOKEN_KEY)
     if (!token) {
-        if (router.currentRoute.value.path !== '/login') {
-            router.push('/login')
+        if (router.currentRoute.value.path !== '/admin/login') {
+            router.push('/admin/login')
         }
         return
     }

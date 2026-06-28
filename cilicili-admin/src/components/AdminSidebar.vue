@@ -1,5 +1,5 @@
 <script setup>
-import { Fold, Expand } from '@element-plus/icons-vue'
+import { Fold, Expand, ArrowUpBold } from '@element-plus/icons-vue'
 
 const props = defineProps({
     menuItems: { type: Array, required: true },
@@ -13,7 +13,9 @@ const emit = defineEmits(['menu-click', 'sub-menu-click', 'toggle-collapse'])
 </script>
 
 <template>
+    <!-- 首页侧边栏 -->
     <aside class="admin-sidebar" :class="{ 'admin-sidebar--collapsed': isCollapsed }">
+        <!-- 侧边栏头 -->
         <div class="admin-sidebar__header">
             <div class="admin-sidebar__logo" v-show="!isCollapsed">
                 <span class="admin-sidebar__logo-icon">C</span>
@@ -21,7 +23,8 @@ const emit = defineEmits(['menu-click', 'sub-menu-click', 'toggle-collapse'])
             </div>
             <span class="admin-sidebar__logo-icon admin-sidebar__logo-icon--mini" v-show="isCollapsed">C</span>
         </div>
-
+        
+        <!-- 侧边栏导航 -->
         <nav class="admin-sidebar__nav">
             <template v-for="item in menuItems" :key="item.key">
                 <div v-if="item.children" class="admin-sidebar__submenu" :class="{ 'admin-sidebar__submenu--open': expandedMenu === item.key }">
@@ -33,7 +36,7 @@ const emit = defineEmits(['menu-click', 'sub-menu-click', 'toggle-collapse'])
                         <el-icon class="admin-sidebar__nav-icon"><component :is="item.icon" /></el-icon>
                         <span class="admin-sidebar__nav-label" v-show="!isCollapsed">{{ item.label }}</span>
                         <el-icon v-show="!isCollapsed" class="admin-sidebar__nav-arrow" :class="{ 'admin-sidebar__nav-arrow--open': expandedMenu === item.key }">
-                            <Fold />
+                            <ArrowUpBold />
                         </el-icon>
                     </div>
                     <div v-show="expandedMenu === item.key && !isCollapsed" class="admin-sidebar__sub-items">
@@ -113,7 +116,7 @@ const emit = defineEmits(['menu-click', 'sub-menu-click', 'toggle-collapse'])
 .admin-sidebar__collapse-icon { font-size: 18px; }
 .admin-sidebar__submenu { overflow: hidden; }
 .admin-sidebar__nav-arrow { margin-left: auto; font-size: 12px; transition: transform 0.25s; color: rgba(255, 255, 255, 0.4); }
-.admin-sidebar__nav-arrow--open { transform: rotate(-90deg); }
+.admin-sidebar__nav-arrow--open { transform: rotate(180deg); }
 .admin-sidebar__sub-items { padding: 2px 0 2px 28px; }
 .admin-sidebar__sub-item {
     display: flex; align-items: center; padding: 8px 14px; border-radius: 6px;

@@ -1,7 +1,7 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : cilicili
+ Source Server         : zsn
  Source Server Type    : MySQL
  Source Server Version : 80034
  Source Host           : localhost:3306
@@ -11,7 +11,7 @@
  Target Server Version : 80034
  File Encoding         : 65001
 
- Date: 26/06/2026 00:13:38
+ Date: 28/06/2026 21:19:36
 */
 
 SET NAMES utf8mb4;
@@ -36,7 +36,7 @@ CREATE TABLE `comment`  (
   INDEX `idx_video_parent`(`video_id`, `parent_id`) USING BTREE,
   INDEX `idx_video_created`(`video_id`, `created_at`) USING BTREE,
   INDEX `idx_user`(`user_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '评论表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '评论表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for comment_like
@@ -49,7 +49,7 @@ CREATE TABLE `comment_like`  (
   `created_at` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `uk_comment_user`(`comment_id`, `user_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '评论点赞记录' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '评论点赞记录' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for danmaku
@@ -68,7 +68,7 @@ CREATE TABLE `danmaku`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_video_time`(`video_id`, `play_time`) USING BTREE,
   INDEX `idx_video_sendtime`(`video_id`, `send_time`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '弹幕表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '弹幕表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for follow
@@ -82,7 +82,7 @@ CREATE TABLE `follow`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `uk_follower_followee`(`follower_id`, `followee_id`) USING BTREE,
   INDEX `idx_followee`(`followee_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户关注表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户关注表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tag
@@ -116,7 +116,7 @@ CREATE TABLE `user`  (
   UNIQUE INDEX `uk_username`(`username`) USING BTREE,
   UNIQUE INDEX `uk_email`(`email`) USING BTREE,
   UNIQUE INDEX `uk_phone`(`phone`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for video
@@ -129,7 +129,7 @@ CREATE TABLE `video`  (
   `cover_url` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '封面图片URL',
   `video_url` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '视频文件URL (MP4)',
   `duration` int(0) UNSIGNED NULL DEFAULT 0 COMMENT '视频时长(秒)',
-  `status` tinyint(0) NOT NULL DEFAULT 1 COMMENT '状态：1正常，0下架，2审核中',
+  `status` tinyint(0) NOT NULL DEFAULT 2 COMMENT '状态：1正常，0下架，2审核中，3驳回',
   `play_count` bigint(0) UNSIGNED NOT NULL DEFAULT 0 COMMENT '播放量',
   `danmaku_count` bigint(0) UNSIGNED NOT NULL DEFAULT 0 COMMENT '弹幕总数',
   `comment_count` bigint(0) UNSIGNED NOT NULL DEFAULT 0 COMMENT '评论总数',
@@ -144,7 +144,7 @@ CREATE TABLE `video`  (
   INDEX `idx_uploader`(`uploader_id`) USING BTREE,
   INDEX `idx_status_created`(`status`, `created_at`) USING BTREE,
   INDEX `idx_play_count`(`play_count`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '视频表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 25 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '视频表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for video_coin
@@ -158,7 +158,7 @@ CREATE TABLE `video_coin`  (
   `created_at` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_video_user`(`video_id`, `user_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '视频投币记录' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '视频投币记录' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for video_collect
@@ -171,7 +171,7 @@ CREATE TABLE `video_collect`  (
   `created_at` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `uk_video_user_collect`(`video_id`, `user_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '视频收藏记录' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '视频收藏记录' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for video_like
@@ -197,7 +197,7 @@ CREATE TABLE `video_tag`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `uk_video_tag`(`video_id`, `tag_id`) USING BTREE,
   INDEX `idx_tag_id`(`tag_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '视频标签关联表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '视频标签关联表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for watch_history

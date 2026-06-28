@@ -1,5 +1,5 @@
 import { adminLogin, currentUser as currentUserApi } from '@/api/index.js'
-import { USER_TOKEN_KEY, USER_STORAGE_KEY } from '@/constants/userSettingConstants.js'
+import { USER_TOKEN_KEY } from '@/constants/userSettingConstants.js'
 import { currentAdminRef } from './userState.js'
 
 // 重新导出 currentAdminRef，让组件可以统一从 userStorage 导入

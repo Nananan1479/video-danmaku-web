@@ -4,7 +4,7 @@ import { USER_TOKEN_KEY } from '@/constants/userSettingConstants.js'
 const routes = [
     {
         path: '/',
-        redirect: '/login'
+        redirect: 'Login'
     },
     {
         path: '/admin',
@@ -13,7 +13,7 @@ const routes = [
         meta: { requiresAuth: true }
     },
     {
-        path: '/login',
+        path: '/admin/login',
         name: 'Login',
         component: () => import('@/views/Login.vue'),
     }
@@ -27,8 +27,8 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
     const token = localStorage.getItem(USER_TOKEN_KEY)
     if (to.meta.requiresAuth && !token) {
-        next('/login')
-    } else if (to.path === '/login' && token) {
+        next('/admin/login')
+    } else if (to.path === '/admin/login' && token) {
         next('/admin')
     } else {
         next()

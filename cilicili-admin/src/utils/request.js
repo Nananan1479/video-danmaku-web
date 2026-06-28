@@ -27,7 +27,7 @@ instance.interceptors.response.use(
         if (error.response?.status === 401) {
             localStorage.removeItem(USER_TOKEN_KEY)
             currentAdminRef.value = null
-            window.location.href = '/login'
+            window.location.href = '/admin/login'
             return Promise.resolve()
         }
         return Promise.reject(error)
