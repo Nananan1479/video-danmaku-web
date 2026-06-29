@@ -195,7 +195,7 @@ fetchVideos(pageNum.value, pageSize.value).then(res => {
     .homeMain_grid {
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
         column-gap: 20px;
-        padding: 0 102px 0 93px;
+        padding: 0 60px 0 60px;
     }
 }
 

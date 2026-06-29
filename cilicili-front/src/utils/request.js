@@ -43,10 +43,7 @@ instance.interceptors.response.use(
             localStorage.removeItem(USER_TOKEN_KEY)
             currentUserRef.value = null
 
-            // 跳转登录
-            if (router.currentRoute.value.path !== '/login') {
-                router.push('/login')
-            }
+            // 此处不设置跳转登录，静默处理
 
             return Promise.reject(error)
         }
