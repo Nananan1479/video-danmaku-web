@@ -1,3 +1,5 @@
 /.vscode
 /cilicili-admin/node_modules
 /cilicili-admin/dist
+cilicili-back/src/main/resources/application-dev.yml
+cilicili-back/src/main/resources/application-prod.yml

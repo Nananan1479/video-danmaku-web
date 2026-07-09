@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cilicili.mapper.interaction.VideoCollectMapper">
+
+    <!-- 检查用户是否已收藏 -->
+    <select id="existsByVideoIdAndUserId" resultType="boolean">
+        SELECT COUNT(*) > 0
+        FROM video_collect
+        WHERE video_id = #{videoId} AND user_id = #{userId}
+    </select>
+
+    <!-- 获取视频收藏数 -->
+    <select id="countByVideoId" resultType="long">
+        SELECT COUNT(*)
+        FROM video_collect
+        WHERE video_id = #{videoId}
+    </select>
+
+    <!-- 用户收藏 -->
+    <insert id="insertCollect">
+        INSERT INTO video_collect (video_id, user_id, created_at)
+        VALUES (#{videoId}, #{userId}, NOW())
+    </insert>
+
+    <!-- 用户取消收藏 -->
+    <delete id="deleteByVideoIdAndUserId">
+        DELETE FROM video_collect
+        WHERE video_id = #{videoId} AND user_id = #{userId}
+    </delete>
+
+    <!-- 获取用户收藏的视频ID列表 -->
+    <select id="selectCollectedVideoIds" resultType="long">
+        SELECT video_id
+        FROM video_collect
+        WHERE user_id = #{userId}
+    </select>
+
+</mapper>

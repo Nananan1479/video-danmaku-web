@@ -15,6 +15,7 @@ public class User {
     private String signature;
     private String email;
     private String phone;
+    private Integer coin;
     private Byte status;
     private Byte role;
     private String created_at;
