@@ -1,0 +1,22 @@
+spring:
+  redis:
+    host: localhost          # 服务器IP
+    port: 6379
+    password:               # 如果有密码
+    database: 0
+    lettuce:
+      pool:
+        max-active: 8     # 最大连接数
+        max-idle: 8       # 最大空闲连接数
+        min-idle: 2       # 最小空闲连接数
+        max-wait: -1ms    # 获取连接超时时间
+  datasource:
+    url: jdbc:mysql://localhost:3306/cili_videodb
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    ############## 替换为自己本地的数据库用户名和密码 ##############
+    username: your_db_username
+    password: your_db_password
+
+video:
+  # 视频上传后存本地，审核通过后上传 OSS的本地路径
+  local-storage: D:/cilicili
