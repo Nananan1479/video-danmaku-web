@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.HashMap;
 
 public interface VideoService {
+    Video getVideoInfo(Long videoId);
 
     ResponseEntity<Resource> getVideo(Long id, String rangeHeader);
 

@@ -40,11 +40,14 @@ public class Result<T> {
     //503 Service Unavailable：服务器过载或维护中。
     //504 Gateway Timeout：网关超时。
 
-    /**
-     * 请求成功
-     */
+    /** 请求成功 */
     public static final int RESULT_OK = 200;
+    /** 请求失败 */
     public static final int RESULT_BAD_REQUEST = 400;
+    /** 条件不满足 (例如硬币不够) */
+    public static final int RESULT_CONDITION_NOT_MET = 405;
+    /** 不能重复操作 */
+    public static final int RESULT_CANNOT_REPEAT_OPERATION = 406;
 
     private int code;       // 状态码
     private String message; // 提示信息

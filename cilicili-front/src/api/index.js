@@ -157,6 +157,24 @@ export function updateUserInfo(data) {
     })
 }
 
+//================= 互动相关接口 =================================
+/** 点赞/取消点赞 */
+export function toggleLike(videoId) {
+    return request.post('/api/videoInteraction/like', { videoId })
+}
+/** 投币 */
+export function sendCoin(videoId, num) {
+    return request.post('/api/videoInteraction/coin', { videoId, num })
+}
+/** 收藏/取消收藏 */
+export function toggleCollect(videoId) {
+    return request.post('/api/videoInteraction/collect', { videoId })
+}
+/** 获取互动状态 */
+export function getInteractionStatus(videoId) {
+    return request.get('/api/videoInteraction/status', { params: { videoId } })
+}
+
 //================= 弹幕相关接口 =================================
 /**
  * 发送弹幕

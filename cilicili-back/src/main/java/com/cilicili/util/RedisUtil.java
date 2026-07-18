@@ -271,7 +271,7 @@ public class RedisUtil {
     }
 
     /**
-     * 删除Set指定key下的对象
+     * 删除ZSet指定key下的对象
      * @param key
      * @param value
      */
@@ -530,6 +530,7 @@ public class RedisUtil {
      * 删除简单数据类型或实体类
      * @param key
      */
+    @SuppressWarnings("all")
     public void delValue(String key) {
         redisTemplate.opsForValue().getOperations().delete(key);
     }

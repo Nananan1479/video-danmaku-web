@@ -2,6 +2,8 @@ package com.cilicili.entity.vo;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 public class UserVO {
     private Long id;
@@ -11,7 +13,7 @@ public class UserVO {
     private String signature;
     private String email;
     private String phone;
-    private Integer coin;
+    private BigDecimal coin;
     private Byte status;
     private Byte role;
     private String created_at;

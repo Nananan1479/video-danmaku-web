@@ -60,6 +60,21 @@ public class VideoServiceImpl implements VideoService {
 //    @Autowired
 //    private VideoUtil videoUtil;
 
+
+    /**
+     * 根据videoId查找全部数据
+     *
+     *
+     * @param videoId
+     *
+     *
+     * @return com.cilicili.entity.Video
+     */
+    @Override
+    public Video getVideoInfo(Long videoId) {
+        return videoMapper.selectById(videoId);
+    }
+
     /**
      * 向前端返回视频流。通过rangeHeader头可向前端返回视频片段实现拖拽进度条时快速跳转到对应位置。
      *
@@ -90,11 +105,11 @@ public class VideoServiceImpl implements VideoService {
             return OssUtil.serveOssVideo(
                     ENDPOINT, ACCESS_KEY_ID, ACCESS_KEY_SECRET, PRIVATE_BUCKET,
                     objectName, rangeHeader);
+        } else {
+            return ResponseEntity.notFound().build();
         }
 
-        // 兜底：本地磁盘读取
-        Path filePath = Paths.get(VIDEO_DIR, videoName);
-        return VideoUtil.serveVideoFile(filePath, rangeHeader);
+        // 不从本地磁盘读取
     }
 
     /**

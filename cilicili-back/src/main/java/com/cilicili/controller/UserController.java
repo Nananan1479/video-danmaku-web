@@ -2,6 +2,7 @@ package com.cilicili.controller;
 
 import com.cilicili.common.Result;
 import com.cilicili.entity.User;
+import com.cilicili.entity.dto.UserUpdateDTO;
 import com.cilicili.entity.vo.UserVO;
 import com.cilicili.service.UserService;
 import com.cilicili.util.JwtUtil;
@@ -91,19 +92,19 @@ public class UserController {
     }
 
     /**
-     * 更新用户信息（昵称、签名、邮箱、电话）
+     * 更新用户信息（昵称、签名、邮箱、电话、投币数）
      */
     @PostMapping("update")
-    public Result<User> updateUser(@RequestBody Map<String, String> body, HttpServletRequest request) {
+    public Result<User> updateUser(@RequestBody UserUpdateDTO dto, HttpServletRequest request) {
         Long userId = (Long) request.getAttribute("userId");
         if (userId == null) {
             return Result.fail(401, "未登录");
         }
         return userService.updateUser(userId,
-                body.get("nickname"),
-                body.get("signature"),
-                body.get("email"),
-                body.get("phone"));
+                dto.getNickname(),
+                dto.getSignature(),
+                dto.getEmail(),
+                dto.getPhone());
     }
 
     @GetMapping("check")

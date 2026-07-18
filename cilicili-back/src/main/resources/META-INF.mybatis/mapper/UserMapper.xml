@@ -13,4 +13,18 @@
         FROM user
         WHERE phone = #{userPhone}
     </select>
+
+    <!-- 增加硬币 -->
+    <update id="addCoin">
+        UPDATE user
+        SET coin = coin + #{amount}
+        WHERE id = #{userId} AND #{amount} > 0
+    </update>
+
+    <!-- 减少硬币 -->
+    <update id="subtractCoin">
+        UPDATE user
+        SET coin = coin - #{amount}
+        WHERE id = #{userId} AND coin >= #{amount}
+    </update>
 </mapper>

@@ -51,14 +51,14 @@ public class VideoController {
     // 使用时需加上.toBytes()方法
 
     /**
-     * 按视频 ID 从数据库查出 video_url ，再把磁盘文件以流的形式返回给浏览器
+     * 按视频 ID 从数据库查出 video_url ，再把OSS文件以流的形式返回给浏览器
      *
 
      * @param id
      * @param rangeHeader
      *
      * @author Nananan1479
-     * @date 2026/5/25 14:13
+     * @date 2026/7/10 14:13
 
      * @return org.springframework.http.ResponseEntity<byte[]>
      */
@@ -85,13 +85,13 @@ public class VideoController {
      * @param id
      *
      * @author Nananan1479
-     * @date 2026/5/25 14:14
+     * @date 2026/7/10 14:14
 
      * @return org.springframework.http.ResponseEntity<java.util.Map<java.lang.String,java.lang.Object>>
      */
     @GetMapping("{id}/info")
-    public ResponseEntity<Map<String, Object>> getVideoInfo(@PathVariable Long id) {
-        Video video = videoMapper.selectById(id);
+    public ResponseEntity<VideoVO> getVideoInfo(@PathVariable Long id) {
+        Video video = videoService.getVideoInfo(id);
         if (video == null) {
             return ResponseEntity.notFound().build();
         }
@@ -100,26 +100,31 @@ public class VideoController {
             return ResponseEntity.status(403).body(null);
         }
 
-        Map<String, Object> info = new HashMap<>();
-        info.put("id", video.getId());
-        info.put("title", video.getTitle());
-        info.put("description", video.getDescription());
-        info.put("duration", video.getDuration());
-        info.put("playCount", video.getPlayCount());
-        info.put("danmakuCount", video.getDanmakuCount());
-        info.put("likeCount", video.getLikeCount());
-        info.put("coinCount", video.getCoinCount());
-        info.put("collectCount", video.getCollectCount());
-        info.put("shareCount", video.getShareCount());
-        info.put("commentCount", video.getCommentCount());
-        info.put("coverUrl", video.getCoverUrl());
-        info.put("uploaderId", video.getUploaderId());
-        info.put("createdAt", video.getCreatedAt());
+        VideoVO videoVO = new VideoVO();
+
+
+//        Map<String, Object> info = new HashMap<>();
+//        info.put("id", video.getId());
+//        info.put("title", video.getTitle());
+//        info.put("description", video.getDescription());
+//        info.put("duration", video.getDuration());
+//        info.put("playCount", video.getPlayCount());
+//        info.put("danmakuCount", video.getDanmakuCount());
+//        info.put("likeCount", video.getLikeCount());
+//        info.put("coinCount", video.getCoinCount());
+//        info.put("collectCount", video.getCollectCount());
+//        info.put("shareCount", video.getShareCount());
+//        info.put("commentCount", video.getCommentCount());
+//        info.put("coverUrl", video.getCoverUrl());
+//        info.put("uploaderId", video.getUploaderId());
+//        info.put("createdAt", video.getCreatedAt());
 
         User uploader = userMapper.selectById(video.getUploaderId());
-        info.put("uploaderName", uploader != null ? uploader.getUsername() : "");
+        videoVO.setUploaderName(uploader != null ? uploader.getUsername() : "");
 
-        return ResponseEntity.ok(info);
+        BeanUtils.copyProperties(video, videoVO);
+
+        return ResponseEntity.ok(videoVO);
     }
 
 

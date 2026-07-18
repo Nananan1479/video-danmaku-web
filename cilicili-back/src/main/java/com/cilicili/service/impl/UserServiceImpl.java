@@ -6,6 +6,7 @@ import com.cilicili.entity.User;
 import com.cilicili.mapper.UserMapper;
 import com.cilicili.service.UserService;
 import com.cilicili.util.OssUtil;
+import com.cilicili.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -46,12 +48,23 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+    @Autowired
+    private RedisUtil redisUtil;
+
+
+    /**
+     * 通过id获取用户信息
+     *
+     *
+     * @param id
+     *
+     *
+     * @return com.cilicili.entity.User
+     */
     @Override
     public User getUserById(long id) {
         return userMapper.selectById(id);
     }
-
-
 
     /**
      * 用户登录。<br>
@@ -187,15 +200,12 @@ public class UserServiceImpl implements UserService {
     /**
      * 更新用户信息（昵称、签名、邮箱、电话）
      *
-     * @param userId
-     * @param nickname
-     * @param signature
-     * @param email
-     * @param phone
+     * @param nickname 用户昵称
+     * @param signature 用户个性签名
      *
      * @author Nananan1479
      * @date 2026/6/10
-     * @return com.cilicili.common.Result<com.cilicili.entity.User>
+     * @return com.cilicili.common.Result&lt;com.cilicili.entity.User&gt;
      */
     @Override
     public Result<User> updateUser(long userId, String nickname, String signature, String email, String phone) {
@@ -219,11 +229,39 @@ public class UserServiceImpl implements UserService {
             }
             user.setPhone(phone.trim());
         }
+
         String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         user.setUpdated_at(now);
         userMapper.updateById(user);
         user.setPassword(null);
         return Result.success(200, user);
+    }
+
+    /**
+     * 增加硬币
+     */
+    @Override
+    public int addCoin(long userId, BigDecimal amount) {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new RuntimeException("增加的硬币必须大于0");
+        }
+        return userMapper.addCoin(userId, amount);
+    }
+
+    /**
+     * 减少硬币（含余额不足校验）
+     */
+    @Override
+    public int subtractCoin(long userId, BigDecimal amount) {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new RuntimeException("扣减的硬币必须大于0");
+        }
+        User user = userMapper.selectById(userId);
+        if (user == null) throw new RuntimeException("用户不存在");
+        if (user.getCoin() == null || user.getCoin().compareTo(amount) < 0) {
+            throw new RuntimeException("硬币不足");
+        }
+        return userMapper.subtractCoin(userId, amount);
     }
 
     /**
@@ -263,4 +301,7 @@ public class UserServiceImpl implements UserService {
             return ResponseEntity.notFound().build();
         }
     }
+
+//    private boolean updateUser()
+
 }
