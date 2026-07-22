@@ -99,5 +99,5 @@ aliyun:
     endpoint: oss-cn-hangzhou.aliyuncs.com         # 替换为你记录的 Endpoint
     accessKeyId: LTAI5tYourAccessKeyId             # 替换为你的 AccessKey ID
     accessKeySecret: YourAccessKeySecret           # 替换为你的 AccessKey Secret
-    private-bucketName: your-private-bucket-name   # 替换为你的 Bucket 名称
-    public-bucket: your-public-bucket-name         # 替换为你的 Bucket 名称
+    private-bucketName: your-private-bucket-name   # 替换为你的 Bucket 名称 （私有，存放视频等敏感资源）
+    public-bucket: your-public-bucket-name         # 替换为你的 Bucket 名称 （公共读，存放头像、封面等公开资源）
